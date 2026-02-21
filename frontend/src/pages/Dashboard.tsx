@@ -1,0 +1,96 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Sidebar from "../components/layout/Sidebar";
+import { useAuth } from "../hooks/useAuth";
+import DashboardHeader from "./dashboard/components/DashboardHeader";
+import AppointmentsTab from "./dashboard/tabs/AppointmentsTab";
+import ClientsTab from "./dashboard/tabs/ClientsTab";
+import InventoryTab from "./dashboard/tabs/InventoryTab";
+import OverviewTab from "./dashboard/tabs/OverviewTab";
+import PetsTab from "./dashboard/tabs/PetsTab";
+import SettingsTab from "./dashboard/tabs/SettingsTab";
+
+export default function Dashboard() {
+  const navigate = useNavigate();
+  const { user, isAdmin, isAuthenticated } = useAuth();
+
+  const [activeTab, setActiveTab] = useState(isAdmin ? "overview" : "pets");
+  const [toastMessage, setToastMessage] = useState("");
+  const [globalSearch, setGlobalSearch] = useState("");
+
+  useEffect(() => {
+    if (!isAuthenticated || !user) {
+      navigate("/login");
+    }
+  }, [user, isAuthenticated, navigate]);
+
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setTimeout(() => setToastMessage(""), 3000);
+  };
+
+  if (!user) return null;
+
+  return (
+    <div className="bg-background-light text-primary font-display antialiased min-h-screen flex overflow-hidden">
+      {/* Sidebar Component */}
+      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col h-screen overflow-hidden relative bg-background-light">
+        {/* Header especializado */}
+        <DashboardHeader
+          activeTab={activeTab}
+          globalSearch={globalSearch}
+          setGlobalSearch={setGlobalSearch}
+        />
+
+        {/* Dashboard Content */}
+        <div className="flex-1 overflow-y-auto p-6 md:p-8">
+          {activeTab === "overview" && isAdmin ? (
+            <OverviewTab showToast={showToast} />
+          ) : activeTab === "clients" && isAdmin ? (
+            <ClientsTab showToast={showToast} searchQuery={globalSearch} />
+          ) : activeTab === "pets" ? (
+            <PetsTab showToast={showToast} searchQuery={globalSearch} />
+          ) : activeTab === "appointments" ? (
+            <AppointmentsTab showToast={showToast} />
+          ) : activeTab === "inventory" && isAdmin ? (
+            <InventoryTab showToast={showToast} searchQuery={globalSearch} />
+          ) : activeTab === "settings" ? (
+            <SettingsTab showToast={showToast} />
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full text-center mt-20">
+              <span className="material-symbols-outlined text-6xl text-gray-300 mb-4">
+                lock_person
+              </span>
+              <h2 className="text-xl font-bold text-primary mb-2">
+                Acesso Restrito
+              </h2>
+              <p className="text-gray-500 max-w-md">
+                Esta área ({activeTab}) é exclusiva para administradores.
+                Por favor, utilize as abas permitidas.
+              </p>
+              <button
+                onClick={() => setActiveTab("pets")}
+                className="mt-6 px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-neutral-800 transition-colors"
+              >
+                Ir para Meus Pets
+              </button>
+            </div>
+          )}
+        </div>
+      </main>
+
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-4 right-4 bg-[#1f1f1f] text-white px-4 py-3 rounded-lg shadow-xl z-50 flex items-center gap-2">
+          <span className="material-symbols-outlined text-[20px] text-green-400">
+            check_circle
+          </span>
+          <span className="font-medium text-sm">{toastMessage}</span>
+        </div>
+      )}
+    </div>
+  );
+}

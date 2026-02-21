@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Response | Clean Express API</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        .json-viewer {
+            background: #000000;
+            border-radius: 12px;
+            padding: 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            border: 1px solid var(--glass-border);
+            text-align: left;
+            margin: 24px 0;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            box-shadow: var(--glow);
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 24px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s;
+        }
+
+        .back-btn:hover {
+            color: var(--accent-color);
+        }
+
+        .data-title {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <main class="glass-container">
+        <header>
+            <div class="badge" id="endpoint-badge">API Endpoint</div>
+            <h1 id="page-title">Response Viewer</h1>
+            <p class="subtitle">Inspeção Visual de Dados em Tempo Real</p>
+        </header>
+
+        <section class="response-content">
+            <span class="data-title">Payload Gerado pelo Caso de Uso</span>
+            <div class="json-viewer" id="json-data">
+                { "loading": true }
+            </div>
+        </section>
+
+        <footer>
+            <a href="/" class="back-btn">← Voltar para a Dashboard</a>
+        </footer>
+    </main>
+
+    <script>
+        // Esta página será alimentada via injeção simples ou buscando o JSON do próprio endpoint
+        // Para este desafio, vamos fazer o cliente buscar o JSON se detectar que é um template
+        async function loadContent() {
+            const path = window.location.pathname;
+            document.getElementById('endpoint-badge').textContent = path;
+
+            if (path === '/health') {
+                document.getElementById('page-title').textContent = 'System Health';
+            } else if (path === '/api/welcome') {
+                document.getElementById('page-title').textContent = 'Welcome Message';
+            }
+
+            try {
+                const response = await fetch(path, {
+                    headers: { 'Accept': 'application/json' }
+                });
+                const data = await response.json();
+                document.getElementById('json-data').textContent = JSON.stringify(data, null, 4);
+            } catch (error) {
+                document.getElementById('json-data').textContent = 'Erro ao carregar dados: ' + error.message;
+            }
+        }
+        loadContent();
+    </script>
+</body>
+
+</html>

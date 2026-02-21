@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetShop Small Breeds | API Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <main class="glass-container">
+        <header>
+            <div class="badge">v1.0.0 Stable</div>
+            <h1>Clean Express <span class="accent">API</span></h1>
+            <p class="subtitle">Arquitetura Limpa • TypeScript • Excelência Técnica</p>
+        </header>
+
+        <section class="status-grid">
+            <div class="status-card">
+                <span class="label">Status</span>
+                <span class="value pulse">Operational</span>
+            </div>
+            <div class="status-card">
+                <span class="label">Environment</span>
+                <span class="value">Development</span>
+            </div>
+            <div class="status-card">
+                <span class="label">Uptime</span>
+                <span class="value" id="uptime">Loading...</span>
+            </div>
+        </section>
+
+        <section class="endpoints">
+            <h2>API Endpoints</h2>
+            <div class="endpoint-list">
+                <a href="/api/welcome" class="endpoint-item">
+                    <span class="method get">GET</span>
+                    <span class="path">/api/welcome</span>
+                    <span class="desc">Welcome Message</span>
+                </a>
+                <a href="/health" class="endpoint-item">
+                    <span class="method get">GET</span>
+                    <span class="path">/health</span>
+                    <span class="desc">System Health</span>
+                </a>
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-content">
+                <p>Implementado por <span class="name">Allysson Rodrigues</span></p>
+                <div class="tech-stack">
+                    <span>Node.js v24</span>
+                    <span>•</span>
+                    <span>Clean Architecture</span>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        // Simple uptime counter stimulation
+        const startTime = Date.now();
+        setInterval(() => {
+            const diff = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(diff / 60);
+            const seconds = diff % 60;
+            document.getElementById('uptime').textContent = `${minutes}m ${seconds}s`;
+        }, 1000);
+    </script>
+</body>
+
+</html>

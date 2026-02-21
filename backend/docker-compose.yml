@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  # Sua API Node.js
+  api:
+    build: .
+    container_name: node-api-service
+    ports:
+      - '5000:5000'
+    env_file:
+      - .env
+    depends_on:
+      - mongodb
+    networks:
+      - app-network
+
+  # Seu Banco de Dados MongoDB
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb-service
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongo-data:

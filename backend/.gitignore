@@ -1,0 +1,26 @@
+# Backend Git Ignore
+# ------------------
+
+node_modules/
+dist/
+build/
+
+# Environment variables
+.env
+.env.local
+.env.test
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+
+# Prisma generated files
+/src/generated/prisma
+
+# OS and Editors
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo

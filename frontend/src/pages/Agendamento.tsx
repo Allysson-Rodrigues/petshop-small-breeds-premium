@@ -1,0 +1,174 @@
+import React, { useState } from "react";
+
+export default function Agendamento() {
+  // SEO: <title>Agendamento | Small Breeds</title>
+  // <meta name="description" content="Reserve um horário para seu pet." />
+  // <meta property="og:title" content="Agendamento | Small Breeds" />
+
+  const [submitting, setSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    // Simulate API call
+    setTimeout(() => {
+      setSubmitting(false);
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 5000);
+    }, 1200);
+  };
+
+  return (
+    <div className="min-h-screen bg-white font-sans text-charcoal flex flex-col">
+      <section className="bg-light-grey pt-32 pb-20 border-b border-border-grey">
+        <div className="max-w-3xl mx-auto px-6 text-center">
+          <h2 className="text-xs font-black uppercase tracking-[0.3em] text-medium-grey mb-4">
+            Concierge
+          </h2>
+          <h1 className="text-4xl md:text-5xl font-display font-light tracking-tight text-black mb-6">
+            Agendamento Exclusivo
+          </h1>
+          <p className="text-lg text-medium-grey font-light leading-relaxed">
+            Reserve um momento de cuidado premium para seu cão de pequeno porte.
+            Nossos horários são desenhados para garantir que seu companheiro
+            receba atenção total, sem pressa e com o máximo de conforto.
+          </p>
+        </div>
+      </section>
+
+      <section className="py-20 px-6 max-w-3xl mx-auto w-full flex-1">
+        {showSuccess && (
+          <div className="mb-10 bg-black text-white p-6 border border-neutral-800 text-center flex flex-col items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
+            <span className="material-symbols-outlined text-4xl font-light">
+              check_circle
+            </span>
+            <div>
+              <h3 className="text-lg font-medium tracking-tight mb-1">
+                Reserva Solicitada
+              </h3>
+              <p className="text-sm font-light text-neutral-400">
+                Nossa equipe de concierge avaliará a disponibilidade e entrará
+                em contato em até 24h para confirmar os detalhes do seu
+                atendimento.
+              </p>
+            </div>
+          </div>
+        )}
+
+        <form className="space-y-10" onSubmit={handleFormSubmit}>
+          <div className="border-b border-border-grey pb-10">
+            <h3 className="text-lg font-medium tracking-tight text-black mb-8 border-l-2 border-black pl-3">
+              Informações do Companheiro
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-3">
+                <label className="block text-[10px] font-bold text-medium-grey uppercase tracking-widest">
+                  Nome do Pet
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ex: Duque"
+                  className="w-full bg-transparent border-b border-medium-grey/40 py-3 text-black focus:border-black outline-none transition-colors placeholder:text-neutral-300"
+                  required
+                />
+              </div>
+              <div className="space-y-3">
+                <label className="block text-[10px] font-bold text-medium-grey uppercase tracking-widest">
+                  Raça
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ex: Yorkshire Terrier"
+                  className="w-full bg-transparent border-b border-medium-grey/40 py-3 text-black focus:border-black outline-none transition-colors placeholder:text-neutral-300"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="border-b border-border-grey pb-10">
+            <h3 className="text-lg font-medium tracking-tight text-black mb-8 border-l-2 border-black pl-3">
+              Detalhes do Serviço
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-3 md:col-span-2">
+                <label className="block text-[10px] font-bold text-medium-grey uppercase tracking-widest">
+                  Serviço Desejado
+                </label>
+                <div className="relative">
+                  <select className="w-full bg-transparent border-b border-medium-grey/40 py-3 text-black focus:border-black outline-none transition-colors appearance-none cursor-pointer">
+                    <option value="">Selecione um pacote de cuidado...</option>
+                    <option value="banho">
+                      Banho de Luxo com Cromoterapia
+                    </option>
+                    <option value="tosa_artesanal">
+                      Tosa Artesanal na Tesoura
+                    </option>
+                    <option value="spa">
+                      Spa Day Completo (Banho, Tosa e Ozonioterapia)
+                    </option>
+                    <option value="vet">Consulta Veterinária Preventiva</option>
+                  </select>
+                  <span className="material-symbols-outlined absolute right-0 top-3 text-medium-grey pointer-events-none">
+                    expand_more
+                  </span>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <label className="block text-[10px] font-bold text-medium-grey uppercase tracking-widest">
+                  Data Preferida
+                </label>
+                <input
+                  type="date"
+                  className="w-full bg-transparent border-b border-medium-grey/40 py-3 text-black focus:border-black outline-none transition-colors"
+                  required
+                />
+              </div>
+              <div className="space-y-3">
+                <label className="block text-[10px] font-bold text-medium-grey uppercase tracking-widest">
+                  Período
+                </label>
+                <div className="relative">
+                  <select
+                    className="w-full bg-transparent border-b border-medium-grey/40 py-3 text-black focus:border-black outline-none transition-colors appearance-none cursor-pointer"
+                    required
+                  >
+                    <option value="">Selecione o turno...</option>
+                    <option value="manha">Manhã (09h - 12h)</option>
+                    <option value="tarde">Tarde (13h - 18h)</option>
+                  </select>
+                  <span className="material-symbols-outlined absolute right-0 top-3 text-medium-grey pointer-events-none">
+                    expand_more
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-8">
+            <button
+              type="submit"
+              disabled={submitting}
+              className={`w-full bg-black text-white py-5 text-xs font-bold uppercase tracking-[0.2em] transition-all duration-300 flex justify-center items-center gap-3 ${submitting ? "opacity-70 cursor-wait" : "hover:bg-neutral-800"}`}
+            >
+              {submitting ? (
+                <>
+                  <span className="material-symbols-outlined animate-spin text-sm">
+                    autorenew
+                  </span>
+                  Processando Solicitação...
+                </>
+              ) : (
+                "Confirmar Solicitação de Reserva"
+              )}
+            </button>
+            <p className="text-[10px] text-center text-medium-grey mt-6 uppercase tracking-widest font-bold">
+              *Atendimentos sujeitos à aprovação da diretoria clínica.
+            </p>
+          </div>
+        </form>
+      </section>
+    </div>
+  );
+}
