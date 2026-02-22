@@ -1,31 +1,41 @@
-@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
 
 @theme {
   --font-sans: "Fira Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Fira Code", monospace;
 
-  --color-primary: #171717;
-  --color-secondary: #525252;
-  --color-cta: #000000;
-  --color-background: #FAFAFA;
-  --color-foreground: #171717;
+  /* 60-30-10 Premium Monochromatic Palette (HSL) */
+  /* Dominant (60%): Pearl / Off-white */
+  --color-background: hsl(0, 0%, 98%);
 
-  --color-charcoal: #171717;
-  --color-border-grey: #e5e5e5;
+  /* Secondary (30%): Deep Ash / Charcoal */
+  --color-foreground: hsl(0, 0%, 15%);
+  --color-secondary: hsl(0, 0%, 35%);
+  --color-border-grey: hsl(0, 0%, 90%);
+
+  /* Accent (10%): Absolute Black */
+  --color-primary: hsl(0, 0%, 0%);
+  --color-cta: hsl(0, 0%, 0%);
+  --color-charcoal: hsl(0, 0%, 9%);
 
   --radius-clay: 24px;
 
-  /* Claymorphism Shadows */
+  /* Premium Multi-layered Studio Shadows (Realistic Offset) */
   --shadow-clay:
-    8px 8px 16px 0 rgba(0, 0, 0, 0.03),
-    inset -4px -4px 8px 0 rgba(0, 0, 0, 0.02),
-    inset 4px 4px 8px 0 rgba(255, 255, 255, 0.9);
+    0 20px 40px -10px rgba(0, 0, 0, 0.08),
+    0 10px 20px -5px rgba(0, 0, 0, 0.04),
+    0 2px 5px -1px rgba(0, 0, 0, 0.02);
 }
 
 @layer base {
   * {
     border-color: var(--color-border-grey);
+  }
+
+  /* UX Audit requirement: form elements should have labels */
+  label {
+    @apply text-sm font-medium text-gray-700;
   }
 
   html {
@@ -67,10 +77,13 @@
 }
 
 .glass {
-  background-color: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  background-color: hsla(0, 0%, 100%, 0.65);
+  /* Semi-transparent base */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid hsla(0, 0%, 100%, 0.4);
+  box-shadow: 0 8px 32px 0 hsla(0, 0%, 0%, 0.05);
+  /* Adds depth to glass */
 }
 
 .clay-card {
@@ -91,37 +104,73 @@
 
   /* Magnetic Sliding Underline */
   .hover-underline-magnetic {
-    @apply relative inline-block;
+    position: relative;
+    display: inline-block;
   }
 
   .hover-underline-magnetic::after {
     content: '';
-    @apply absolute w-full h-[1px] bg-charcoal bottom-[-4px] left-0 origin-right transition-transform duration-500 ease-[cubic-bezier(0.16, 1, 0.3, 1)] scale-x-0;
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    background-color: var(--color-charcoal);
+    bottom: -4px;
+    left: 0;
+    transform-origin: right;
+    transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+    transform: scaleX(0);
   }
 
   .hover-underline-magnetic:hover::after {
-    @apply origin-left scale-x-100;
+    transform-origin: left;
+    transform: scaleX(1);
   }
 
   /* Magnetic Button Fill Slide */
   .btn-magnetic {
-    @apply relative overflow-hidden z-[1];
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
   }
 
   .btn-magnetic::before {
     content: '';
-    @apply absolute top-0 left-0 w-full h-full bg-charcoal origin-right transition-transform duration-[600ms] ease-[cubic-bezier(0.16, 1, 0.3, 1)] scale-x-0 z-[-1];
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-charcoal);
+    transform-origin: right;
+    transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+    transform: scaleX(0);
+    z-index: -1;
   }
 
   .btn-magnetic:hover::before {
-    @apply origin-left scale-x-100;
+    transform-origin: left;
+    transform: scaleX(1);
   }
 
   .btn-magnetic:hover {
-    @apply text-white border-charcoal;
+    color: white;
+    border-color: var(--color-charcoal);
   }
 
 
+
+  /* Scroll Reveal Animation */
+  .reveal-up {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .reveal-up.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
 
   @keyframes fadeIn {
     from {
@@ -151,13 +200,9 @@
     *,
     ::before,
     ::after {
-      animation-delay: -1ms !important;
-      animation-duration: 1ms !important;
-      animation-iteration-count: 1 !important;
-      background-attachment: initial !important;
+      animation: none !important;
+      transition: none !important;
       scroll-behavior: auto !important;
-      transition-duration: 0s !important;
-      transition-delay: 0s !important;
     }
   }
 }

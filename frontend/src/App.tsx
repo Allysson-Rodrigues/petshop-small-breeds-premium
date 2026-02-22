@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import Galeria from "./pages/Galeria";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import RacaCuidados from "./pages/RacaCuidados";
 import Registro from "./pages/Registro";
 import Servicos from "./pages/Servicos";
 import Sobre from "./pages/Sobre";
@@ -38,6 +39,7 @@ function App() {
           <Route path="/catalogo" element={<Catalogo />} />
           <Route path="/galeria" element={<Galeria />} />
           <Route path="/agendamento" element={<Agendamento />} />
+          <Route path="/galeria/:slug" element={<RacaCuidados />} />
         </Route>
       </Routes>
     </BrowserRouter>

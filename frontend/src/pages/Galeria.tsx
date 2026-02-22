@@ -1,51 +1,60 @@
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 
+const breeds = [
+  {
+    name: "Poodle Toy",
+    slug: "poodle-toy",
+    desc: "Altamente inteligente e extremamente leal, possui uma pelagem que requer cuidados de tosa artesanal constantes para manter o alto padrão estético.",
+    type: "COMPANHIA",
+    image: "/breeds/poodle.png",
+  },
+  {
+    name: "Chihuahua",
+    slug: "chihuahua",
+    desc: "O menor cão do mundo carrega a maior personalidade. Requer atenção especial à temperatura e produtos delicados e hipoalergênicos no banho.",
+    type: "VALENTE",
+    image: "/breeds/chihuahua.png",
+  },
+  {
+    name: "Maltês",
+    slug: "maltes",
+    desc: "Elegante, dócil e com pelagem de seda brilhante. Nossa hidratação botânica e tosa na tesoura extraem o máximo da beleza desta raça ancestral.",
+    type: "LUXO",
+    image: "/breeds/maltes.png",
+  },
+  {
+    name: "Yorkshire Terrier",
+    slug: "yorkshire-terrier",
+    desc: "Pequeno caçador com coração gigante e espírito aventureiro. Seus pelos finos demandam escovação profissional e produtos de nutrição intensa.",
+    type: "ATIVO",
+    image: "/breeds/yorkshire.png",
+  },
+  {
+    name: "Shih Tzu",
+    slug: "shih-tzu",
+    desc: "O 'cão leão' chinês é o companheiro de colo perfeito. Banhos frequentes com tosa bebê garantem o frescor e reduzem a formação de nós.",
+    type: "DÓCIL",
+    image: "/breeds/shihtzu.png",
+  },
+  {
+    name: "Pug",
+    slug: "pug",
+    desc: "Muito charme e personalidade em um corpo compacto. Nossa equipe veterinária atenta dedica tempo extra à higienização de suas dobras faciais.",
+    type: "SOCIAL",
+    image: "/breeds/pug.png",
+  },
+];
+
 export default function Galeria() {
-  // SEO: <title>Galeria de Raças | Small Breeds</title>
-  // <meta name="description" content="Conheça as raças pequenas que atendemos." />
-  // <meta property="og:title" content="Galeria de Raças | Small Breeds" />
-
-  const breeds = [
-    {
-      name: "Poodle Toy",
-      desc: "Altamente inteligente e extremamente leal, possui uma pelagem que requer cuidados de tosa artesanal constantes para manter o alto padrão estético.",
-      type: "COMPANHIA",
-      image: "/breeds/poodle.png",
-    },
-    {
-      name: "Chihuahua",
-      desc: "O menor cão do mundo carrega a maior personalidade. Requer atenção especial à temperatura e produtos delicados e hipoalergênicos no banho.",
-      type: "VALENTE",
-      image: "/breeds/chihuahua.png",
-    },
-    {
-      name: "Maltês",
-      desc: "Elegante, dócil e com pelagem de seda brilhante. Nossa hidratação botânica e tosa na tesoura extraem o máximo da beleza desta raça ancestral.",
-      type: "LUXO",
-      image: "/breeds/maltes.png",
-    },
-    {
-      name: "Yorkshire Terrier",
-      desc: "Pequeno caçador com coração gigante e espírito aventureiro. Seus pelos finos demandam escovação profissional e produtos de nutrição intensa.",
-      type: "ATIVO",
-      image: "/breeds/yorkshire.png",
-    },
-    {
-      name: "Shih Tzu",
-      desc: "O 'cão leão' chinês é o companheiro de colo perfeito. Banhos frequentes com tosa bebê garantem o frescor e reduzem a formação de nós.",
-      type: "DÓCIL",
-      image: "/breeds/shihtzu.png",
-    },
-    {
-      name: "Pug",
-      desc: "Muito charme e personalidade em um corpo compacto. Nossa equipe veterinária atenta dedica tempo extra à higienização de suas dobras faciais.",
-      type: "SOCIAL",
-      image: "/breeds/pug.png",
-    },
-  ];
-
   return (
     <div className="min-h-screen bg-white font-sans text-charcoal flex flex-col">
+      <Helmet>
+        <title>Galeria de Raças | Small Breeds</title>
+        <meta name="description" content="Conheça as raças pequenas que atendemos. Poodle Toy, Chihuahua, Maltês, Yorkshire, Shih Tzu e Pug." />
+        <meta property="og:title" content="Galeria de Raças — Small Breeds" />
+      </Helmet>
+
       <section className="bg-light-grey pt-32 pb-24 border-b border-border-grey">
         <div className="max-w-7xl mx-auto px-6 md:px-12 text-center">
           <h2 className="text-xs font-black uppercase tracking-[0.3em] text-medium-grey mb-4">
@@ -71,15 +80,15 @@ export default function Galeria() {
                 <img
                   src={b.image}
                   alt={b.name}
-                  className="w-full h-full object-cover object-center grayscale contrast-110 transition-all duration-[5000ms] ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-110 group-hover:grayscale-0 group-hover:brightness-105"
+                  className="w-full h-full object-cover object-center grayscale contrast-110 transition-all duration-[3000ms] group-hover:scale-110 group-hover:grayscale-0 group-hover:brightness-105"
                 />
-                <div className="absolute inset-x-0 bottom-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]">
+                <div className="absolute inset-x-0 bottom-0 p-6 opacity-0 group-hover:opacity-100 transition-all duration-700 translate-y-2 group-hover:translate-y-0">
                   <Link
-                    to="/agendamento"
-                    className="text-white bg-black/80 backdrop-blur-md px-4 py-3 text-[10px] font-bold uppercase tracking-widest flex items-center justify-between gap-2 hover:bg-black transition-colors transform translate-y-4 group-hover:translate-y-0 duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+                    to={`/galeria/${b.slug}`}
+                    className="text-white bg-black/85 backdrop-blur-md px-4 py-3 text-[10px] font-bold uppercase tracking-widest flex items-center justify-between gap-2 hover:bg-black transition-colors"
                   >
                     Explorar Cuidados
-                    <span className="material-symbols-outlined text-sm">
+                    <span className="material-symbols-outlined text-sm transition-transform duration-300 group-hover:translate-x-1">
                       arrow_forward
                     </span>
                   </Link>
@@ -95,6 +104,15 @@ export default function Galeria() {
                 <p className="text-charcoal font-light leading-relaxed text-sm flex-1">
                   {b.desc}
                 </p>
+                <Link
+                  to={`/galeria/${b.slug}`}
+                  className="mt-6 text-[10px] font-black uppercase tracking-widest text-charcoal hover:text-black transition-colors flex items-center gap-2 group/link"
+                >
+                  Ver cuidados
+                  <span className="material-symbols-outlined text-xs transition-transform duration-200 group-hover/link:translate-x-1">
+                    arrow_forward
+                  </span>
+                </Link>
               </div>
             </article>
           ))}

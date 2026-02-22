@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 export default function Servicos() {
   const { hash } = useLocation();
@@ -13,13 +14,14 @@ export default function Servicos() {
       }
     }
   }, [hash]);
-  // SEO: <title>Serviços Premium | Small Breeds</title>
-  // <meta name="description" content="Tosa artesanal, banho de luxo e cuidados veterinários dedicados exclusivamente para cães de raças pequenas." />
-  // <meta property="og:title" content="Experiência Sênior para Pets - Small Breeds" />
-  // <meta property="og:description" content="Cuidado artesanal com infraestrutura de luxo." />
-  // <meta name="keywords" content="tosa artisanal, banho luxo sampa, veterinário especializado raças pequenas" />
   return (
     <div className="flex flex-col min-h-screen font-display bg-background-light text-charcoal">
+      <Helmet>
+        <title>Serviços Premium | Small Breeds</title>
+        <meta name="description" content="Tosa artesanal, banho de luxo e cuidados veterinários dedicados exclusivamente para cães de raças pequenas." />
+        <meta property="og:title" content="Serviços Premium — Small Breeds" />
+        <meta property="og:description" content="Cuidado artesanal com infraestrutura de luxo." />
+      </Helmet>
       {/* Hero Section */}
       <section className="relative bg-white pt-32 pb-20 border-b border-border-grey">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">

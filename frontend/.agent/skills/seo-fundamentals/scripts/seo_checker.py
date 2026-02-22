@@ -36,7 +36,7 @@ SKIP_DIRS = {
     '__pycache__', '.vscode', '.idea', 'coverage', 'test', 'tests',
     '__tests__', 'spec', 'docs', 'documentation', 'examples',
     'archive', '02-playground', '03-estudos', '.agent',
-    'biblioteca-conhecimento', 'dotfiles-repo'
+    'biblioteca-conhecimento', 'dotfiles-repo', 'playwright-report'
 }
 
 # Files to skip (not pages)
@@ -105,11 +105,12 @@ def check_page(file_path: Path) -> dict:
         return {"file": str(file_path.name), "issues": [f"Error: {e}"]}
 
     # Detect if this is a layout/template file (has Head component or direct meta tags)
-    is_layout = ('Head>' in content or
-                 '<head' in content.lower() or
+    is_layout = ('<Helmet>' in content or
+                 '<Helmet ' in content or
+                 '<head>' in content.lower() or
+                 '<head ' in content.lower() or
                  'name="description"' in content.lower() or
-                 'og:' in content.lower() or
-                 'property="og' in content.lower() or
+                 'property="og:' in content.lower() or
                  file_path.name == 'index.html')
 
     # 1. Title tag

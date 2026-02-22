@@ -128,7 +128,7 @@ export default function Footer() {
               />
               <button
                 type="submit"
-                className="absolute right-0 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-black transition-colors hover-underline-magnetic"
+                className="absolute right-0 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-black transition-colors"
                 aria-label="Inscrever-se"
               >
                 <span className="material-symbols-outlined text-[20px]">

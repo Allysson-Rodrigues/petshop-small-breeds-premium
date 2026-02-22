@@ -1,8 +1,8 @@
 import { useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { categories, products, type Product } from "../data/products";
 
 export default function Catalogo() {
-  // SEO: <title>Catálogo | Small Breeds</title>
   const [activeCategory, setActiveCategory] = useState("Todos");
   const [sortOrder, setSortOrder] = useState("padrao");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -20,6 +20,12 @@ export default function Catalogo() {
 
   return (
     <div className="min-h-screen bg-white font-sans text-charcoal flex flex-col">
+      <Helmet>
+        <title>Catálogo | Small Breeds</title>
+        <meta name="description" content="Coleção exclusiva de produtos premium para raças pequenas. Acessórios de luxo, ração e cuidados." />
+        <meta property="og:title" content="Catálogo — Small Breeds" />
+        <meta property="og:description" content="Luxo curado para o seu companheiro mais precioso." />
+      </Helmet>
       {/* Hero Section */}
       <section className="relative h-[60vh] min-h-[500px] w-full bg-light-grey flex items-center justify-center overflow-hidden pt-16">
         <img

@@ -8,11 +8,6 @@ type DashboardHeaderProps = {
     onMenuClick?: () => void;
 };
 
-{/* SEO optimization */ }
-<head>
-    <title>Dashboard Admin | Small Breeds</title>
-    <meta name="robots" content="noindex, nofollow" />
-</head>
 
 export default function DashboardHeader({
     activeTab,

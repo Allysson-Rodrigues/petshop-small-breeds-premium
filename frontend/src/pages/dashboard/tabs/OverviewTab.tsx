@@ -44,11 +44,6 @@ export default function OverviewTab({ showToast, setActiveTab }: OverviewTabProp
 
   return (
     <div className="max-w-7xl mx-auto flex flex-col gap-6 md:gap-8">
-      {/* SEO optimization */}
-      <head>
-        <title>Dashboard Admin | Small Breeds</title>
-        <meta name="robots" content="noindex, nofollow" />
-      </head>
       {/* Page Title */}
       <div>
         <h1 className="text-xl md:text-2xl font-bold text-primary tracking-tight">
@@ -122,6 +117,7 @@ export default function OverviewTab({ showToast, setActiveTab }: OverviewTabProp
             <h2 className="text-lg font-bold text-primary">Agendamentos de Hoje</h2>
             <button
               className="text-sm font-medium text-gray-500 hover:text-primary transition-all duration-500 ease-in-out flex items-center gap-1"
+              aria-label="Ver todos os agendamentos de hoje"
               onClick={(e) => {
                 e.preventDefault();
                 setActiveTab("appointments");
@@ -215,6 +211,7 @@ export default function OverviewTab({ showToast, setActiveTab }: OverviewTabProp
             <h2 className="text-lg font-bold text-primary">Alertas de Estoque</h2>
             <button
               className="text-sm font-medium text-gray-500 hover:text-primary transition-all duration-500 ease-in-out"
+              aria-label="Gerenciar todo o estoque de produtos"
               onClick={(e) => {
                 e.preventDefault();
                 setActiveTab("inventory");
@@ -255,6 +252,7 @@ export default function OverviewTab({ showToast, setActiveTab }: OverviewTabProp
                   </p>
                   <button
                     className="w-full py-1.5 px-3 bg-primary text-white text-xs font-medium rounded hover:bg-[#4d4d4d] transition-all duration-500 ease-in-out flex items-center justify-center gap-1.5"
+                    aria-label={`Repor estoque de ${item.name}`}
                     onClick={(e) => {
                       e.preventDefault();
                       handleReposter(item.id, item.name);

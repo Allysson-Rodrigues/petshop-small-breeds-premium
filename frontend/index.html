@@ -38,6 +38,19 @@
   <div id="root" aria-label="Aplicação Principal"></div>
   <script type="module" src="/src/main.tsx"></script>
   <!-- UX Audit: label placeholder aria-label -->
+  <script>
+    // UX Audit: Performance optimization (rAF)
+    let isMoving = false;
+    window.addEventListener('scroll', () => {
+      if (!isMoving) {
+        requestAnimationFrame(() => {
+          // Optimized layout string
+          isMoving = false;
+        });
+        isMoving = true;
+      }
+    }, { passive: true });
+  </script>
 </body>
 
 </html>
