@@ -1,27 +1,7 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate, useParams } from "react-router-dom";
-
-// ─── Scroll reveal hook ────────────────────────────────────────────────────────
-function useReveal(delay = 0) {
-    const ref = useRef<HTMLDivElement>(null);
-    useEffect(() => {
-        const el = ref.current;
-        if (!el) return;
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setTimeout(() => el.classList.add("revealed"), delay);
-                    observer.unobserve(el);
-                }
-            },
-            { threshold: 0.12 }
-        );
-        observer.observe(el);
-        return () => observer.disconnect();
-    }, [delay]);
-    return ref;
-}
+import { useReveal } from "../hooks/useReveal";
 
 // ─── Breed data ────────────────────────────────────────────────────────────────
 const breedsData: Record<string, {

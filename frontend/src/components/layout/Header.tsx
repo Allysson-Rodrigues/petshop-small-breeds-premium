@@ -30,9 +30,10 @@ export default function Header() {
         {/* Logo */}
         <Link
           to="/"
-          className="text-xl font-bold tracking-tighter hover:opacity-80 transition-opacity duration-300 text-charcoal shrink-0"
+          className="text-xl font-bold tracking-tighter hover:opacity-80 transition-opacity duration-300 text-charcoal shrink-0 flex items-center gap-2"
           onClick={() => window.scrollTo(0, 0)}
         >
+          <span className="material-symbols-outlined text-xl">pets</span>
           PETSHOP{" "}
           <span className="font-light text-medium-grey underline decoration-charcoal underline-offset-4">
             SMALL BREEDS
@@ -42,7 +43,7 @@ export default function Header() {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6 lg:gap-8" aria-label="Navegação principal">
           {navLinks.map((link, i) => {
-            const isActive = location.pathname === link.path;
+            const isActive = link.path === "/" ? location.pathname === "/" : location.pathname.startsWith(link.path);
             return (
               <Link
                 key={link.path}

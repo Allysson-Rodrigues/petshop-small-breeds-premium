@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
 import { authService } from "../services/authService";
 
@@ -41,6 +42,11 @@ export default function Registro() {
 
   return (
     <div className="bg-background-light font-display antialiased">
+      <Helmet>
+        <title>Criar Conta | Small Breeds</title>
+        <meta name="description" content="Crie sua conta no Petshop Small Breeds e agende cuidados exclusivos para seu pet." />
+        <meta property="og:title" content="Criar Conta — Small Breeds" />
+      </Helmet>
       <div className="flex min-h-screen w-full flex-row overflow-hidden bg-white">
         {/* Left Side: Image Panel */}
         <div className="hidden lg:flex lg:w-1/2 relative bg-neutral-900 border-r border-[#e5e5e5]">
@@ -73,10 +79,11 @@ export default function Registro() {
             <div className="mb-10 flex justify-center">
               <Link
                 to="/"
-                className="text-2xl font-bold tracking-tighter hover:opacity-80 transition-opacity text-primary"
+                className="text-2xl font-bold tracking-tighter hover:opacity-80 transition-opacity text-black flex items-center gap-2"
               >
+                <span className="material-symbols-outlined text-2xl">pets</span>
                 PETSHOP{" "}
-                <span className="font-light text-neutral-400 underline decoration-primary underline-offset-4">
+                <span className="font-light text-neutral-400 underline decoration-black underline-offset-4">
                   SMALL BREEDS
                 </span>
               </Link>
@@ -93,14 +100,14 @@ export default function Registro() {
             </div>
 
             {error && (
-              <div className="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-500">
+              <div className="mb-4 bg-neutral-100 border border-neutral-200 p-4 text-sm text-charcoal">
                 {error}
               </div>
             )}
 
             {success && (
-              <div className="mb-4 rounded-lg bg-green-50 p-4 text-sm text-green-600 border border-green-100 text-center uppercase tracking-widest font-semibold flex items-center justify-center gap-2">
-                <span className="material-symbols-outlined text-green-600">
+              <div className="mb-4 bg-neutral-100 border border-neutral-200 p-4 text-sm text-black text-center uppercase tracking-widest font-semibold flex items-center justify-center gap-2">
+                <span className="material-symbols-outlined text-black">
                   check_circle
                 </span>
                 Criado com sucesso! Redirecionando...
@@ -124,7 +131,7 @@ export default function Registro() {
                     </span>
                   </span>
                   <input
-                    className="flex h-12 w-full rounded-lg border border-neutral-300 bg-transparent px-3 py-2 pl-10 text-sm placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-offset-2 transition-all outline-none"
+                    className="flex h-12 w-full border-b border-neutral-300 bg-transparent px-0 py-3 pl-10 text-sm placeholder:text-neutral-400 focus:border-black focus:outline-none transition-colors"
                     id="name"
                     placeholder="Seu nome completo"
                     type="text"
@@ -150,7 +157,7 @@ export default function Registro() {
                     </span>
                   </span>
                   <input
-                    className="flex h-12 w-full rounded-lg border border-neutral-300 bg-transparent px-3 py-2 pl-10 text-sm placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-offset-2 transition-all outline-none"
+                    className="flex h-12 w-full border-b border-neutral-300 bg-transparent px-0 py-3 pl-10 text-sm placeholder:text-neutral-400 focus:border-black focus:outline-none transition-colors"
                     id="email"
                     placeholder="nome@exemplo.com"
                     type="email"
@@ -176,7 +183,7 @@ export default function Registro() {
                     </span>
                   </span>
                   <input
-                    className="flex h-12 w-full rounded-lg border border-neutral-300 bg-transparent px-3 py-2 pl-10 text-sm placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-offset-2 transition-all outline-none"
+                    className="flex h-12 w-full border-b border-neutral-300 bg-transparent px-0 py-3 pl-10 text-sm placeholder:text-neutral-400 focus:border-black focus:outline-none transition-colors"
                     id="password"
                     placeholder="••••••••"
                     type="password"
@@ -213,9 +220,9 @@ export default function Registro() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`mt-4 inline-flex h-12 w-full items-center justify-center rounded-lg bg-primary px-8 text-sm font-medium text-white transition-all focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${isLoading
-                    ? "opacity-70 cursor-not-allowed"
-                    : "hover:bg-neutral-800"
+                className={`mt-4 inline-flex h-12 w-full items-center justify-center bg-black px-8 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all disabled:pointer-events-none disabled:opacity-50 ${isLoading
+                  ? "opacity-70 cursor-not-allowed"
+                  : "hover:bg-neutral-800"
                   }`}
               >
                 {isLoading ? "Criando Conta..." : "Criar Conta"}
@@ -236,7 +243,7 @@ export default function Registro() {
             {/* Footer / Login Link */}
             <div className="mt-8 text-center text-sm text-neutral-500">
               <Link
-                className="inline-flex h-10 w-full items-center justify-center rounded-lg border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-neutral-50 hover:text-black focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-offset-2"
+                className="inline-flex h-10 w-full items-center justify-center border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-neutral-50 focus:outline-none"
                 to="/login"
               >
                 Fazer o Login

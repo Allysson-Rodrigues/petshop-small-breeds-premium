@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
+import RevealSection from "../components/ui/RevealSection";
 import { categories, products, type Product } from "../data/products";
 
 export default function Catalogo() {
@@ -37,7 +38,7 @@ export default function Catalogo() {
 
         <div className="relative z-10 text-center px-6 max-w-4xl mx-auto flex flex-col items-center">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-light tracking-tight text-white mb-6 font-display">
-            The Small Breed Collection
+            A Coleção Small Breeds
           </h1>
           <p className="text-lg md:text-xl text-white/90 font-light tracking-wide max-w-2xl">
             Luxo curado para o seu companheiro mais precioso. Experiência
@@ -95,42 +96,44 @@ export default function Catalogo() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16">
-            {sortedProducts.map((p) => (
-              <article key={p.id} className="group flex flex-col">
-                <div className="aspect-[4/5] bg-light-grey mb-6 overflow-hidden relative">
-                  <img
-                    src={p.image}
-                    alt={p.name}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover object-center grayscale contrast-110 transition-all duration-[5000ms] ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-110 group-hover:grayscale-0 group-hover:brightness-105"
-                  />
-                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] flex items-center justify-center p-4">
-                    <button
-                      onClick={() => setSelectedProduct(p)}
-                      className="bg-white text-black px-8 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-neutral-100 transition-all flex items-center gap-2 transform translate-y-2 group-hover:translate-y-0 duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] shadow-xl opacity-0 group-hover:opacity-100 relative overflow-hidden"
-                    >
-                      <span className="absolute inset-0 bg-neutral-200/50 scale-x-0 group-active:scale-x-100 transition-transform origin-left duration-300"></span>
-                      <span className="material-symbols-outlined text-sm relative z-10">visibility</span>
-                      <span className="relative z-10">Visualizar</span>
+            {sortedProducts.map((p, i) => (
+              <RevealSection key={p.id} delay={i * 80}>
+                <article className="group flex flex-col">
+                  <div className="aspect-[4/5] bg-light-grey mb-6 overflow-hidden relative">
+                    <img
+                      src={p.image}
+                      alt={p.name}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover object-center grayscale contrast-110 transition-all duration-[5000ms] ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-110 group-hover:grayscale-0 group-hover:brightness-105"
+                    />
+                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] flex items-center justify-center p-4">
+                      <button
+                        onClick={() => setSelectedProduct(p)}
+                        className="bg-white text-black px-8 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-neutral-100 transition-all flex items-center gap-2 transform translate-y-2 group-hover:translate-y-0 duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] shadow-xl opacity-0 group-hover:opacity-100 relative overflow-hidden"
+                      >
+                        <span className="absolute inset-0 bg-neutral-200/50 scale-x-0 group-active:scale-x-100 transition-transform origin-left duration-300"></span>
+                        <span className="material-symbols-outlined text-sm relative z-10">visibility</span>
+                        <span className="relative z-10">Visualizar</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex flex-col flex-1 text-center items-center">
+                    <span className="text-[10px] font-bold tracking-[0.2em] text-medium-grey uppercase mb-2">
+                      {p.category}
+                    </span>
+                    <h3 className="text-sm font-medium tracking-wide text-charcoal mb-3 flex-1 px-2">
+                      {p.name}
+                    </h3>
+                    <span className="text-sm font-bold tracking-widest text-black mb-5">
+                      R$ {p.price.toFixed(2)}
+                    </span>
+                    <button className="w-full border border-black bg-transparent text-black px-4 py-3 text-[10px] font-bold uppercase tracking-widest btn-magnetic transition-all duration-[600ms] ease-[cubic-bezier(0.25,1,0.5,1)]">
+                      Comprar Agora
                     </button>
                   </div>
-                </div>
-                <div className="flex flex-col flex-1 text-center items-center">
-                  <span className="text-[10px] font-bold tracking-[0.2em] text-medium-grey uppercase mb-2">
-                    {p.category}
-                  </span>
-                  <h3 className="text-sm font-medium tracking-wide text-charcoal mb-3 flex-1 px-2">
-                    {p.name}
-                  </h3>
-                  <span className="text-sm font-bold tracking-widest text-black mb-5">
-                    R$ {p.price.toFixed(2)}
-                  </span>
-                  <button className="w-full border border-black bg-transparent text-black px-4 py-3 text-[10px] font-bold uppercase tracking-widest btn-magnetic transition-all duration-[600ms] ease-[cubic-bezier(0.25,1,0.5,1)]">
-                    Comprar Agora
-                  </button>
-                </div>
-              </article>
+                </article>
+              </RevealSection>
             ))}
           </div>
         </div>

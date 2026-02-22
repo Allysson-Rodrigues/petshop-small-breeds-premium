@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
 import { authService } from "../services/authService";
 
@@ -37,6 +38,11 @@ export default function Login() {
   };
   return (
     <div className="bg-background-light font-display antialiased">
+      <Helmet>
+        <title>Login | Small Breeds</title>
+        <meta name="description" content="Acesse sua conta Small Breeds para gerenciar agendamentos e preferências do seu pet." />
+        <meta property="og:title" content="Login — Small Breeds" />
+      </Helmet>
       <div className="flex min-h-screen w-full flex-row overflow-hidden bg-white">
         {/* Left Side: Image Panel */}
         <div className="hidden lg:flex lg:w-1/2 relative bg-neutral-900">
@@ -70,10 +76,11 @@ export default function Login() {
             <div className="mb-10 flex justify-center">
               <Link
                 to="/"
-                className="text-2xl font-bold tracking-tighter hover:opacity-80 transition-opacity text-primary"
+                className="text-2xl font-bold tracking-tighter hover:opacity-80 transition-opacity text-black flex items-center gap-2"
               >
+                <span className="material-symbols-outlined text-2xl">pets</span>
                 PETSHOP{" "}
-                <span className="font-light text-neutral-400 underline decoration-primary underline-offset-4">
+                <span className="font-light text-neutral-400 underline decoration-black underline-offset-4">
                   SMALL BREEDS
                 </span>
               </Link>
@@ -90,7 +97,7 @@ export default function Login() {
             </div>
 
             {error && (
-              <div className="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-500">
+              <div className="mb-4 bg-neutral-100 border border-neutral-200 p-4 text-sm text-charcoal">
                 {error}
               </div>
             )}
@@ -106,7 +113,7 @@ export default function Login() {
                 </label>
                 <div className="relative">
                   <input
-                    className="flex h-12 w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-primary placeholder:text-neutral-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-200"
+                    className="flex h-12 w-full border-b border-neutral-300 bg-transparent px-0 py-3 text-sm text-black placeholder:text-neutral-400 focus:border-black focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-200"
                     id="email"
                     placeholder="nome@exemplo.com"
                     type="email"
@@ -131,7 +138,7 @@ export default function Login() {
                 </label>
                 <div className="relative">
                   <input
-                    className="flex h-12 w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-primary placeholder:text-neutral-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-200"
+                    className="flex h-12 w-full border-b border-neutral-300 bg-transparent px-0 py-3 text-sm text-black placeholder:text-neutral-400 focus:border-black focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-200"
                     id="password"
                     placeholder="••••••••"
                     type="password"
@@ -163,11 +170,10 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`mt-2 inline-flex h-12 w-full items-center justify-center rounded-lg bg-primary px-8 text-sm font-medium text-white transition-all focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
-                  isLoading
-                    ? "opacity-70 cursor-not-allowed"
-                    : "hover:bg-neutral-800"
-                }`}
+                className={`mt-2 inline-flex h-12 w-full items-center justify-center bg-black px-8 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all disabled:pointer-events-none disabled:opacity-50 ${isLoading
+                  ? "opacity-70 cursor-not-allowed"
+                  : "hover:bg-neutral-800"
+                  }`}
               >
                 {isLoading ? "Validando Acesso..." : "Entrar"}
               </button>
@@ -198,7 +204,7 @@ export default function Login() {
 
             <div className="mt-6 grid grid-cols-2 gap-3">
               <button
-                className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-neutral-50 hover:text-black focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-offset-2"
+                className="inline-flex h-10 w-full items-center justify-center gap-2 border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-neutral-50 focus:outline-none"
                 type="button"
                 onClick={(e) => {
                   e.preventDefault();
@@ -226,7 +232,7 @@ export default function Login() {
                 Google
               </button>
               <button
-                className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-neutral-50 hover:text-black focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-offset-2"
+                className="inline-flex h-10 w-full items-center justify-center gap-2 border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-neutral-50 focus:outline-none"
                 type="button"
                 onClick={(e) => {
                   e.preventDefault();

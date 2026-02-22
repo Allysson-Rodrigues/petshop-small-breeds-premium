@@ -3,12 +3,13 @@ import { Link } from "react-router-dom";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Inscribed:", email);
     setEmail("");
-    alert("Inscrição realizada com sucesso para receber novidades exclusivas.");
+    setSubscribed(true);
+    setTimeout(() => setSubscribed(false), 4000);
   };
 
   return (
@@ -21,9 +22,10 @@ export default function Footer() {
           <div className="lg:col-span-3 space-y-8">
             <Link
               to="/"
-              className="text-2xl font-bold tracking-tighter hover:opacity-80 transition-opacity text-black inline-block"
+              className="text-2xl font-bold tracking-tighter hover:opacity-80 transition-opacity text-black inline-flex items-center gap-2"
               onClick={() => window.scrollTo(0, 0)}
             >
+              <span className="material-symbols-outlined text-2xl">pets</span>
               PETSHOP{" "}
               <span className="font-light text-neutral-400 underline decoration-black underline-offset-4">
                 SMALL BREEDS
@@ -136,6 +138,12 @@ export default function Footer() {
                 </span>
               </button>
             </form>
+            {subscribed && (
+              <div className="mt-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-black animate-fade-in">
+                <span className="material-symbols-outlined text-sm">check_circle</span>
+                Inscrição realizada com sucesso
+              </div>
+            )}
           </div>
 
         </div>
