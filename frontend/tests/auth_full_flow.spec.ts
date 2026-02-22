@@ -18,11 +18,17 @@ test.describe('Authentication & Role-Based Access Control Flow', () => {
 
         // Should be redirected to login
         await expect(page).toHaveURL(/.*login/);
+        // Wait for the exit animation of /registro to finish and the /login page to be active
+        await expect(page.getByRole('heading', { name: /Bem-vindo/i })).toBeVisible({ timeout: 10000 });
 
         // 2. Login
         await page.getByPlaceholder('nome@exemplo.com').fill(testUser.email);
         await page.getByPlaceholder('••••••••').fill(testUser.password);
         await page.getByRole('button', { name: 'Entrar' }).click();
+
+        // Wait for the success toast or check for error
+        // Wait for the success toast
+        await expect(page.getByText('Login realizado com sucesso!')).toBeVisible({ timeout: 5000 });
 
         // Should land on Dashboard
         await expect(page).toHaveURL(/.*dashboard/);
