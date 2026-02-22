@@ -37,3 +37,4 @@ dist-ssr
 /playwright/.cache/
 /playwright/.auth/
 .vercel
+../frontend_backup
