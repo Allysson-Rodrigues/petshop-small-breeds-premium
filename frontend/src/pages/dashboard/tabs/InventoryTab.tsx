@@ -173,13 +173,13 @@ export default function InventoryTab({
         </button>
       </div>
 
-      <div className="bg-white rounded-xl border border-[#e5e5e5] shadow-sm overflow-hidden relative">
+      <div className={`bg-white rounded-xl border border-[#e5e5e5] shadow-sm relative ${isEditing ? 'min-h-[500px]' : 'overflow-hidden'} transition-all duration-300`}>
         {isEditing && (
-          <div className="absolute inset-0 bg-white/95 z-10 flex flex-col p-6 backdrop-blur-sm animate-in fade-in">
+          <div className="absolute inset-0 bg-white/95 z-10 flex flex-col p-6 backdrop-blur-sm animate-in fade-in overflow-y-auto">
             <h2 className="text-lg font-bold text-primary mb-4">
               {currentItem.id ? "Editar Item" : "Novo Item"}
             </h2>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
               <input
                 type="text"
                 placeholder="Nome do Produto"
@@ -233,7 +233,7 @@ export default function InventoryTab({
                 className="border border-[#e5e5e5] rounded p-2 text-sm"
               />
             </div>
-            <div className="flex justify-between mt-auto">
+            <div className="flex justify-between mt-auto pt-6 border-t border-gray-100">
               {currentItem.id && (
                 <button
                   onClick={() =>

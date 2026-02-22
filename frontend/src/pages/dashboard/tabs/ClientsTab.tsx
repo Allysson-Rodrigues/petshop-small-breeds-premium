@@ -122,13 +122,13 @@ export default function ClientsTab({
         </button>
       </div>
 
-      <div className="bg-white rounded-xl border border-[#e5e5e5] shadow-sm overflow-hidden relative">
+      <div className={`bg-white rounded-xl border border-[#e5e5e5] shadow-sm relative ${isEditing ? 'min-h-[500px]' : 'overflow-hidden'} transition-all duration-300`}>
         {isEditing && (
-          <div className="absolute inset-0 bg-white/95 z-10 flex flex-col p-6 backdrop-blur-sm animate-in fade-in">
+          <div className="absolute inset-0 bg-white/95 z-10 flex flex-col p-6 backdrop-blur-sm animate-in fade-in overflow-y-auto">
             <h2 className="text-lg font-bold text-primary mb-4">
               {currentClient.id ? "Editar Cliente" : "Novo Cliente"}
             </h2>
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
               <label htmlFor="clientName">Nome Completo</label>
               <input
                 id="clientName"
@@ -187,7 +187,7 @@ export default function ClientsTab({
                 className="border border-[#e5e5e5] rounded p-2 text-sm"
               />
             </div>
-            <div className="flex justify-end gap-2 mt-auto">
+            <div className="flex justify-end gap-3 mt-auto pt-6 border-t border-gray-100">
               <button
                 onClick={() => setIsEditing(false)}
                 className="px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100"
