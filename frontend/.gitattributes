@@ -1,0 +1,4 @@
+.agent/** linguist-documentation
+.agent/**/*.py linguist-detectable=false
+design-system/** linguist-documentation
+**/scripts/** linguist-detectable=false
