@@ -19,7 +19,7 @@ const MOCK_USERS_KEY = "mock_users";
 export const authService = {
     login: async (email: string, pass: string): Promise<boolean> => {
         // Network request constraint simulation
-        await new Promise((resolve) => setTimeout(resolve, 600));
+        await new Promise((resolve) => setTimeout(resolve, 200));
 
         // 1. Guard Clauses: Validation
         if (!email || !pass) return false;
@@ -53,7 +53,7 @@ export const authService = {
     },
 
     register: async (name: string, email: string, pass: string): Promise<boolean> => {
-        await new Promise((resolve) => setTimeout(resolve, 800));
+        await new Promise((resolve) => setTimeout(resolve, 300));
 
         if (!name || !email || !pass) return false;
 

@@ -32,7 +32,7 @@ export default function Registro() {
       }
 
       setSuccess(true);
-      setTimeout(() => navigate("/login"), 2000);
+      navigate("/login");
     } catch {
       setError("Ocorreu um erro ao criar a conta. Tente novamente.");
     } finally {
