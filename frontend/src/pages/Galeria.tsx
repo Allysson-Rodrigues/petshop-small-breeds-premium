@@ -75,46 +75,51 @@ export default function Galeria() {
       <section className="py-24 px-6 md:px-12 max-w-7xl mx-auto w-full">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
           {breeds.map((b) => (
-            <article key={b.name} className="group flex flex-col cursor-pointer">
-              <div className="aspect-[4/3] bg-light-grey mb-8 overflow-hidden relative rounded-none">
+            <Link
+              key={b.name}
+              to={`/galeria/${b.slug}`}
+              className="group flex flex-col border-l border-medium-grey/10 pl-6 transition-all duration-500 hover:border-black"
+            >
+              <div className="aspect-[4/5] bg-light-grey mb-8 overflow-hidden relative rounded-none">
                 <img
                   src={b.image}
                   alt={b.name}
-                  className="w-full h-full object-cover object-center grayscale contrast-110 transition-all duration-[3000ms] group-hover:scale-110 group-hover:grayscale-0 group-hover:brightness-105"
+                  className="w-full h-full object-cover object-center grayscale contrast-110 transition-all duration-[2000ms] ease-out group-hover:scale-105 group-hover:grayscale-0 group-hover:brightness-105"
                 />
-                <div className="absolute inset-x-0 bottom-0 p-6 opacity-0 group-hover:opacity-100 transition-all duration-700 translate-y-2 group-hover:translate-y-0">
-                  <Link
-                    to={`/galeria/${b.slug}`}
-                    className="text-white bg-black/85 backdrop-blur-md px-4 py-3 text-[10px] font-bold uppercase tracking-widest flex items-center justify-between gap-2 hover:bg-black transition-colors"
-                  >
-                    Explorar Cuidados
-                    <span className="material-symbols-outlined text-sm transition-transform duration-300 group-hover:translate-x-1">
-                      arrow_forward
+
+                {/* Subtle Premium Overlay */}
+                <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+
+                {/* Minimalist Indicator */}
+                <div className="absolute bottom-6 left-6 overflow-hidden">
+                  <div className="flex items-center gap-3 translate-y-full group-hover:translate-y-0 transition-transform duration-700 ease-expo">
+                    <span className="h-[1px] w-8 bg-black/40" />
+                    <span className="text-[9px] font-black uppercase tracking-[0.3em] text-black/60">
+                      Ver Perfil
                     </span>
-                  </Link>
+                  </div>
                 </div>
               </div>
-              <div className="flex flex-col flex-1 pl-2 border-l border-medium-grey/20">
-                <span className="text-[10px] font-bold tracking-[0.2em] text-medium-grey uppercase mb-2">
-                  Perfil {b.type}
+
+              <div className="flex flex-col flex-1">
+                <span className="text-[9px] font-bold tracking-[0.3em] text-medium-grey uppercase mb-3 opacity-60 group-hover:opacity-100 transition-opacity duration-500">
+                  {b.type}
                 </span>
-                <h3 className="text-2xl font-display font-medium tracking-tight text-black mb-4">
+                <h3 className="text-2xl font-display font-light tracking-tight text-black mb-4 group-hover:translate-x-1 transition-transform duration-500">
                   {b.name}
                 </h3>
-                <p className="text-charcoal font-light leading-relaxed text-sm flex-1">
+                <p className="text-charcoal font-light leading-relaxed text-sm flex-1 opacity-70 group-hover:opacity-100 transition-opacity duration-500">
                   {b.desc}
                 </p>
-                <Link
-                  to={`/galeria/${b.slug}`}
-                  className="mt-6 text-[10px] font-black uppercase tracking-widest text-charcoal hover:text-black transition-colors flex items-center gap-2 group/link"
-                >
-                  Ver cuidados
-                  <span className="material-symbols-outlined text-xs transition-transform duration-200 group-hover/link:translate-x-1">
+
+                <div className="mt-8 flex items-center gap-4 group/arrow">
+                  <div className="h-[1px] w-0 bg-black group-hover:w-12 transition-all duration-700 ease-expo" />
+                  <span className="material-symbols-outlined text-sm -translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-700 delay-100">
                     arrow_forward
                   </span>
-                </Link>
+                </div>
               </div>
-            </article>
+            </Link>
           ))}
         </div>
       </section>

@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect } from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import MainLayout from "./MainLayout";
@@ -22,26 +23,80 @@ function ScrollToTop() {
   return null;
 }
 
+function AnimatedRoutes() {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/login" element={
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}>
+            <Login />
+          </motion.div>
+        } />
+        <Route path="/registro" element={
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}>
+            <Registro />
+          </motion.div>
+        } />
+        <Route path="/dashboard" element={
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}>
+            <Dashboard />
+          </motion.div>
+        } />
+        {/* Main Application Routes that need the Header */}
+        <Route element={<MainLayout />}>
+          <Route path="/" element={
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
+              <Home />
+            </motion.div>
+          } />
+          <Route path="/loja" element={
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
+              <Catalogo />
+            </motion.div>
+          } />
+          <Route path="/sobre" element={
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
+              <Sobre />
+            </motion.div>
+          } />
+          <Route path="/servicos" element={
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
+              <Servicos />
+            </motion.div>
+          } />
+          <Route path="/catalogo" element={
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
+              <Catalogo />
+            </motion.div>
+          } />
+          <Route path="/galeria" element={
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
+              <Galeria />
+            </motion.div>
+          } />
+          <Route path="/agendamento" element={
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
+              <Agendamento />
+            </motion.div>
+          } />
+          <Route path="/galeria/:slug" element={
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
+              <RacaCuidados />
+            </motion.div>
+          } />
+        </Route>
+      </Routes>
+    </AnimatePresence>
+  );
+}
+
 function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/registro" element={<Registro />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        {/* Main Application Routes that need the Header */}
-        <Route element={<MainLayout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/loja" element={<Catalogo />} />
-          <Route path="/sobre" element={<Sobre />} />
-          <Route path="/servicos" element={<Servicos />} />
-          <Route path="/catalogo" element={<Catalogo />} />
-          <Route path="/galeria" element={<Galeria />} />
-          <Route path="/agendamento" element={<Agendamento />} />
-          <Route path="/galeria/:slug" element={<RacaCuidados />} />
-        </Route>
-      </Routes>
+      <AnimatedRoutes />
     </BrowserRouter>
   );
 }

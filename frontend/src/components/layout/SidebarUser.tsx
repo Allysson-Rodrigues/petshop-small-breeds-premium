@@ -1,12 +1,19 @@
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 
 export default function SidebarUser({ isCollapsed }: { isCollapsed?: boolean }) {
     const { user, getInitials, logout } = useAuth();
+    const navigate = useNavigate();
 
     if (!user) return null;
 
+    const handleLogout = () => {
+        logout();
+        navigate("/");
+    };
+
     return (
-        <div className="p-4 border-t border-white/10 flex items-center justify-between overflow-hidden">
+        <div className="p-4 pb-8 lg:pb-4 border-t border-white/10 flex items-center justify-between overflow-hidden shrink-0">
             <div className="flex items-center gap-3 whitespace-nowrap">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-500 to-gray-700 flex items-center justify-center text-xs font-bold text-white uppercase shrink-0 border border-white/10">
                     {getInitials(user.name)}
@@ -22,7 +29,7 @@ export default function SidebarUser({ isCollapsed }: { isCollapsed?: boolean }) 
             </div>
 
             <button
-                onClick={logout}
+                onClick={handleLogout}
                 className={`text-gray-400 hover:text-red-400 transition-all p-2 hover:bg-red-400/10 rounded-lg flex items-center justify-center shrink-0 ${isCollapsed ? "hidden" : "block"}`}
                 title="Sair"
             >

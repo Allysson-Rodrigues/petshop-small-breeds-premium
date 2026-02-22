@@ -34,7 +34,7 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, onClose }: Si
       className={[
         // Mobile: fixed + translateX slide. Desktop: static part of flow.
         "fixed lg:static inset-y-0 left-0 z-30",
-        "bg-[#1f1f1f] flex-shrink-0 flex flex-col h-screen text-white overflow-hidden",
+        "bg-[#1f1f1f] flex-shrink-0 flex flex-col h-[100dvh] text-white overflow-hidden",
         // Mobile open/close via translateX (GPU only)
         isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
         // Desktop: collapse to icon-only, expand on hover via width

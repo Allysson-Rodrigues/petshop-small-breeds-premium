@@ -114,17 +114,17 @@ export default function Footer() {
           {/* Column 5: Newsletter (3/12) */}
           <div className="lg:col-span-3">
             <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-black mb-8">
-              Newsletter Exclusiva
+              Newsletter
             </h3>
-            <p className="text-xs text-neutral-500 mb-6 font-light leading-relaxed">
-              Receba convites para eventos e novidades da Small Breeds em primeira mão.
+            <p className="text-[11px] text-neutral-500 mb-6 font-light leading-relaxed">
+              Assine para convites exclusivos e novidades curadas.
             </p>
             <form onSubmit={handleSubscribe} className="relative group">
               <input
                 type="email"
                 required
-                placeholder="Seu e-mail sênior"
-                className="w-full bg-neutral-50 border-b border-neutral-200 py-3 pr-10 text-xs font-light tracking-widest placeholder:text-neutral-300 focus:outline-none focus:border-black transition-all"
+                placeholder="E-mail"
+                className="w-full bg-transparent border-b border-neutral-200 py-3 pr-10 text-[11px] font-light tracking-widest placeholder:text-neutral-300 focus:outline-none focus:border-black transition-all"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -133,17 +133,33 @@ export default function Footer() {
                 className="absolute right-0 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-black transition-colors"
                 aria-label="Inscrever-se"
               >
-                <span className="material-symbols-outlined text-[20px]">
-                  arrow_forward
+                <span className="material-symbols-outlined text-[18px]">
+                  east
                 </span>
               </button>
             </form>
             {subscribed && (
-              <div className="mt-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-black animate-fade-in">
-                <span className="material-symbols-outlined text-sm">check_circle</span>
-                Inscrição realizada com sucesso
+              <div className="mt-3 flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-black animate-fade-in">
+                <span className="material-symbols-outlined text-xs">done_all</span>
+                Pronto.
               </div>
             )}
+
+            {/* Trust Markers */}
+            <div className="mt-12 pt-8 border-t border-neutral-100 flex flex-wrap gap-6">
+              <div className="flex items-center gap-2 opacity-40 hover:opacity-100 transition-opacity grayscale hover:grayscale-0 cursor-default">
+                <span className="material-symbols-outlined text-lg">workspace_premium</span>
+                <span className="text-[8px] font-black uppercase tracking-widest">Premium Care</span>
+              </div>
+              <div className="flex items-center gap-2 opacity-40 hover:opacity-100 transition-opacity grayscale hover:grayscale-0 cursor-default">
+                <span className="material-symbols-outlined text-lg">medical_expert</span>
+                <span className="text-[8px] font-black uppercase tracking-widest">Expert Vet</span>
+              </div>
+              <div className="flex items-center gap-2 opacity-40 hover:opacity-100 transition-opacity grayscale hover:grayscale-0 cursor-default">
+                <span className="material-symbols-outlined text-lg">verified_user</span>
+                <span className="text-[8px] font-black uppercase tracking-widest">Safe Stay</span>
+              </div>
+            </div>
           </div>
 
         </div>

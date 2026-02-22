@@ -98,38 +98,51 @@ export default function Catalogo() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16">
             {sortedProducts.map((p, i) => (
               <RevealSection key={p.id} delay={i * 80}>
-                <article className="group flex flex-col">
-                  <div className="aspect-[4/5] bg-light-grey mb-6 overflow-hidden relative">
+                <article className="group flex flex-col border-l border-medium-grey/10 pl-6 transition-all duration-500 hover:border-black">
+                  <div className="aspect-[4/5] bg-light-grey mb-8 overflow-hidden relative">
                     <img
                       src={p.image}
                       alt={p.name}
                       loading="lazy"
                       decoding="async"
-                      className="w-full h-full object-cover object-center grayscale contrast-110 transition-all duration-[5000ms] ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-110 group-hover:grayscale-0 group-hover:brightness-105"
+                      className="w-full h-full object-cover object-center grayscale contrast-110 transition-all duration-[2000ms] ease-out group-hover:scale-105 group-hover:grayscale-0 group-hover:brightness-105"
                     />
-                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] flex items-center justify-center p-4">
+
+                    {/* Subtle Premium Overlay */}
+                    <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+
+                    {/* Minimalist Quick View Indicator */}
+                    <div className="absolute bottom-6 left-6 overflow-hidden">
                       <button
                         onClick={() => setSelectedProduct(p)}
-                        className="bg-white text-black px-8 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-neutral-100 transition-all flex items-center gap-2 transform translate-y-2 group-hover:translate-y-0 duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] shadow-xl opacity-0 group-hover:opacity-100 relative overflow-hidden"
+                        className="flex items-center gap-3 translate-y-full group-hover:translate-y-0 transition-transform duration-700 ease-expo"
                       >
-                        <span className="absolute inset-0 bg-neutral-200/50 scale-x-0 group-active:scale-x-100 transition-transform origin-left duration-300"></span>
-                        <span className="material-symbols-outlined text-sm relative z-10">visibility</span>
-                        <span className="relative z-10">Visualizar</span>
+                        <span className="h-[1px] w-8 bg-black/40" />
+                        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-black/60 hover:text-black transition-colors">
+                          Vista Rápida
+                        </span>
                       </button>
                     </div>
                   </div>
-                  <div className="flex flex-col flex-1 text-center items-center">
-                    <span className="text-[10px] font-bold tracking-[0.2em] text-medium-grey uppercase mb-2">
+
+                  <div className="flex flex-col flex-1 items-start text-left">
+                    <span className="text-[9px] font-bold tracking-[0.3em] text-medium-grey uppercase mb-3 opacity-60 group-hover:opacity-100 transition-opacity duration-500">
                       {p.category}
                     </span>
-                    <h3 className="text-sm font-medium tracking-wide text-charcoal mb-3 flex-1 px-2">
+                    <h3 className="text-base font-display font-light tracking-tight text-black mb-1 group-hover:translate-x-1 transition-transform duration-500">
                       {p.name}
                     </h3>
-                    <span className="text-sm font-bold tracking-widest text-black mb-5">
+                    <span className="text-sm font-bold tracking-widest text-black mb-6">
                       R$ {p.price.toFixed(2)}
                     </span>
-                    <button className="w-full border border-black bg-transparent text-black px-4 py-3 text-[10px] font-bold uppercase tracking-widest btn-magnetic transition-all duration-[600ms] ease-[cubic-bezier(0.25,1,0.5,1)]">
-                      Comprar Agora
+
+                    <button className="w-full border border-black bg-transparent text-black px-4 py-3 text-[9px] font-bold uppercase tracking-widest hover:bg-black hover:text-white transition-all duration-500 group/btn">
+                      <div className="flex items-center justify-center gap-3">
+                        Comprar Agora
+                        <span className="material-symbols-outlined text-xs -translate-x-2 opacity-0 group-hover/btn:translate-x-0 group-hover/btn:opacity-100 transition-all duration-500">
+                          arrow_forward
+                        </span>
+                      </div>
                     </button>
                   </div>
                 </article>

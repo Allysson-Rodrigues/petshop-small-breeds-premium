@@ -1,31 +1,35 @@
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Fira+Code:wght@400;500&display=swap');
 @import "tailwindcss";
 
-@theme {
-  --font-sans: "Fira Sans", ui-sans-serif, system-ui, sans-serif;
+:root {
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Playfair Display", serif;
   --font-mono: "Fira Code", monospace;
 
-  /* 60-30-10 Premium Monochromatic Palette (HSL) */
-  /* Dominant (60%): Pearl / Off-white */
-  --color-background: hsl(0, 0%, 98%);
-
-  /* Secondary (30%): Deep Ash / Charcoal */
-  --color-foreground: hsl(0, 0%, 15%);
-  --color-secondary: hsl(0, 0%, 35%);
-  --color-border-grey: hsl(0, 0%, 90%);
-
-  /* Accent (10%): Absolute Black */
-  --color-primary: hsl(0, 0%, 0%);
-  --color-cta: hsl(0, 0%, 0%);
+  /* Premium Design Palettes */
+  --color-background-light: hsl(30, 20%, 98%);
   --color-charcoal: hsl(0, 0%, 9%);
+  --color-medium-grey: hsl(0, 0%, 45%);
+  --color-border-grey: hsl(0, 0%, 92%);
 
-  --radius-clay: 24px;
+  /* Nuances */
+  --color-nude: hsl(30, 20%, 96%);
+  --color-champagne: hsl(35, 25%, 90%);
+  --color-forest: hsl(140, 20%, 15%);
 
-  /* Premium Multi-layered Studio Shadows (Realistic Offset) */
-  --shadow-clay:
-    0 20px 40px -10px rgba(0, 0, 0, 0.08),
-    0 10px 20px -5px rgba(0, 0, 0, 0.04),
-    0 2px 5px -1px rgba(0, 0, 0, 0.02);
+  /* Fluid Scale */
+  --text-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.8rem);
+  --text-sm: clamp(0.8rem, 0.75rem + 0.25vw, 0.9rem);
+  --text-base: clamp(0.95rem, 0.9rem + 0.25vw, 1.05rem);
+  --text-lg: clamp(1.1rem, 1rem + 0.5vw, 1.25rem);
+  --text-xl: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+  --text-2xl: clamp(1.5rem, 1.35rem + 0.75vw, 2rem);
+  --text-3xl: clamp(2rem, 1.75rem + 1vw, 2.75rem);
+  --text-4xl: clamp(2.5rem, 2rem + 2vw, 4rem);
+  --text-5xl: clamp(3rem, 2.5rem + 3vw, 5.5rem);
+
+  /* Shadows */
+  --shadow-premium: 0 20px 40px -10px rgba(0, 0, 0, 0.05), 0 10px 20px -5px rgba(0, 0, 0, 0.02);
 }
 
 @layer base {
@@ -43,63 +47,78 @@
   }
 
   body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
+    background-color: var(--color-background-light);
+    color: var(--color-charcoal);
     @apply antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
-  /* Custom Scrollbar - Minimalist Monochromatic */
+  /* Custom Scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
 
   ::-webkit-scrollbar-track {
-    background: var(--color-background);
+    background: var(--color-background-light);
   }
 
   ::-webkit-scrollbar-thumb {
     background: #d4d4d4;
-    /* Neutral 300 */
     border-radius: 10px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
     background: #a3a3a3;
-    /* Neutral 400 */
   }
 
   /* Accessibility: Skip to main content link */
   .skip-to-main {
-    @apply absolute left-0 -top-full bg-primary text-white p-3 z-[100] transition-all focus:top-0;
+    position: absolute;
+    left: -9999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    z-index: 999;
+  }
+
+  .skip-to-main:focus {
+    left: 1rem;
+    top: 1rem;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    padding: 1rem 1.5rem;
+    background: #000;
+    color: #fff;
+    text-decoration: none;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    border-radius: 4px;
   }
 }
 
 .glass {
   background-color: hsla(0, 0%, 100%, 0.65);
-  /* Semi-transparent base */
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid hsla(0, 0%, 100%, 0.4);
-  box-shadow: 0 8px 32px 0 hsla(0, 0%, 0%, 0.05);
-  /* Adds depth to glass */
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
 }
 
 .clay-card {
-  background-color: white;
+  background-color: #ffffff;
   border-radius: var(--radius-clay);
-  box-shadow: var(--shadow-clay);
-  border: 2px solid white;
+  box-shadow: var(--shadow-premium);
+  border: 2px solid #ffffff;
 }
 
 @layer utilities {
   .animate-fade-in {
     animation: fadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  }
-
-  .animate-scale-up {
-    animation: scaleUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   }
 
   /* Magnetic Sliding Underline */
@@ -126,39 +145,6 @@
     transform: scaleX(1);
   }
 
-  /* Magnetic Button Fill Slide */
-  .btn-magnetic {
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-  }
-
-  .btn-magnetic::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: var(--color-charcoal);
-    transform-origin: right;
-    transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
-    transform: scaleX(0);
-    z-index: -1;
-  }
-
-  .btn-magnetic:hover::before {
-    transform-origin: left;
-    transform: scaleX(1);
-  }
-
-  .btn-magnetic:hover {
-    color: white;
-    border-color: var(--color-charcoal);
-  }
-
-
-
   /* Scroll Reveal Animation */
   .reveal-up {
     opacity: 0;
@@ -179,30 +165,6 @@
 
     to {
       opacity: 1;
-    }
-  }
-
-  @keyframes scaleUp {
-    from {
-      opacity: 0;
-      transform: scale(0.95) translateY(10px);
-    }
-
-    to {
-      opacity: 1;
-      transform: scale(1) translateY(0);
-    }
-  }
-
-  /* Accessibility: Reduced Motion */
-  @media (prefers-reduced-motion: reduce) {
-
-    *,
-    ::before,
-    ::after {
-      animation: none !important;
-      transition: none !important;
-      scroll-behavior: auto !important;
     }
   }
 }

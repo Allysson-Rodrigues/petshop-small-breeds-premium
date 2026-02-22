@@ -21,28 +21,27 @@ export default function Home() {
           <div className="relative overflow-hidden">
             <div className="grid lg:grid-cols-2 items-center gap-12 lg:gap-0">
               <div className="relative z-10 py-12 lg:pr-12 animate-fade-in">
-                <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-medium-grey mb-6">
-                  Exclusivo para Raças Pequenas
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-medium-grey mb-6">
+                  Heritage of Care
                 </p>
                 <h1 className="font-display text-5xl font-black leading-[1.1] tracking-tight text-black sm:text-6xl lg:text-7xl mb-8">
-                  Cuidado Elevado para <br />
-                  <span className="text-medium-grey">Seu Melhor Amigo</span>
+                  Cuidado Elevado <br />
+                  <span className="text-medium-grey italic font-light lowercase">Para seu melhor amigo</span>
                 </h1>
                 <p className="mb-10 max-w-lg text-lg text-charcoal font-light leading-relaxed">
-                  Experimente serviços premium de banho e tosa e cuidados
-                  veterinários, adaptados às necessidades únicas do seu pet em
-                  um ambiente sofisticado e minimalista.
+                  Redefinindo o luxo pet com estética minimalista e cuidado sênior.
+                  Serviços adaptados às necessidades únicas do seu companheiro em um ambiente de absoluta sofisticação.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex flex-col sm:flex-row gap-6">
                   <Link
                     to="/agendamento"
-                    className="inline-flex items-center justify-center bg-black px-10 py-5 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all btn-magnetic"
+                    className="inline-flex items-center justify-center bg-black px-12 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-white transition-all hover:bg-neutral-800 shadow-premium"
                   >
                     Agendar Horário
                   </Link>
                   <Link
                     to="/servicos"
-                    className="inline-flex items-center justify-center border border-charcoal px-10 py-5 text-xs font-bold uppercase tracking-[0.2em] text-charcoal transition-all btn-magnetic"
+                    className="inline-flex items-center justify-center border border-charcoal/20 px-12 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-charcoal transition-all hover:bg-neutral-50"
                   >
                     Ver Serviços
                   </Link>

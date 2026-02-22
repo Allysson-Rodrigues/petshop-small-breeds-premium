@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { authService } from "../../services/authService";
 
 const navLinks = [
   { name: "Serviços", path: "/servicos" },
@@ -16,11 +17,18 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const handleLogout = () => {
-    localStorage.removeItem("auth_token");
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    // Pequeno delay para feedback visual e suavidade
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    authService.logout();
     setIsLoggedIn(false);
-    navigate("/login");
+    navigate("/");
+    setIsMobileMenuOpen(false);
+    setIsLoggingOut(false);
   };
 
   return (
@@ -30,18 +38,18 @@ export default function Header() {
         {/* Logo */}
         <Link
           to="/"
-          className="text-xl font-bold tracking-tighter hover:opacity-80 transition-opacity duration-300 text-charcoal shrink-0 flex items-center gap-2"
+          className="group text-xl font-bold tracking-tighter hover:opacity-80 transition-opacity duration-300 text-charcoal shrink-0 flex items-center gap-2"
           onClick={() => window.scrollTo(0, 0)}
         >
-          <span className="material-symbols-outlined text-xl">pets</span>
-          PETSHOP{" "}
-          <span className="font-light text-medium-grey underline decoration-charcoal underline-offset-4">
-            SMALL BREEDS
+          <span className="material-symbols-outlined text-2xl transition-transform group-hover:rotate-12">pets</span>
+          <span className="font-display font-black tracking-tight">PETSHOP</span>{" "}
+          <span className="font-display font-light italic text-medium-grey underline decoration-charcoal/20 underline-offset-4">
+            Small Breeds
           </span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6 lg:gap-8" aria-label="Navegação principal">
+        <nav className="hidden md:flex items-center gap-6 lg:gap-8 font-sans" aria-label="Navegação principal">
           {navLinks.map((link, i) => {
             const isActive = link.path === "/" ? location.pathname === "/" : location.pathname.startsWith(link.path);
             return (
@@ -49,9 +57,9 @@ export default function Header() {
                 key={link.path}
                 to={link.path}
                 className={`
-                  relative text-xs font-bold uppercase tracking-widest transition-colors duration-300
+                  relative text-[10px] font-black uppercase tracking-[0.3em] transition-colors duration-300
                   hover:text-black group
-                  ${isActive ? "text-black" : "text-charcoal"}
+                  ${isActive ? "text-black" : "text-medium-grey"}
                 `}
                 style={{ animationDelay: `${i * 60}ms` }}
               >
@@ -59,7 +67,7 @@ export default function Header() {
                 {/* Animated underline */}
                 <span
                   className={`
-                    absolute -bottom-1 left-0 h-[1.5px] bg-black transition-all duration-500 ease-out
+                    absolute -bottom-2 left-0 h-[1.5px] bg-black transition-all duration-500 ease-out
                     ${isActive ? "w-full" : "w-0 group-hover:w-full"}
                   `}
                 />
@@ -69,35 +77,36 @@ export default function Header() {
         </nav>
 
         {/* Desktop CTA */}
-        <div className="hidden md:flex items-center gap-3 shrink-0">
+        <div className="hidden md:flex items-center gap-6 shrink-0">
           {isLoggedIn ? (
             <>
               <Link
                 to="/dashboard"
-                className="inline-flex items-center justify-center border border-charcoal bg-charcoal text-white px-5 py-2 text-xs font-bold uppercase tracking-widest hover:bg-black transition-all duration-300 primary-cta"
+                className="hover-underline-magnetic text-[10px] font-black uppercase tracking-[0.2em] text-charcoal"
               >
-                Dashboard
+                Painel
               </Link>
               <button
                 onClick={handleLogout}
-                className="inline-flex items-center justify-center border border-charcoal px-5 py-2 text-xs font-bold uppercase tracking-widest text-charcoal hover:bg-neutral-100 transition-all duration-300"
+                disabled={isLoggingOut}
+                className="inline-flex items-center justify-center bg-black text-white px-6 py-2.5 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-neutral-800 transition-all duration-300 shadow-sm disabled:opacity-50"
               >
-                Sair
+                {isLoggingOut ? "Saindo..." : "Sair"}
               </button>
             </>
           ) : (
             <>
               <Link
                 to="/login"
-                className="text-xs font-bold uppercase tracking-widest text-charcoal hover:text-black transition-colors duration-300 mr-2"
+                className="hover-underline-magnetic text-[10px] font-black uppercase tracking-[0.2em] text-charcoal"
               >
                 Entrar
               </Link>
               <Link
                 to="/agendamento"
-                className="inline-flex items-center justify-center bg-black text-white px-6 py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-neutral-800 transition-all duration-300 primary-cta"
+                className="inline-flex items-center justify-center bg-black text-white px-8 py-3 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-neutral-800 transition-all duration-300 shadow-sm"
               >
-                Agendar
+                Reservar
               </Link>
             </>
           )}
@@ -166,9 +175,10 @@ export default function Header() {
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center justify-center border border-charcoal px-6 py-4 text-sm font-bold uppercase tracking-widest text-charcoal"
+                  disabled={isLoggingOut}
+                  className="flex items-center justify-center border border-charcoal px-6 py-4 text-sm font-bold uppercase tracking-widest text-charcoal disabled:opacity-50"
                 >
-                  Sair
+                  {isLoggingOut ? "Saindo..." : "Sair"}
                 </button>
               </div>
             ) : (
