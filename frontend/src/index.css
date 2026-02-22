@@ -11,6 +11,8 @@
   --color-charcoal: hsl(0, 0%, 9%);
   --color-medium-grey: hsl(0, 0%, 45%);
   --color-border-grey: hsl(0, 0%, 92%);
+  --color-primary: var(--color-charcoal);
+  --color-secondary: var(--color-medium-grey);
 
   /* Nuances */
   --color-nude: hsl(30, 20%, 96%);
