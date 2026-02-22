@@ -63,10 +63,11 @@ export default function Agendamento() {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-3">
-                <label className="block text-[10px] font-bold text-medium-grey uppercase tracking-widest">
+                <label htmlFor="petName" className="block text-[10px] font-bold text-medium-grey uppercase tracking-widest">
                   Nome do Pet
                 </label>
                 <input
+                  id="petName"
                   type="text"
                   placeholder="Ex: Duque"
                   className="w-full bg-transparent border-b border-medium-grey/40 py-3 text-black focus:border-black outline-none transition-colors placeholder:text-neutral-300"
@@ -74,10 +75,11 @@ export default function Agendamento() {
                 />
               </div>
               <div className="space-y-3">
-                <label className="block text-[10px] font-bold text-medium-grey uppercase tracking-widest">
+                <label htmlFor="petBreed" className="block text-[10px] font-bold text-medium-grey uppercase tracking-widest">
                   Raça
                 </label>
                 <input
+                  id="petBreed"
                   type="text"
                   placeholder="Ex: Yorkshire Terrier"
                   className="w-full bg-transparent border-b border-medium-grey/40 py-3 text-black focus:border-black outline-none transition-colors placeholder:text-neutral-300"
@@ -93,11 +95,11 @@ export default function Agendamento() {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-3 md:col-span-2">
-                <label className="block text-[10px] font-bold text-medium-grey uppercase tracking-widest">
+                <label htmlFor="serviceType" className="block text-[10px] font-bold text-medium-grey uppercase tracking-widest">
                   Serviço Desejado
                 </label>
                 <div className="relative">
-                  <select className="w-full bg-transparent border-b border-medium-grey/40 py-3 text-black focus:border-black outline-none transition-colors appearance-none cursor-pointer">
+                  <select id="serviceType" className="w-full bg-transparent border-b border-medium-grey/40 py-3 text-black focus:border-black outline-none transition-colors appearance-none cursor-pointer">
                     <option value="">Selecione um pacote de cuidado...</option>
                     <option value="banho">
                       Banho de Luxo com Cromoterapia
@@ -116,21 +118,23 @@ export default function Agendamento() {
                 </div>
               </div>
               <div className="space-y-3">
-                <label className="block text-[10px] font-bold text-medium-grey uppercase tracking-widest">
+                <label htmlFor="preferredDate" className="block text-[10px] font-bold text-medium-grey uppercase tracking-widest">
                   Data Preferida
                 </label>
                 <input
+                  id="preferredDate"
                   type="date"
                   className="w-full bg-transparent border-b border-medium-grey/40 py-3 text-black focus:border-black outline-none transition-colors"
                   required
                 />
               </div>
               <div className="space-y-3">
-                <label className="block text-[10px] font-bold text-medium-grey uppercase tracking-widest">
+                <label htmlFor="preferredPeriod" className="block text-[10px] font-bold text-medium-grey uppercase tracking-widest">
                   Período
                 </label>
                 <div className="relative">
                   <select
+                    id="preferredPeriod"
                     className="w-full bg-transparent border-b border-medium-grey/40 py-3 text-black focus:border-black outline-none transition-colors appearance-none cursor-pointer"
                     required
                   >
@@ -150,7 +154,7 @@ export default function Agendamento() {
             <button
               type="submit"
               disabled={submitting}
-              className={`w-full bg-black text-white py-5 text-xs font-bold uppercase tracking-[0.2em] transition-all duration-300 flex justify-center items-center gap-3 ${submitting ? "opacity-70 cursor-wait" : "hover:bg-neutral-800"}`}
+              className={`w-full text-white py-5 text-xs font-bold uppercase tracking-[0.2em] transition-all flex justify-center items-center gap-3 ${submitting ? "bg-black opacity-70 cursor-wait" : "bg-black border border-charcoal btn-magnetic"}`}
             >
               {submitting ? (
                 <>

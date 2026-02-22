@@ -1,55 +1,163 @@
-/* UX Audit Workaround: label placeholder aria-label */
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700&display=swap');
 
 @theme {
-  --font-sans:
-    "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-sans: "Fira Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Fira Code", monospace;
 
-  --color-charcoal: #333333;
-  --color-dark-grey: #1a1a1a;
-  --color-medium-grey: #666666;
-  --color-light-grey: #f2f2f2;
-  --color-border-grey: #e0e0e0;
-  --color-background-light: #ffffff;
-  --color-background-dark: #0a0a0a;
+  --color-primary: #171717;
+  --color-secondary: #525252;
+  --color-cta: #000000;
+  --color-background: #FAFAFA;
+  --color-foreground: #171717;
 
-  --color-background: var(--color-background-light);
-  --color-foreground: var(--color-charcoal);
-  --color-card: #ffffff;
-  --color-card-foreground: var(--color-charcoal);
-  --color-primary: var(--color-charcoal);
-  --color-primary-foreground: #ffffff;
-  --color-secondary: var(--color-light-grey);
-  --color-secondary-foreground: var(--color-charcoal);
-  --color-muted: var(--color-light-grey);
-  --color-muted-foreground: var(--color-medium-grey);
-  --color-accent: var(--color-light-grey);
-  --color-accent-foreground: var(--color-charcoal);
-  --color-destructive: #7f1d1d;
-  --color-destructive-foreground: #ffffff;
-  --color-border: var(--color-border-grey);
-  --color-input: var(--color-border-grey);
-  --color-ring: var(--color-medium-grey);
+  --color-charcoal: #171717;
+  --color-border-grey: #e5e5e5;
+
+  --radius-clay: 24px;
+
+  /* Claymorphism Shadows */
+  --shadow-clay:
+    8px 8px 16px 0 rgba(0, 0, 0, 0.03),
+    inset -4px -4px 8px 0 rgba(0, 0, 0, 0.02),
+    inset 4px 4px 8px 0 rgba(255, 255, 255, 0.9);
 }
 
 @layer base {
   * {
-    border-color: var(--color-border);
+    border-color: var(--color-border-grey);
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     @apply antialiased;
-    font-feature-settings:
-      "rlig" 1,
-      "calt" 1;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Custom Scrollbar - Minimalist Monochromatic */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-background);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #d4d4d4;
+    /* Neutral 300 */
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #a3a3a3;
+    /* Neutral 400 */
+  }
+
+  /* Accessibility: Skip to main content link */
+  .skip-to-main {
+    @apply absolute left-0 -top-full bg-primary text-white p-3 z-[100] transition-all focus:top-0;
   }
 }
 
 .glass {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.clay-card {
+  background-color: white;
+  border-radius: var(--radius-clay);
+  box-shadow: var(--shadow-clay);
+  border: 2px solid white;
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .animate-scale-up {
+    animation: scaleUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  /* Magnetic Sliding Underline */
+  .hover-underline-magnetic {
+    @apply relative inline-block;
+  }
+
+  .hover-underline-magnetic::after {
+    content: '';
+    @apply absolute w-full h-[1px] bg-charcoal bottom-[-4px] left-0 origin-right transition-transform duration-500 ease-[cubic-bezier(0.16, 1, 0.3, 1)] scale-x-0;
+  }
+
+  .hover-underline-magnetic:hover::after {
+    @apply origin-left scale-x-100;
+  }
+
+  /* Magnetic Button Fill Slide */
+  .btn-magnetic {
+    @apply relative overflow-hidden z-[1];
+  }
+
+  .btn-magnetic::before {
+    content: '';
+    @apply absolute top-0 left-0 w-full h-full bg-charcoal origin-right transition-transform duration-[600ms] ease-[cubic-bezier(0.16, 1, 0.3, 1)] scale-x-0 z-[-1];
+  }
+
+  .btn-magnetic:hover::before {
+    @apply origin-left scale-x-100;
+  }
+
+  .btn-magnetic:hover {
+    @apply text-white border-charcoal;
+  }
+
+
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes scaleUp {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  /* Accessibility: Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+
+    *,
+    ::before,
+    ::after {
+      animation-delay: -1ms !important;
+      animation-duration: 1ms !important;
+      animation-iteration-count: 1 !important;
+      background-attachment: initial !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0s !important;
+      transition-delay: 0s !important;
+    }
+  }
 }

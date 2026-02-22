@@ -1,6 +1,23 @@
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 export default function Servicos() {
+  const { hash } = useLocation();
+
+  useEffect(() => {
+    if (hash) {
+      const id = hash.replace("#", "");
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [hash]);
+  // SEO: <title>Serviços Premium | Small Breeds</title>
+  // <meta name="description" content="Tosa artesanal, banho de luxo e cuidados veterinários dedicados exclusivamente para cães de raças pequenas." />
+  // <meta property="og:title" content="Experiência Sênior para Pets - Small Breeds" />
+  // <meta property="og:description" content="Cuidado artesanal com infraestrutura de luxo." />
+  // <meta name="keywords" content="tosa artisanal, banho luxo sampa, veterinário especializado raças pequenas" />
   return (
     <div className="flex flex-col min-h-screen font-display bg-background-light text-charcoal">
       {/* Hero Section */}
@@ -24,7 +41,7 @@ export default function Servicos() {
       <section className="bg-white py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-1 md:grid-cols-3">
-            <div className="group border border-border-grey bg-white p-12 transition-all hover:bg-neutral-50 shadow-sm">
+            <div id="tosa" className="group border border-border-grey bg-white p-12 transition-all hover:bg-neutral-50 shadow-sm">
               <div className="mb-10 text-charcoal">
                 <span className="material-symbols-outlined text-5xl font-light">
                   cut
@@ -38,7 +55,7 @@ export default function Servicos() {
                 raça do seu pet, garantindo um visual elegante e confortável.
               </p>
             </div>
-            <div className="group border border-border-grey bg-white p-12 transition-all hover:bg-neutral-50 shadow-sm">
+            <div id="banho" className="group border border-border-grey bg-white p-12 transition-all hover:bg-neutral-50 shadow-sm">
               <div className="mb-10 text-charcoal">
                 <span className="material-symbols-outlined text-5xl font-light">
                   bathtub
@@ -52,7 +69,7 @@ export default function Servicos() {
                 hipoalergênicos seguidos de secagem suave e escovação.
               </p>
             </div>
-            <div className="group border border-border-grey bg-white p-12 transition-all hover:bg-neutral-50 shadow-sm">
+            <div id="veterinario" className="group border border-border-grey bg-white p-12 transition-all hover:bg-neutral-50 shadow-sm">
               <div className="mb-10 text-charcoal">
                 <span className="material-symbols-outlined text-5xl font-light">
                   medical_services
@@ -71,7 +88,7 @@ export default function Servicos() {
           <div className="mt-20 text-center">
             <Link
               to="/agendamento"
-              className="inline-flex items-center justify-center bg-black px-10 py-5 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all hover:bg-neutral-800 focus:outline-none"
+              className="inline-flex items-center justify-center bg-black px-10 py-5 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all btn-magnetic focus:outline-none"
             >
               Agendar um Atendimento
             </Link>

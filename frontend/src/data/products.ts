@@ -1,3 +1,13 @@
+export interface Product {
+  id: number;
+  name: string;
+  category: string;
+  price: number;
+  image: string;
+  description: string;
+  details?: string[];
+}
+
 export const categories = [
   "Todos",
   "Acessórios",
@@ -6,69 +16,77 @@ export const categories = [
   "Higiene",
 ];
 
-export const products = [
+export const products: Product[] = [
   {
     id: 1,
     name: "Coleira de Couro Heritage",
     category: "Acessórios",
     price: 120.0,
-    image:
-      "https://images.unsplash.com/photo-1605897472359-85e4b94d685d?auto=format&fit=crop&q=80&w=800&grayscale=true",
+    image: "/products/collar.png",
+    description: "Uma peça atemporal em couro italiano legítimo com acabamento em latão escovado.",
+    details: ["Couro de flor integral", "Hardware em bronze sólido", "Ajuste milimétrico", "Disponível em 3 tamanhos"]
   },
   {
     id: 2,
     name: "Cama Nuvem Velvet",
     category: "Bem-estar",
     price: 299.0,
-    image:
-      "https://images.unsplash.com/photo-1541599540903-216a46ca1dc0?auto=format&fit=crop&q=80&w=800&grayscale=true",
+    image: "/products/bed.png",
+    description: "O ápice do conforto sênior. Preenchimento ortopédico com revestimento em veludo ultra suave.",
+    details: ["Veludo de alta gramatura", "Base antiderrapante", "Capa lavável em máquina", "Espuma de memória"]
   },
   {
     id: 3,
     name: "Ração Premium Orgânica 2kg",
     category: "Alimentação",
     price: 189.9,
-    image:
-      "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=800&grayscale=true",
+    image: "/products/food.png",
+    description: "Nutrição holística com ingredientes controlados na origem. Livre de grãos e subprodutos.",
+    details: ["100% Ingredientes de grau humano", "Rica em Ômega 3 e 6", "Zero transgênicos", "Processamento a frio"]
   },
   {
     id: 4,
     name: "Shampoo Botânico Suave",
     category: "Higiene",
     price: 68.0,
-    image:
-      "https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?auto=format&fit=crop&q=80&w=800&grayscale=true",
+    image: "/products/shampoo.png",
+    description: "Fórmula sândalo e bergamota para uma limpeza profunda sem agredir a pele sensível.",
+    details: ["pH balanceado", "Livre de sulfatos e parabenos", "Fragrância hipoalergênica"]
   },
   {
     id: 5,
     name: "Bolsa de Transporte Aspen",
     category: "Acessórios",
     price: 450.0,
-    image:
-      "https://images.unsplash.com/photo-1537151608804-ea6fac25d471?auto=format&fit=crop&q=80&w=800&grayscale=true",
+    image: "/products/carrier.png",
+    description: "Segurança e estilo para viagens. Design arquitetônico com ventilação otimizada.",
+    details: ["Lona militar reforçada", "Acabamento em couro", "Tela de ventilação resistente", "Cinto de segurança interno"]
   },
   {
     id: 6,
     name: "Tigela de Cerâmica Fosca",
     category: "Alimentação",
     price: 85.0,
-    image:
-      "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&q=80&w=800&grayscale=true",
+    image: "/products/bowl.png",
+    description: "Cerâmica artesanal com design ergonômico. Menos estresse nos bigodes durante as refeições.",
+    details: ["Acabamento fosco premium", "Livre de chumbo e cádmio", "Pode ir à lava-louças"]
   },
   {
     id: 7,
     name: "Escova de Cerdas Naturais",
     category: "Higiene",
     price: 45.0,
-    image:
-      "https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&q=80&w=800&grayscale=true",
+    image: "/products/brush.png",
+    description: "Cerdas suaves para estimular a circulação natural e brilho da pelagem curta e média.",
+    details: ["Cerdas de bambu sustentável", "Cabo ergonômico"]
   },
   {
     id: 8,
     name: "Perfume Cítrico Pet",
     category: "Higiene",
     price: 110.0,
-    image:
-      "https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?auto=format&fit=crop&q=80&w=800&grayscale=true",
+    image: "/products/perfume.png",
+    description: "Colônia suave com notas de verbena e limão siciliano. Elegância discreta no pós-banho.",
+    details: ["Sem álcool", "Fixação de até 12 horas", "Extratos naturais"]
   },
 ];

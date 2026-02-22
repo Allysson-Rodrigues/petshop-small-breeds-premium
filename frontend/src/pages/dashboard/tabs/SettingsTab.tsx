@@ -17,32 +17,32 @@ export default function SettingsTab({ showToast }: SettingsTabProps) {
   };
 
   return (
-    <div className="max-w-4xl mx-auto flex flex-col gap-8">
-      <div className="flex items-center justify-between">
+    <div className="max-w-4xl mx-auto flex flex-col gap-6 md:gap-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-primary tracking-tight">
+          <h1 className="text-xl md:text-2xl font-bold text-primary tracking-tight">
             Configurações
           </h1>
-          <p className="text-gray-500 text-sm mt-1">
+          <p className="text-gray-500 text-xs md:text-sm mt-1">
             Gerencie as preferências da sua conta {isAdmin ? "administrativa" : "pessoal"}.
           </p>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-[#e5e5e5] shadow-sm overflow-hidden p-8">
-        <form onSubmit={handleSave} className="space-y-8">
+      <div className="bg-white rounded-xl border border-[#e5e5e5] shadow-sm overflow-hidden p-4 md:p-8">
+        <form onSubmit={handleSave} className="space-y-6 md:space-y-8">
           <div>
-            <h3 className="text-lg font-medium text-primary mb-4 border-b border-[#e5e5e5] pb-2">
+            <h3 className="text-base md:text-lg font-medium text-primary mb-4 border-b border-[#e5e5e5] pb-2">
               Perfil
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700">
                   Nome Completo
                 </label>
                 <input
                   type="text"
-                  className="w-full bg-gray-50 border border-border-grey rounded-lg px-4 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"
+                  className="w-full bg-gray-50 border border-border-grey rounded-lg px-4 py-2.5 md:py-2 text-sm focus:ring-1 focus:ring-primary outline-none"
                   value={user?.name || ""}
                   disabled
                 />
@@ -53,7 +53,7 @@ export default function SettingsTab({ showToast }: SettingsTabProps) {
                 </label>
                 <input
                   type="email"
-                  className="w-full bg-gray-50 border border-border-grey rounded-lg px-4 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"
+                  className="w-full bg-gray-50 border border-border-grey rounded-lg px-4 py-2.5 md:py-2 text-sm focus:ring-1 focus:ring-primary outline-none"
                   value={user?.email || ""}
                   disabled
                 />
@@ -62,20 +62,20 @@ export default function SettingsTab({ showToast }: SettingsTabProps) {
           </div>
 
           <div>
-            <h3 className="text-lg font-medium text-primary mb-4 border-b border-[#e5e5e5] pb-2">
+            <h3 className="text-base md:text-lg font-medium text-primary mb-4 border-b border-[#e5e5e5] pb-2">
               Preferências do Sistema
             </h3>
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 border border-[#e5e5e5] rounded-lg">
-                <div>
-                  <h4 className="font-medium text-primary">
+              <div className="flex items-center justify-between p-4 border border-[#e5e5e5] rounded-lg gap-4">
+                <div className="flex-1">
+                  <h4 className="text-sm md:text-base font-medium text-primary">
                     Notificações Push
                   </h4>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-[10px] md:text-xs text-gray-500">
                     Receber alertas de estoque e novos agendamentos.
                   </p>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
+                <label className="relative inline-flex items-center cursor-pointer shrink-0">
                   <input
                     type="checkbox"
                     className="sr-only peer"
@@ -86,17 +86,17 @@ export default function SettingsTab({ showToast }: SettingsTabProps) {
                 </label>
               </div>
 
-              <div className="flex items-center justify-between p-4 border border-[#e5e5e5] rounded-lg">
-                <div>
-                  <h4 className="font-medium text-primary">
+              <div className="flex items-center justify-between p-4 border border-[#e5e5e5] rounded-lg gap-4">
+                <div className="flex-1">
+                  <h4 className="text-sm md:text-base font-medium text-primary">
                     Tema da Interface
                   </h4>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-[10px] md:text-xs text-gray-500">
                     Forçar esquema escuro ou claro (mockup visual).
                   </p>
                 </div>
                 <select
-                  className="bg-white border border-[#e5e5e5] rounded-lg text-sm px-3 py-1.5 focus:ring-1 focus:ring-primary outline-none"
+                  className="bg-white border border-[#e5e5e5] rounded-lg text-xs md:text-sm px-3 py-1.5 focus:ring-1 focus:ring-primary outline-none shrink-0"
                   value={theme}
                   onChange={(e) => setTheme(e.target.value)}
                 >
@@ -110,7 +110,7 @@ export default function SettingsTab({ showToast }: SettingsTabProps) {
           <div className="pt-4 flex justify-end">
             <button
               type="submit"
-              className="bg-primary text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-[#4d4d4d] transition-colors"
+              className="bg-primary text-white px-6 py-3 md:py-2.5 rounded-lg text-sm font-medium hover:bg-[#4d4d4d] transition-colors w-full md:w-auto"
             >
               Salvar Preferências
             </button>

@@ -1,23 +1,21 @@
 import { useState } from "react";
-import { categories, products } from "../data/products";
+import { categories, products, type Product } from "../data/products";
 
 export default function Catalogo() {
   // SEO: <title>Catálogo | Small Breeds</title>
-  // <meta name="description" content="Produtos exclusivos para raças pequenas." />
-  // <meta property="og:title" content="Catálogo | Small Breeds" />
-
   const [activeCategory, setActiveCategory] = useState("Todos");
   const [sortOrder, setSortOrder] = useState("padrao");
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const filteredProducts =
     activeCategory === "Todos"
       ? [...products]
       : products.filter((p) => p.category === activeCategory);
 
-  const sortedProducts = filteredProducts.sort((a, b) => {
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
     if (sortOrder === "crescente") return a.price - b.price;
     if (sortOrder === "decrescente") return b.price - a.price;
-    return 0; // "padrao" não altera a ordem do ID
+    return 0;
   });
 
   return (
@@ -36,7 +34,7 @@ export default function Catalogo() {
             The Small Breed Collection
           </h1>
           <p className="text-lg md:text-xl text-white/90 font-light tracking-wide max-w-2xl">
-            Luxo curador para o seu companheiro mais precioso. Experiência
+            Luxo curado para o seu companheiro mais precioso. Experiência
             unificada, conforto elevado.
           </p>
         </div>
@@ -55,11 +53,10 @@ export default function Catalogo() {
                 <li key={cat}>
                   <button
                     onClick={() => setActiveCategory(cat)}
-                    className={`text-sm tracking-wide transition-colors ${
-                      activeCategory === cat
-                        ? "text-black font-semibold"
-                        : "text-medium-grey hover:text-black"
-                    }`}
+                    className={`text-sm tracking-wide transition-colors ${activeCategory === cat
+                      ? "text-black font-semibold"
+                      : "text-medium-grey hover:text-black"
+                      }`}
                   >
                     {cat}
                   </button>
@@ -93,22 +90,23 @@ export default function Catalogo() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16">
             {sortedProducts.map((p) => (
-              <article
-                key={p.id}
-                className="group cursor-pointer flex flex-col"
-              >
+              <article key={p.id} className="group flex flex-col">
                 <div className="aspect-[4/5] bg-light-grey mb-6 overflow-hidden relative">
                   <img
                     src={p.image}
                     alt={p.name}
                     loading="lazy"
                     decoding="async"
-                    className="w-full h-full object-cover object-center grayscale contrast-110 group-hover:scale-105 transition-transform duration-700"
+                    className="w-full h-full object-cover object-center grayscale contrast-110 transition-all duration-[5000ms] ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-110 group-hover:grayscale-0 group-hover:brightness-105"
                   />
-                  {/* Botão Hover Escuro Minimalista */}
-                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                    <button className="bg-white text-black px-8 py-3 text-xs font-bold uppercase tracking-widest hover:bg-neutral-200 transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300">
-                      Visualizar
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] flex items-center justify-center p-4">
+                    <button
+                      onClick={() => setSelectedProduct(p)}
+                      className="bg-white text-black px-8 py-3 text-[10px] font-bold uppercase tracking-widest hover:bg-neutral-100 transition-all flex items-center gap-2 transform translate-y-2 group-hover:translate-y-0 duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] shadow-xl opacity-0 group-hover:opacity-100 relative overflow-hidden"
+                    >
+                      <span className="absolute inset-0 bg-neutral-200/50 scale-x-0 group-active:scale-x-100 transition-transform origin-left duration-300"></span>
+                      <span className="material-symbols-outlined text-sm relative z-10">visibility</span>
+                      <span className="relative z-10">Visualizar</span>
                     </button>
                   </div>
                 </div>
@@ -116,14 +114,14 @@ export default function Catalogo() {
                   <span className="text-[10px] font-bold tracking-[0.2em] text-medium-grey uppercase mb-2">
                     {p.category}
                   </span>
-                  <h3 className="text-sm font-medium tracking-wide text-charcoal mb-3 flex-1">
+                  <h3 className="text-sm font-medium tracking-wide text-charcoal mb-3 flex-1 px-2">
                     {p.name}
                   </h3>
                   <span className="text-sm font-bold tracking-widest text-black mb-5">
-                    R$ {p.price}
+                    R$ {p.price.toFixed(2)}
                   </span>
-                  <button className="w-full border border-black bg-transparent text-black px-4 py-3 text-xs font-bold uppercase tracking-widest hover:bg-black hover:text-white transition-colors duration-300">
-                    Adicionar
+                  <button className="w-full border border-black bg-transparent text-black px-4 py-3 text-[10px] font-bold uppercase tracking-widest btn-magnetic transition-all duration-[600ms] ease-[cubic-bezier(0.25,1,0.5,1)]">
+                    Comprar Agora
                   </button>
                 </div>
               </article>
@@ -131,6 +129,61 @@ export default function Catalogo() {
           </div>
         </div>
       </section>
+
+      {/* Product Modal */}
+      {selectedProduct && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setSelectedProduct(null)}></div>
+          <div className="relative bg-white w-full max-w-5xl overflow-hidden flex flex-col md:flex-row shadow-2xl animate-fade-in animate-scale-up">
+            <button
+              onClick={() => setSelectedProduct(null)}
+              className="absolute top-4 right-4 z-10 p-2 text-black hover:opacity-50 transition-opacity"
+            >
+              <span className="material-symbols-outlined text-3xl">close</span>
+            </button>
+
+            <div className="w-full md:w-1/2 aspect-square md:aspect-auto bg-light-grey">
+              <img
+                src={selectedProduct.image}
+                alt={selectedProduct.name}
+                className="w-full h-full object-cover grayscale contrast-110"
+              />
+            </div>
+
+            <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col">
+              <span className="text-xs font-bold tracking-widest text-medium-grey uppercase mb-4">
+                {selectedProduct.category}
+              </span>
+              <h2 className="text-3xl font-light tracking-tight text-charcoal mb-4 font-display">
+                {selectedProduct.name}
+              </h2>
+              <div className="text-2xl font-bold tracking-widest text-black mb-8">
+                R$ {selectedProduct.price.toFixed(2)}
+              </div>
+
+              <div className="border-t border-border-grey pt-8 mb-8 flex-1">
+                <p className="text-charcoal/80 leading-relaxed mb-6 font-light">
+                  {selectedProduct.description}
+                </p>
+                {selectedProduct.details && (
+                  <ul className="space-y-3">
+                    {selectedProduct.details.map((detail: string, i: number) => (
+                      <li key={i} className="flex items-center gap-3 text-sm text-charcoal/70 font-light">
+                        <span className="w-1.5 h-1.5 rounded-full bg-black/20"></span>
+                        {detail}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              <button className="w-full bg-black text-white px-8 py-4 text-xs font-bold uppercase tracking-widest hover:bg-neutral-800 transition-all shadow-lg active:scale-95">
+                Adicionar ao Carrinho
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

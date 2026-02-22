@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function Galeria() {
   // SEO: <title>Galeria de Raças | Small Breeds</title>
   // <meta name="description" content="Conheça as raças pequenas que atendemos." />
@@ -8,43 +10,37 @@ export default function Galeria() {
       name: "Poodle Toy",
       desc: "Altamente inteligente e extremamente leal, possui uma pelagem que requer cuidados de tosa artesanal constantes para manter o alto padrão estético.",
       type: "COMPANHIA",
-      image:
-        "https://images.unsplash.com/photo-1593134257782-e89567b7718a?auto=format&fit=crop&q=80&w=800&grayscale=true",
+      image: "/breeds/poodle.png",
     },
     {
       name: "Chihuahua",
       desc: "O menor cão do mundo carrega a maior personalidade. Requer atenção especial à temperatura e produtos delicados e hipoalergênicos no banho.",
       type: "VALENTE",
-      image:
-        "https://images.unsplash.com/photo-1605897472359-85e4b94d685d?auto=format&fit=crop&q=80&w=800&grayscale=true",
+      image: "/breeds/chihuahua.png",
     },
     {
       name: "Maltês",
       desc: "Elegante, dócil e com pelagem de seda brilhante. Nossa hidratação botânica e tosa na tesoura extraem o máximo da beleza desta raça ancestral.",
       type: "LUXO",
-      image:
-        "https://images.unsplash.com/photo-1541599540903-216a46ca1dc0?auto=format&fit=crop&q=80&w=800&grayscale=true",
+      image: "/breeds/maltes.png",
     },
     {
       name: "Yorkshire Terrier",
       desc: "Pequeno caçador com coração gigante e espírito aventureiro. Seus pelos finos demandam escovação profissional e produtos de nutrição intensa.",
       type: "ATIVO",
-      image:
-        "https://images.unsplash.com/photo-1589924691995-400dc9ce8cee?auto=format&fit=crop&q=80&w=800&grayscale=true",
+      image: "/breeds/yorkshire.png",
     },
     {
       name: "Shih Tzu",
       desc: "O 'cão leão' chinês é o companheiro de colo perfeito. Banhos frequentes com tosa bebê garantem o frescor e reduzem a formação de nós.",
       type: "DÓCIL",
-      image:
-        "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=800&grayscale=true",
+      image: "/breeds/shihtzu.png",
     },
     {
       name: "Pug",
       desc: "Muito charme e personalidade em um corpo compacto. Nossa equipe veterinária atenta dedica tempo extra à higienização de suas dobras faciais.",
       type: "SOCIAL",
-      image:
-        "https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&q=80&w=800&grayscale=true",
+      image: "/breeds/pug.png",
     },
   ];
 
@@ -70,20 +66,23 @@ export default function Galeria() {
       <section className="py-24 px-6 md:px-12 max-w-7xl mx-auto w-full">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
           {breeds.map((b) => (
-            <article key={b.name} className="group flex flex-col">
-              <div className="aspect-[4/3] bg-light-grey mb-8 overflow-hidden relative">
+            <article key={b.name} className="group flex flex-col cursor-pointer">
+              <div className="aspect-[4/3] bg-light-grey mb-8 overflow-hidden relative rounded-none">
                 <img
                   src={b.image}
                   alt={b.name}
-                  className="w-full h-full object-cover object-center grayscale contrast-110 group-hover:scale-105 transition-transform duration-700"
+                  className="w-full h-full object-cover object-center grayscale contrast-110 transition-all duration-[5000ms] ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-110 group-hover:grayscale-0 group-hover:brightness-105"
                 />
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <button className="text-white text-xs font-bold uppercase tracking-widest flex items-center gap-2 hover:opacity-80 transition-opacity">
+                <div className="absolute inset-x-0 bottom-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]">
+                  <Link
+                    to="/agendamento"
+                    className="text-white bg-black/80 backdrop-blur-md px-4 py-3 text-[10px] font-bold uppercase tracking-widest flex items-center justify-between gap-2 hover:bg-black transition-colors transform translate-y-4 group-hover:translate-y-0 duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+                  >
                     Explorar Cuidados
                     <span className="material-symbols-outlined text-sm">
                       arrow_forward
                     </span>
-                  </button>
+                  </Link>
                 </div>
               </div>
               <div className="flex flex-col flex-1 pl-2 border-l border-medium-grey/20">

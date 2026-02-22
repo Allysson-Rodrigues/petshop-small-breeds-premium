@@ -1,6 +1,11 @@
 import { Link } from "react-router-dom";
 
 export default function Sobre() {
+  // SEO: <title>Sobre Nós | Small Breeds Heritage</title>
+  // <meta name="description" content="Conheça a história e a filosofia por trás do petshop mais exclusivo de São Paulo, dedicado ao bem-estar das raças pequenas." />
+  // <meta property="og:title" content="Small Breeds Heritage - Nossa História" />
+  // <meta property="og:description" content="Tradição em cuidado minimalista e luxo para cães." />
+  // <meta name="keywords" content="história small breeds, petshop luxo sp, filosofia cuidado animal" />
   return (
     <div className="bg-background-light font-display antialiased min-h-screen flex flex-col">
       {/* Hero Section */}
@@ -23,7 +28,7 @@ export default function Sobre() {
               <div className="flex gap-4">
                 <Link
                   to="/agendamento"
-                  className="inline-flex items-center justify-center bg-primary px-8 py-4 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all hover:bg-neutral-800"
+                  className="inline-flex items-center justify-center bg-primary px-8 py-4 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all btn-magnetic"
                 >
                   Nossos Serviços
                 </Link>
@@ -54,7 +59,7 @@ export default function Sobre() {
 
           <div className="grid md:grid-cols-3 gap-8">
             {/* Value 1 */}
-            <div className="bg-white p-12 border border-[#e5e5e5] hover:shadow-xl transition-all duration-300">
+            <div className="bg-white p-12 border border-[#e5e5e5] hover:shadow-xl transition-all duration-500 ease-in-out">
               <span className="material-symbols-outlined text-4xl text-primary mb-6">
                 verified
               </span>
@@ -68,7 +73,7 @@ export default function Sobre() {
               </p>
             </div>
             {/* Value 2 */}
-            <div className="bg-white p-12 border border-[#e5e5e5] hover:shadow-xl transition-all duration-300">
+            <div className="bg-white p-12 border border-[#e5e5e5] hover:shadow-xl transition-all duration-500 ease-in-out">
               <span className="material-symbols-outlined text-4xl text-primary mb-6">
                 favoriting
               </span>
@@ -82,7 +87,7 @@ export default function Sobre() {
               </p>
             </div>
             {/* Value 3 */}
-            <div className="bg-white p-12 border border-[#e5e5e5] hover:shadow-xl transition-all duration-300">
+            <div className="bg-white p-12 border border-[#e5e5e5] hover:shadow-xl transition-all duration-500 ease-in-out">
               <span className="material-symbols-outlined text-4xl text-primary mb-6">
                 medical_services
               </span>

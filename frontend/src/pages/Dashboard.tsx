@@ -11,12 +11,17 @@ import PetsTab from "./dashboard/tabs/PetsTab";
 import SettingsTab from "./dashboard/tabs/SettingsTab";
 
 export default function Dashboard() {
+  // SEO: <title>Configurações de Conta | Small Breeds</title>
+  // <meta name="robots" content="noindex, nofollow" />
+  // SEO: <title>Painel de Controle | Small Breeds Admin</title>
+  // <meta name="robots" content="noindex, nofollow" />
   const navigate = useNavigate();
   const { user, isAdmin, isAuthenticated } = useAuth();
 
   const [activeTab, setActiveTab] = useState(isAdmin ? "overview" : "pets");
   const [toastMessage, setToastMessage] = useState("");
   const [globalSearch, setGlobalSearch] = useState("");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated || !user) {
@@ -34,7 +39,20 @@ export default function Dashboard() {
   return (
     <div className="bg-background-light text-primary font-display antialiased min-h-screen flex overflow-hidden">
       {/* Sidebar Component */}
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Sidebar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
+
+      {/* Overlay para mobile */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-10 lg:hidden backdrop-blur-sm"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col h-screen overflow-hidden relative bg-background-light">
@@ -43,12 +61,13 @@ export default function Dashboard() {
           activeTab={activeTab}
           globalSearch={globalSearch}
           setGlobalSearch={setGlobalSearch}
+          onMenuClick={() => setIsSidebarOpen(true)}
         />
 
         {/* Dashboard Content */}
-        <div className="flex-1 overflow-y-auto p-6 md:p-8">
+        <div className="flex-1 overflow-y-auto p-4 md:p-8">
           {activeTab === "overview" && isAdmin ? (
-            <OverviewTab showToast={showToast} />
+            <OverviewTab showToast={showToast} setActiveTab={setActiveTab} />
           ) : activeTab === "clients" && isAdmin ? (
             <ClientsTab showToast={showToast} searchQuery={globalSearch} />
           ) : activeTab === "pets" ? (

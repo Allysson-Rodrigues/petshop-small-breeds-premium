@@ -31,25 +31,31 @@ export default function Header() {
         </div>
         <nav className="hidden md:flex items-center gap-10">
           <Link
-            className="text-xs font-bold uppercase tracking-widest text-charcoal hover:text-black transition-colors"
+            className="text-xs font-bold uppercase tracking-widest text-charcoal hover:text-black transition-colors hover-underline-magnetic"
             to="/servicos"
           >
             Serviços
           </Link>
           <Link
-            className="text-xs font-bold uppercase tracking-widest text-charcoal hover:text-black transition-colors"
+            className="text-xs font-bold uppercase tracking-widest text-charcoal hover:text-black transition-colors hover-underline-magnetic"
+            to="/galeria"
+          >
+            Galeria
+          </Link>
+          <Link
+            className="text-xs font-bold uppercase tracking-widest text-charcoal hover:text-black transition-colors hover-underline-magnetic"
             to="/agendamento"
           >
             Agendamento
           </Link>
           <Link
-            className="text-xs font-bold uppercase tracking-widest text-charcoal hover:text-black transition-colors"
+            className="text-xs font-bold uppercase tracking-widest text-charcoal hover:text-black transition-colors hover-underline-magnetic"
             to="/loja"
           >
             Loja
           </Link>
           <Link
-            className="text-xs font-bold uppercase tracking-widest text-charcoal hover:text-black transition-colors"
+            className="text-xs font-bold uppercase tracking-widest text-charcoal hover:text-black transition-colors hover-underline-magnetic"
             to="/sobre"
           >
             Sobre
@@ -74,7 +80,7 @@ export default function Header() {
           ) : (
             <Link
               to="/login"
-              className="hidden md:flex items-center justify-center border border-charcoal px-6 py-2 text-xs font-bold uppercase tracking-widest text-charcoal hover:bg-charcoal hover:text-white transition-all"
+              className="hidden md:flex items-center justify-center border border-charcoal px-6 py-2 text-xs font-bold uppercase tracking-widest text-charcoal btn-magnetic transition-all"
             >
               Entrar
             </Link>
@@ -99,6 +105,13 @@ export default function Header() {
             onClick={() => setIsMobileMenuOpen(false)}
           >
             Serviços
+          </Link>
+          <Link
+            className="text-sm font-bold uppercase tracking-widest text-charcoal border-b border-border-grey pb-4"
+            to="/galeria"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Galeria
           </Link>
           <Link
             className="text-sm font-bold uppercase tracking-widest text-charcoal border-b border-border-grey pb-4"

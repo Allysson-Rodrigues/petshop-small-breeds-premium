@@ -5,13 +5,21 @@ type DashboardHeaderProps = {
     globalSearch: string;
     setGlobalSearch: (search: string) => void;
     showSearch?: boolean;
+    onMenuClick?: () => void;
 };
+
+{/* SEO optimization */ }
+<head>
+    <title>Dashboard Admin | Small Breeds</title>
+    <meta name="robots" content="noindex, nofollow" />
+</head>
 
 export default function DashboardHeader({
     activeTab,
     globalSearch,
     setGlobalSearch,
-    showSearch = true
+    showSearch = true,
+    onMenuClick
 }: DashboardHeaderProps) {
     const { user, getInitials } = useAuth();
 
@@ -28,18 +36,27 @@ export default function DashboardHeader({
     };
 
     return (
-        <header className="h-16 border-b border-gray-100 flex items-center justify-between px-8 bg-white/80 backdrop-blur-md sticky top-0 z-10">
-            <div className="flex items-center gap-4">
-                <h2 className="text-xl font-semibold text-gray-800 tracking-tight">
+        <header className="h-16 border-b border-gray-100 flex items-center justify-between px-4 md:px-8 bg-white/80 backdrop-blur-md sticky top-0 z-10 w-full overflow-hidden">
+            <div className="flex items-center gap-3 overflow-hidden">
+                <button
+                    onClick={onMenuClick}
+                    className="lg:hidden p-2 -ml-2 text-gray-400 hover:text-black transition-colors hover-underline-magnetic shrink-0"
+                >
+                    <span className="material-symbols-outlined">menu</span>
+                </button>
+
+                <h2 className="text-base md:text-xl font-semibold text-gray-800 tracking-tight truncate shrink-0">
                     {getTabTitle(activeTab)}
                 </h2>
+
                 {showSearch && (activeTab === "clients" || activeTab === "pets" || activeTab === "inventory") && (
-                    <div className="relative group ml-4">
+                    <div className="relative group ml-4 hidden md:block">
                         <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg group-focus-within:text-black transition-colors">
                             search
                         </span>
                         <input
                             type="text"
+                            aria-label={`Buscar em ${getTabTitle(activeTab).toLowerCase()}`}
                             placeholder={`Buscando em ${getTabTitle(activeTab).toLowerCase()}...`}
                             className="pl-10 pr-4 py-1.5 bg-gray-50 border-none rounded-full text-sm focus:ring-1 focus:ring-black w-64 transition-all outline-none"
                             value={globalSearch}
@@ -49,14 +66,14 @@ export default function DashboardHeader({
                 )}
             </div>
 
-            <div className="flex items-center gap-6">
-                <button className="text-gray-400 hover:text-black transition-colors relative">
+            <div className="flex items-center gap-2 md:gap-6 shrink-0">
+                <button className="text-gray-400 hover:text-black transition-colors hover-underline-magnetic relative p-2">
                     <span className="material-symbols-outlined text-[22px]">notifications</span>
-                    <span className="absolute top-0 right-0 w-2 h-2 bg-black border-2 border-white rounded-full"></span>
+                    <span className="absolute top-2 right-2 w-2 h-2 bg-black border-2 border-white rounded-full"></span>
                 </button>
-                <div className="h-8 w-[1px] bg-gray-100"></div>
-                <div className="flex items-center gap-3 pl-2">
-                    <div className="flex flex-col items-end">
+                <div className="h-8 w-[1px] bg-gray-100 hidden md:block"></div>
+                <div className="flex items-center gap-3 md:pl-2">
+                    <div className="hidden md:flex flex-col items-end">
                         <span className="text-sm font-semibold text-gray-900 leading-none">
                             {user?.name || "Usuário"}
                         </span>
@@ -64,7 +81,7 @@ export default function DashboardHeader({
                             {user?.role === "admin" ? "Acesso Total" : "Área do Cliente"}
                         </span>
                     </div>
-                    <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-sm font-bold text-gray-800 border border-gray-100 shadow-sm">
+                    <div className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-gray-50 flex items-center justify-center text-xs md:text-sm font-bold text-gray-800 border border-gray-100 shadow-sm shrink-0">
                         {user ? getInitials(user.name) : "??"}
                     </div>
                 </div>

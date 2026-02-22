@@ -1,6 +1,11 @@
 import { Link } from "react-router-dom";
 
 export default function Home() {
+  // SEO: <title>Petshop Small Breeds | Luxo e Cuidado para Raças Pequenas</title>
+  // <meta name="description" content="O destino definitivo de luxo para seu pet de raça pequena. Banho, tosa artesanal e cuidados veterinários premium em São Paulo." />
+  // <meta property="og:title" content="Petshop Small Breeds - Heritage of Care" />
+  // <meta property="og:description" content="Redefinindo o luxo pet com estética minimalista e cuidado sênior." />
+  // <meta name="keywords" content="petshop luxo, banho e tosa premium, pet shop itaim bibi, raças pequenas" />
   return (
     <div className="relative flex min-h-screen flex-col font-display bg-background-light text-charcoal">
       <section className="relative bg-white">
@@ -20,13 +25,13 @@ export default function Home() {
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Link
                     to="/agendamento"
-                    className="inline-flex items-center justify-center bg-black px-10 py-5 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all hover:bg-neutral-800 focus:outline-none"
+                    className="inline-flex items-center justify-center bg-black px-10 py-5 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all btn-magnetic"
                   >
                     Agendar Horário
                   </Link>
                   <Link
                     to="/servicos"
-                    className="inline-flex items-center justify-center border border-charcoal px-10 py-5 text-xs font-bold uppercase tracking-[0.2em] text-charcoal transition-all hover:bg-light-grey"
+                    className="inline-flex items-center justify-center border border-charcoal px-10 py-5 text-xs font-bold uppercase tracking-[0.2em] text-charcoal transition-all btn-magnetic"
                   >
                     Ver Serviços
                   </Link>
