@@ -86,12 +86,20 @@ export default function Header() {
               </button>
             </>
           ) : (
-            <Link
-              to="/agendamento"
-              className="inline-flex items-center justify-center bg-black text-white px-6 py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-neutral-800 transition-all duration-300 primary-cta"
-            >
-              Agendar
-            </Link>
+            <>
+              <Link
+                to="/login"
+                className="text-xs font-bold uppercase tracking-widest text-charcoal hover:text-black transition-colors duration-300 mr-2"
+              >
+                Entrar
+              </Link>
+              <Link
+                to="/agendamento"
+                className="inline-flex items-center justify-center bg-black text-white px-6 py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-neutral-800 transition-all duration-300 primary-cta"
+              >
+                Agendar
+              </Link>
+            </>
           )}
         </div>
 
@@ -164,13 +172,22 @@ export default function Header() {
                 </button>
               </div>
             ) : (
-              <Link
-                to="/agendamento"
-                className="flex items-center justify-center bg-black px-6 py-4 text-sm font-bold uppercase tracking-widest text-white primary-cta"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Agendar Horário
-              </Link>
+              <div className="flex flex-col gap-3">
+                <Link
+                  to="/login"
+                  className="flex items-center justify-center border border-charcoal px-6 py-4 text-sm font-bold uppercase tracking-widest text-charcoal"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Entrar
+                </Link>
+                <Link
+                  to="/agendamento"
+                  className="flex items-center justify-center bg-black px-6 py-4 text-sm font-bold uppercase tracking-widest text-white primary-cta"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Agendar Horário
+                </Link>
+              </div>
             )}
           </div>
         </nav>
