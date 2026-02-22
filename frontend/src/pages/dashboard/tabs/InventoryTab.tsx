@@ -239,7 +239,7 @@ export default function InventoryTab({
                   onClick={() =>
                     handleDelete(currentItem.id!, currentItem.name)
                   }
-                  className="px-4 py-2 text-sm font-medium text-white hover:bg-neutral-900 text-white rounded flex items-center gap-1"
+                  className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-red-500 hover:bg-red-50 flex items-center gap-1 transition-colors"
                 >
                   <span className="material-symbols-outlined text-[16px]">
                     delete
@@ -249,13 +249,13 @@ export default function InventoryTab({
               <div className="flex gap-2 ml-auto">
                 <button
                   onClick={() => setIsEditing(false)}
-                  className="px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 rounded"
+                  className="px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={saveItem}
-                  className="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-black rounded"
+                  className="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-black"
                 >
                   Salvar Detalhes
                 </button>

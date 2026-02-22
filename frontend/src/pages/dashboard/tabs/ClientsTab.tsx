@@ -190,13 +190,13 @@ export default function ClientsTab({
             <div className="flex justify-end gap-2 mt-auto">
               <button
                 onClick={() => setIsEditing(false)}
-                className="px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 rounded"
+                className="px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100"
               >
                 Cancelar
               </button>
               <button
                 onClick={saveClient}
-                className="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-black rounded"
+                className="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-black"
               >
                 Salvar
               </button>
@@ -286,7 +286,7 @@ export default function ClientsTab({
                     </button>
                     <button
                       onClick={() => handleDelete(client.id!, client.name)}
-                      className="text-white hover:text-white transition-all duration-500 ease-in-out p-1 ml-2"
+                      className="text-gray-400 hover:text-red-500 transition-all duration-500 ease-in-out p-1 ml-2"
                       title="Excluir"
                     >
                       <span className="material-symbols-outlined text-[18px]">

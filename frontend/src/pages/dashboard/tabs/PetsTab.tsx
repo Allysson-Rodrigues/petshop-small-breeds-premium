@@ -212,13 +212,13 @@ export default function PetsTab({ showToast, searchQuery = "" }: PetsTabProps) {
             <div className="flex justify-end gap-2 mt-auto">
               <button
                 onClick={() => setIsEditing(false)}
-                className="px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 rounded"
+                className="px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100"
               >
                 Cancelar
               </button>
               <button
                 onClick={savePet}
-                className="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-black rounded"
+                className="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-black"
               >
                 Salvar
               </button>
@@ -239,10 +239,10 @@ export default function PetsTab({ showToast, searchQuery = "" }: PetsTabProps) {
                 </div>
                 <span
                   className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${pet.status === "Saudável"
-                      ? "bg-neutral-100 border border-neutral-200 text-neutral-800 font-bold"
-                      : pet.status === "Vacinação Pendente"
-                        ? "bg-white border border-neutral-300 border-dashed text-neutral-600 italic"
-                        : "bg-neutral-600 text-white text-white"
+                    ? "bg-neutral-100 border border-neutral-200 text-neutral-800 font-bold"
+                    : pet.status === "Vacinação Pendente"
+                      ? "bg-white border border-neutral-300 border-dashed text-neutral-600 italic"
+                      : "bg-neutral-600 text-white text-white"
                     }`}
                 >
                   {pet.status}
@@ -315,10 +315,10 @@ export default function PetsTab({ showToast, searchQuery = "" }: PetsTabProps) {
                   <td className="px-6 py-4">
                     <span
                       className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${pet.status === "Saudável"
-                          ? "bg-neutral-100 border border-neutral-200 text-neutral-800 font-bold"
-                          : pet.status === "Vacinação Pendente"
-                            ? "bg-white border border-neutral-300 border-dashed text-neutral-600 italic"
-                            : "bg-neutral-600 text-white text-white"
+                        ? "bg-neutral-100 border border-neutral-200 text-neutral-800 font-bold"
+                        : pet.status === "Vacinação Pendente"
+                          ? "bg-white border border-neutral-300 border-dashed text-neutral-600 italic"
+                          : "bg-neutral-600 text-white text-white"
                         }`}
                     >
                       {pet.status}
@@ -336,7 +336,7 @@ export default function PetsTab({ showToast, searchQuery = "" }: PetsTabProps) {
                     </button>
                     <button
                       onClick={() => handleDelete(pet.id!, pet.name)}
-                      className="text-white hover:text-white transition-all duration-500 ease-in-out p-1 ml-2"
+                      className="text-gray-400 hover:text-red-500 transition-all duration-500 ease-in-out p-1 ml-2"
                       title="Excluir"
                     >
                       <span className="material-symbols-outlined text-[18px]">
