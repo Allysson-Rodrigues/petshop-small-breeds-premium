@@ -1,4 +1,8 @@
 import type { User } from "../entities/user.entity.js";
+import {
+	DuplicateEmailError,
+	InputValidationError,
+} from "../errors/auth-errors.js";
 import type { UserRepository } from "../repositories/user.repository.js";
 import type { Hasher } from "../services/hasher.js";
 
@@ -15,15 +19,34 @@ export class RegisterUserUseCase {
 	) {}
 
 	async execute(params: RegisterUserParams): Promise<User> {
-		const existingUser = await this.userRepository.findByEmail(params.email);
-		if (existingUser) {
-			throw new Error("Email already registered");
+		const normalizedName = params.name.trim();
+		const normalizedEmail = params.email.trim().toLowerCase();
+		const normalizedPassword = params.password.trim();
+
+		if (!normalizedName || normalizedName.length < 2) {
+			throw new InputValidationError("Invalid name");
 		}
 
-		const hashedPassword = await this.hasher.hash(params.password);
+		const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if (!emailPattern.test(normalizedEmail)) {
+			throw new InputValidationError("Invalid email");
+		}
+
+		if (normalizedPassword.length < 6) {
+			throw new InputValidationError(
+				"Password must have at least 6 characters",
+			);
+		}
+
+		const existingUser = await this.userRepository.findByEmail(normalizedEmail);
+		if (existingUser) {
+			throw new DuplicateEmailError();
+		}
+
+		const hashedPassword = await this.hasher.hash(normalizedPassword);
 		return this.userRepository.create({
-			name: params.name,
-			email: params.email,
+			name: normalizedName,
+			email: normalizedEmail,
 			password: hashedPassword,
 		});
 	}

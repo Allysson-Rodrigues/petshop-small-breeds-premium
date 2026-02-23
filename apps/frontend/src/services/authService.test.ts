@@ -46,6 +46,9 @@ describe("authService", () => {
 		const result = await authService.login("wrong@email.com", "wrongpass");
 
 		expect(result.ok).toBe(false);
+		if (!result.ok) {
+			expect(result.message).toBe("E-mail ou senha incorretos.");
+		}
 		expect(localStorage.getItem("auth_token")).toBeNull();
 	});
 
@@ -69,7 +72,7 @@ describe("authService", () => {
 			"fetch",
 			vi.fn().mockResolvedValue(
 				new Response(JSON.stringify({ message: "Email already registered" }), {
-					status: 400,
+					status: 409,
 					headers: { "Content-Type": "application/json" },
 				}),
 			),
@@ -82,6 +85,9 @@ describe("authService", () => {
 		);
 
 		expect(registeredAgain.ok).toBe(false);
+		if (!registeredAgain.ok) {
+			expect(registeredAgain.message).toBe("Este e-mail já está cadastrado.");
+		}
 	});
 
 	it("should handle logout correctly", () => {

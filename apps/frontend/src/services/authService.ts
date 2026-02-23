@@ -67,6 +67,26 @@ const mapBackendMessageToPtBr = (
 		return "Preencha todos os campos.";
 	}
 
+	if (normalized === "invalid email") {
+		return "Informe um e-mail válido.";
+	}
+
+	if (normalized === "invalid name") {
+		return "Informe um nome válido.";
+	}
+
+	if (normalized === "password must have at least 6 characters") {
+		return "A senha deve ter pelo menos 6 caracteres.";
+	}
+
+	if (status === 409) {
+		return "Este e-mail já está cadastrado.";
+	}
+
+	if (status === 422) {
+		return "Dados inválidos. Revise os campos e tente novamente.";
+	}
+
 	return null;
 };
 

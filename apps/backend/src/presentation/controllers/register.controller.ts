@@ -1,3 +1,7 @@
+import {
+	DuplicateEmailError,
+	InputValidationError,
+} from "../../domain/errors/auth-errors.js";
 import type { RegisterUserUseCase } from "../../domain/use-cases/register-user.use-case.js";
 import type { Controller } from "../protocols/controller.js";
 import type { HttpRequest, HttpResponse } from "../protocols/http.js";
@@ -14,11 +18,13 @@ export class RegisterController implements Controller {
 	async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
 		try {
 			const body = (httpRequest.body ?? {}) as RegisterRequestBody;
-			const { name, email, password } = body;
+			const name = body.name?.trim() ?? "";
+			const email = body.email?.trim() ?? "";
+			const password = body.password?.trim() ?? "";
 
 			if (!name || !email || !password) {
 				return {
-					statusCode: 400,
+					statusCode: 422,
 					body: { message: "Missing parameters" },
 				};
 			}
@@ -35,12 +41,23 @@ export class RegisterController implements Controller {
 				body: safeUser,
 			};
 		} catch (error: unknown) {
-			const message =
-				error instanceof Error ? error.message : "Unable to register user";
+			if (error instanceof DuplicateEmailError) {
+				return {
+					statusCode: 409,
+					body: { message: error.message },
+				};
+			}
+
+			if (error instanceof InputValidationError) {
+				return {
+					statusCode: 422,
+					body: { message: error.message },
+				};
+			}
 
 			return {
-				statusCode: 400,
-				body: { message },
+				statusCode: 500,
+				body: { message: "Unable to register user" },
 			};
 		}
 	}

@@ -39,4 +39,24 @@ describe("Auth Integration Tests", () => {
 		expect(response.statusCode).toBe(401);
 		expect(response.body).toHaveProperty("message", "Invalid credentials");
 	});
+
+	it("should return 409 when email is already registered", async () => {
+		const response = await request(app)
+			.post("/api/auth/register")
+			.send(credentials);
+
+		expect(response.statusCode).toBe(409);
+		expect(response.body).toHaveProperty("message", "Email already registered");
+	});
+
+	it("should return 422 for invalid registration payload", async () => {
+		const response = await request(app).post("/api/auth/register").send({
+			name: "A",
+			email: "invalid-email",
+			password: "123",
+		});
+
+		expect(response.statusCode).toBe(422);
+		expect(response.body).toHaveProperty("message", "Invalid name");
+	});
 });
