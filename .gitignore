@@ -50,3 +50,7 @@ docs/
 
 # Local-only database (SQLite)
 apps/backend/prisma/dev.db
+
+# Local-only helper scripts
+apps/frontend/download_img.py
+apps/frontend/download_cushion.py
