@@ -13,7 +13,8 @@ export class LoginController implements Controller {
 	async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
 		try {
 			const body = (httpRequest.body ?? {}) as LoginRequestBody;
-			const { email, password } = body;
+			const email = body.email?.trim().toLowerCase() ?? "";
+			const password = body.password?.trim() ?? "";
 
 			if (!email || !password) {
 				return {

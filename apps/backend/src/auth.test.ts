@@ -30,6 +30,17 @@ describe("Auth Integration Tests", () => {
 		expect(response.body.user.email).toBe(credentials.email);
 	});
 
+	it("should login with mixed-case email", async () => {
+		const response = await request(app).post("/api/auth/login").send({
+			email: credentials.email.toUpperCase(),
+			password: credentials.password,
+		});
+
+		expect(response.statusCode).toBe(200);
+		expect(response.body).toHaveProperty("token");
+		expect(response.body.user.email).toBe(credentials.email);
+	});
+
 	it("should fail to login with wrong password", async () => {
 		const response = await request(app).post("/api/auth/login").send({
 			email: credentials.email,
