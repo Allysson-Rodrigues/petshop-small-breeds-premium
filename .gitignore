@@ -73,6 +73,7 @@ test-results/
 __pycache__/
 *.pyc
 *.pid
+apps/frontend/.npmrc
 
 # Monorepo: keep a single lockfile at repo root
 apps/*/package-lock.json
