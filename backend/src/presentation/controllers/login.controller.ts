@@ -8,7 +8,6 @@ export class LoginController implements Controller {
 	async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
 		try {
 			const { email, password } = httpRequest.body as any;
-			console.log("[LoginController] Attempting login for:", email);
 
 			if (!email || !password) {
 				return {

@@ -15,17 +15,12 @@ export class RegisterUserUseCase {
 	) {}
 
 	async execute(params: RegisterUserParams): Promise<User> {
-		console.log(
-			`[RegisterUserUseCase] Tentativa de registro para: ${params.email}`,
-		);
 		const existingUser = await this.userRepository.findByEmail(params.email);
 		if (existingUser) {
-			console.log(`[RegisterUserUseCase] Email já cadastrado: ${params.email}`);
 			throw new Error("Email already registered");
 		}
 
 		const hashedPassword = await this.hasher.hash(params.password);
-		console.log(`[RegisterUserUseCase] Senha hasheada. Criando usuário...`);
 		return this.userRepository.create({
 			name: params.name,
 			email: params.email,
