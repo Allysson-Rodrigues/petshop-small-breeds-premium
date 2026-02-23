@@ -49,18 +49,42 @@ type AuthResult =
 			message: string;
 	  };
 
+const mapBackendMessageToPtBr = (
+	message: string,
+	status: number,
+): string | null => {
+	const normalized = message.trim().toLowerCase();
+
+	if (status === 401 || normalized === "invalid credentials") {
+		return "E-mail ou senha incorretos.";
+	}
+
+	if (normalized === "email already registered") {
+		return "Este e-mail já está cadastrado.";
+	}
+
+	if (normalized === "missing parameters") {
+		return "Preencha todos os campos.";
+	}
+
+	return null;
+};
+
 const getErrorMessageFromResponse = async (response: Response): Promise<string> => {
 	try {
 		const payload = (await response.json()) as { message?: unknown };
 		if (typeof payload?.message === "string" && payload.message.trim()) {
-			return payload.message;
+			return (
+				mapBackendMessageToPtBr(payload.message, response.status) ??
+				payload.message
+			);
 		}
 	} catch {
 		// ignore parse errors
 	}
 
 	return response.status === 401
-		? "Credenciais inválidas."
+		? "E-mail ou senha incorretos."
 		: "Não foi possível concluir a solicitação.";
 };
 
