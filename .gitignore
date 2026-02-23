@@ -43,3 +43,7 @@ coverage/
 .cache
 .parcel-cache
 .turbo
+
+# Local-only folders (keep out of repo)
+apps/frontend/design-system/
+docs/
