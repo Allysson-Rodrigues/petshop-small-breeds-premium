@@ -1,7 +1,8 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import { getJwtSecret } from "../config/env.js";
 
-const secret = process.env.JWT_SECRET || "secret";
+const secret = getJwtSecret();
 
 export const authMiddleware = (
 	req: Request,
@@ -30,12 +31,20 @@ export const authMiddleware = (
 		return res.status(401).json({ message: "Token error" });
 	}
 
-	jwt.verify(token, secret, (err: any, decoded: any) => {
-		if (err) {
+	try {
+		const decoded = jwt.verify(token, secret);
+		if (typeof decoded !== "object" || decoded === null || !("id" in decoded)) {
 			return res.status(401).json({ message: "Token invalid" });
 		}
 
-		req.headers["x-user-id"] = decoded.id;
+		const userId = decoded.id;
+		if (typeof userId !== "string") {
+			return res.status(401).json({ message: "Token invalid" });
+		}
+
+		req.headers["x-user-id"] = userId;
 		return next();
-	});
+	} catch {
+		return res.status(401).json({ message: "Token invalid" });
+	}
 };

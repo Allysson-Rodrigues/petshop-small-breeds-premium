@@ -2,39 +2,49 @@ import type { CreatePetUseCase } from "../../domain/use-cases/create-pet.use-cas
 import type { Controller } from "../protocols/controller.js";
 import type { HttpRequest, HttpResponse } from "../protocols/http.js";
 
+interface CreatePetRequestBody {
+	name?: string;
+	breed?: string;
+	age?: number | string;
+}
+
 export class CreatePetController implements Controller {
 	constructor(private readonly createPetUseCase: CreatePetUseCase) {}
 
 	async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
 		try {
-			const userId = (httpRequest.headers as any)?.["x-user-id"];
-			const { name, breed, age } = httpRequest.body as any;
-			console.log("[CreatePet] Request payload:", { name, breed, age, userId });
+			const rawUserId = httpRequest.headers?.["x-user-id"];
+			const userId = Array.isArray(rawUserId) ? rawUserId[0] : rawUserId;
+			const body = (httpRequest.body ?? {}) as CreatePetRequestBody;
+			const { name, breed, age } = body;
+			const parsedAge = Number(age);
 
-			if (!userId)
+			if (!userId) {
 				return { statusCode: 401, body: { message: "Unauthorized" } };
-			if (!name || !breed || !age)
+			}
+
+			if (!name || !breed || Number.isNaN(parsedAge)) {
 				return { statusCode: 400, body: { message: "Missing params" } };
+			}
 
 			const pet = await this.createPetUseCase.execute({
 				name,
 				breed,
-				age: Number(age),
-				userId: userId as string,
+				age: parsedAge,
+				userId,
 			});
-
-			console.log("[CreatePet] Success:", pet.id);
-
-			console.log("[CreatePet] Success:", pet.id);
 
 			return {
 				statusCode: 201,
 				body: pet,
 			};
-		} catch (error: any) {
+		} catch (error: unknown) {
+			const message =
+				error instanceof Error ? error.message : "Unable to create pet";
+
 			return {
 				statusCode: 500,
-				body: { message: error.message },
+				body: { message },
 			};
 		}
 	}

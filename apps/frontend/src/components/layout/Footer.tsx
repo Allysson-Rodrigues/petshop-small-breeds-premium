@@ -13,7 +13,10 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-white border-t border-border-grey pt-24 pb-16 mt-auto">
+    <footer
+      className="bg-white border-t border-border-grey pt-24 pb-16 mt-auto"
+      onKeyDown={() => undefined}
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Main Footer Grid */}
         <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-12 mb-20">
@@ -120,7 +123,11 @@ export default function Footer() {
               Assine para convites exclusivos e novidades curadas.
             </p>
             <form onSubmit={handleSubscribe} className="relative group">
+              <label htmlFor="newsletter-email" className="sr-only">
+                E-mail para newsletter
+              </label>
               <input
+                id="newsletter-email"
                 type="email"
                 required
                 placeholder="E-mail"

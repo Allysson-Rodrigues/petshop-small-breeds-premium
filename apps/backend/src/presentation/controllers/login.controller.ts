@@ -3,8 +3,8 @@ import type { Controller } from "../protocols/controller.js";
 import type { HttpRequest, HttpResponse } from "../protocols/http.js";
 
 interface LoginRequestBody {
-	email: string;
-	password: string;
+	email?: string;
+	password?: string;
 }
 
 export class LoginController implements Controller {
@@ -12,7 +12,8 @@ export class LoginController implements Controller {
 
 	async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
 		try {
-			const { email, password } = httpRequest.body as LoginRequestBody;
+			const body = (httpRequest.body ?? {}) as LoginRequestBody;
+			const { email, password } = body;
 
 			if (!email || !password) {
 				return {

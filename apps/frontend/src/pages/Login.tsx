@@ -38,7 +38,10 @@ export default function Login() {
     }
   };
   return (
-    <div className="bg-background-light font-display antialiased">
+    <div
+      className="bg-background-light font-display antialiased"
+      onKeyDown={() => undefined}
+    >
       <Helmet>
         <title>Login | Small Breeds</title>
         <meta name="description" content="Acesse sua conta Small Breeds para gerenciar agendamentos e preferências do seu pet." />
@@ -156,7 +159,8 @@ export default function Login() {
 
               {/* Forgot Password Link */}
               <div className="flex items-center justify-end">
-                <a
+                <button
+                  type="button"
                   className="text-sm font-medium text-neutral-500 hover:text-primary transition-colors cursor-pointer"
                   onClick={(e) => {
                     e.preventDefault();
@@ -164,7 +168,7 @@ export default function Login() {
                   }}
                 >
                   Esqueceu a Senha?
-                </a>
+                </button>
               </div>
 
               {/* Sign In Button */}

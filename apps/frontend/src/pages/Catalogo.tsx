@@ -20,7 +20,10 @@ export default function Catalogo() {
   });
 
   return (
-    <div className="min-h-screen bg-white font-sans text-charcoal flex flex-col">
+    <div
+      className="min-h-screen bg-white font-sans text-charcoal flex flex-col"
+      onKeyDown={() => undefined}
+    >
       <Helmet>
         <title>Catálogo | Small Breeds</title>
         <meta name="description" content="Coleção exclusiva de produtos premium para raças pequenas. Acessórios de luxo, ração e cuidados." />

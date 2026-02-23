@@ -37,10 +37,14 @@ export default function SettingsTab({ showToast }: SettingsTabProps) {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="settings-full-name"
+                  className="text-sm font-medium text-gray-700"
+                >
                   Nome Completo
                 </label>
                 <input
+                  id="settings-full-name"
                   type="text"
                   className="w-full bg-gray-50 border border-border-grey rounded-lg px-4 py-2.5 md:py-2 text-sm focus:ring-1 focus:ring-primary outline-none"
                   value={user?.name || ""}
@@ -48,10 +52,14 @@ export default function SettingsTab({ showToast }: SettingsTabProps) {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="settings-account-email"
+                  className="text-sm font-medium text-gray-700"
+                >
                   E-mail da Conta
                 </label>
                 <input
+                  id="settings-account-email"
                   type="email"
                   className="w-full bg-gray-50 border border-border-grey rounded-lg px-4 py-2.5 md:py-2 text-sm focus:ring-1 focus:ring-primary outline-none"
                   value={user?.email || ""}
@@ -75,8 +83,12 @@ export default function SettingsTab({ showToast }: SettingsTabProps) {
                     Receber alertas de estoque e novos agendamentos.
                   </p>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                <label
+                  htmlFor="settings-push-notifications"
+                  className="relative inline-flex items-center cursor-pointer shrink-0"
+                >
                   <input
+                    id="settings-push-notifications"
                     type="checkbox"
                     className="sr-only peer"
                     checked={notifications}
@@ -95,7 +107,11 @@ export default function SettingsTab({ showToast }: SettingsTabProps) {
                     Forçar esquema escuro ou claro (mockup visual).
                   </p>
                 </div>
+                <label htmlFor="settings-theme" className="sr-only">
+                  Tema da interface
+                </label>
                 <select
+                  id="settings-theme"
                   className="bg-white border border-[#e5e5e5] rounded-lg text-xs md:text-sm px-3 py-1.5 focus:ring-1 focus:ring-primary outline-none shrink-0"
                   value={theme}
                   onChange={(e) => setTheme(e.target.value)}

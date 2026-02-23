@@ -1,4 +1,6 @@
+import type { JwtPayload } from "jsonwebtoken";
+
 export interface Encrypter {
-	encrypt(payload: any): Promise<string>;
-	decrypt(token: string): Promise<any>;
+	encrypt(payload: Record<string, unknown>): Promise<string>;
+	decrypt(token: string): Promise<JwtPayload | string>;
 }

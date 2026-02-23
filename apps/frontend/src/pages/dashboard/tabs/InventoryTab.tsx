@@ -154,7 +154,10 @@ export default function InventoryTab({
   );
 
   return (
-    <div className="max-w-7xl mx-auto flex flex-col gap-6 md:gap-8">
+    <div
+      className="max-w-7xl mx-auto flex flex-col gap-6 md:gap-8"
+      onKeyDown={() => undefined}
+    >
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl md:text-2xl font-bold text-primary tracking-tight">
@@ -183,6 +186,7 @@ export default function InventoryTab({
               <input
                 type="text"
                 placeholder="Nome do Produto"
+                aria-label="Nome do Produto"
                 value={currentItem.name}
                 onChange={(e) =>
                   setCurrentItem({ ...currentItem, name: e.target.value })
@@ -205,6 +209,7 @@ export default function InventoryTab({
               <input
                 type="text"
                 placeholder="SKU"
+                aria-label="SKU"
                 value={currentItem.sku}
                 onChange={(e) =>
                   setCurrentItem({ ...currentItem, sku: e.target.value })
@@ -214,6 +219,7 @@ export default function InventoryTab({
               <input
                 type="number"
                 placeholder="Estoque Inicial"
+                aria-label="Estoque inicial"
                 value={currentItem.stock}
                 onChange={(e) =>
                   setCurrentItem({
@@ -226,6 +232,7 @@ export default function InventoryTab({
               <input
                 type="text"
                 placeholder="Unidade (ex: kg, unid)"
+                aria-label="Unidade de medida"
                 value={currentItem.unit}
                 onChange={(e) =>
                   setCurrentItem({ ...currentItem, unit: e.target.value })

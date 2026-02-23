@@ -3,7 +3,6 @@ import { PrismaClient } from "@prisma/client";
 process.env.DATABASE_URL ??= "file:./dev.db";
 
 declare global {
-	// biome-ignore lint/style/noNamespace: Node global cache for Prisma singleton
 	namespace NodeJS {
 		interface Global {
 			prisma?: PrismaClient;

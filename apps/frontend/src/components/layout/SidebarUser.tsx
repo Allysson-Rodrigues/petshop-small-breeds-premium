@@ -13,7 +13,10 @@ export default function SidebarUser({ isCollapsed }: { isCollapsed?: boolean }) 
     };
 
     return (
-        <div className="p-4 pb-8 lg:pb-4 border-t border-white/10 flex items-center justify-between overflow-hidden shrink-0">
+        <div
+            className="p-4 pb-8 lg:pb-4 border-t border-white/10 flex items-center justify-between overflow-hidden shrink-0"
+            onKeyDown={() => undefined}
+        >
             <div className="flex items-center gap-3 whitespace-nowrap">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-500 to-gray-700 flex items-center justify-center text-xs font-bold text-white uppercase shrink-0 border border-white/10">
                     {getInitials(user.name)}

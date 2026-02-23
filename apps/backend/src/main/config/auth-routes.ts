@@ -7,13 +7,14 @@ import { PrismaUserRepository } from "../../infrastructure/prisma/prisma-user.re
 import { LoginController } from "../../presentation/controllers/login.controller.js";
 import { RegisterController } from "../../presentation/controllers/register.controller.js";
 import { adaptRoute } from "../adapters/express-route-adapter.js";
+import { getJwtSecret } from "./env.js";
 
 const router = Router();
 
 // Factory Simple (Composition Root)
 const userRepository = new PrismaUserRepository();
 const hasher = new BcryptHasher();
-const encrypter = new JwtEncrypter(process.env.JWT_SECRET || "secret");
+const encrypter = new JwtEncrypter(getJwtSecret());
 
 const registerUseCase = new RegisterUserUseCase(userRepository, hasher);
 const loginUseCase = new LoginUseCase(userRepository, hasher, encrypter);

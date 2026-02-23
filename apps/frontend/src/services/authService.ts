@@ -1,109 +1,121 @@
 export type UserRole = "admin" | "client";
 
 export interface User {
-    name: string;
-    email: string;
-    role: UserRole;
+	name: string;
+	email: string;
+	role: UserRole;
 }
 
-interface StoredUser {
-    id: string;
-    name: string;
-    email: string;
-    passHash: string;
+interface AuthApiUser {
+	id: string;
+	name: string;
+	email: string;
 }
 
 const AUTH_TOKEN_KEY = "auth_token";
 const AUTH_USER_KEY = "auth_user";
-const MOCK_USERS_KEY = "mock_users";
 
-const simpleHash = (input: string): string => {
-    let hash = 0;
-    for (let i = 0; i < input.length; i++) {
-        const char = input.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash |= 0;
-    }
-    return `h_${Math.abs(hash).toString(36)}`;
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "/api").replace(
+	/\/$/,
+	"",
+);
+
+const resolveAdminEmails = (): Set<string> => {
+	const raw = import.meta.env.VITE_ADMIN_EMAILS ?? "admin@petshop.com";
+	return new Set(
+		raw
+			.split(",")
+			.map((email: string) => email.trim().toLowerCase())
+			.filter(Boolean),
+	);
 };
 
+const adminEmails = resolveAdminEmails();
+
+const resolveRole = (email: string): UserRole => {
+	return adminEmails.has(email.toLowerCase()) ? "admin" : "client";
+};
+
+const mapApiUserToSessionUser = (user: AuthApiUser): User => ({
+	name: user.name,
+	email: user.email,
+	role: resolveRole(user.email),
+});
+
 export const authService = {
-    login: async (email: string, pass: string): Promise<boolean> => {
-        await new Promise((resolve) => setTimeout(resolve, 200));
+	login: async (email: string, pass: string): Promise<boolean> => {
+		if (!email || !pass) return false;
 
-        if (!email || !pass) return false;
+		try {
+			const response = await fetch(`${API_BASE_URL}/auth/login`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ email, password: pass }),
+			});
 
-        if (email === "admin@petshop.com" && pass === "admin123") {
-            const adminUser: User = {
-                name: "Admin Geral",
-                email,
-                role: "admin",
-            };
-            authService.saveSession("simulated_jwt_token_admin_456", adminUser);
-            return true;
-        }
+			if (!response.ok) return false;
 
-        const storedUsers: StoredUser[] = JSON.parse(localStorage.getItem(MOCK_USERS_KEY) || "[]");
-        const passHash = simpleHash(pass);
-        const found = storedUsers.find((u) => u.email === email && u.passHash === passHash);
+			const payload = (await response.json()) as {
+				token?: string;
+				user?: AuthApiUser;
+			};
 
-        if (found) {
-            const clientUser: User = {
-                name: found.name,
-                email: found.email,
-                role: "client",
-            };
-            authService.saveSession(`simulated_jwt_token_user_${found.id}`, clientUser);
-            return true;
-        }
+			if (!payload.token || !payload.user?.email || !payload.user?.name) {
+				return false;
+			}
 
-        return false;
-    },
+			authService.saveSession(payload.token, mapApiUserToSessionUser(payload.user));
+			return true;
+		} catch {
+			return false;
+		}
+	},
 
-    register: async (name: string, email: string, pass: string): Promise<boolean> => {
-        await new Promise((resolve) => setTimeout(resolve, 300));
+	register: async (name: string, email: string, pass: string): Promise<boolean> => {
+		if (!name || !email || !pass) return false;
 
-        if (!name || !email || !pass) return false;
+		try {
+			const response = await fetch(`${API_BASE_URL}/auth/register`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ name, email, password: pass }),
+			});
 
-        const storedUsers: StoredUser[] = JSON.parse(localStorage.getItem(MOCK_USERS_KEY) || "[]");
+			return response.ok;
+		} catch {
+			return false;
+		}
+	},
 
-        if (storedUsers.some((u) => u.email === email)) {
-            return false;
-        }
+	saveSession: (token: string, user: User) => {
+		localStorage.setItem(AUTH_TOKEN_KEY, token);
+		localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+	},
 
-        const newUser: StoredUser = {
-            id: crypto.randomUUID(),
-            name,
-            email,
-            passHash: simpleHash(pass),
-        };
-        storedUsers.push(newUser);
-        localStorage.setItem(MOCK_USERS_KEY, JSON.stringify(storedUsers));
+	logout: () => {
+		localStorage.removeItem(AUTH_TOKEN_KEY);
+		localStorage.removeItem(AUTH_USER_KEY);
+	},
 
-        return true;
-    },
+	isAuthenticated: () => {
+		return !!localStorage.getItem(AUTH_TOKEN_KEY);
+	},
 
-    saveSession: (token: string, user: User) => {
-        localStorage.setItem(AUTH_TOKEN_KEY, token);
-        localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
-    },
+	getToken: (): string | null => {
+		return localStorage.getItem(AUTH_TOKEN_KEY);
+	},
 
-    logout: () => {
-        localStorage.removeItem(AUTH_TOKEN_KEY);
-        localStorage.removeItem(AUTH_USER_KEY);
-    },
-
-    isAuthenticated: () => {
-        return !!localStorage.getItem(AUTH_TOKEN_KEY);
-    },
-
-    getUser: (): User | null => {
-        const userJson = localStorage.getItem(AUTH_USER_KEY);
-        if (!userJson) return null;
-        try {
-            return JSON.parse(userJson) as User;
-        } catch {
-            return null;
-        }
-    },
+	getUser: (): User | null => {
+		const userJson = localStorage.getItem(AUTH_USER_KEY);
+		if (!userJson) return null;
+		try {
+			return JSON.parse(userJson) as User;
+		} catch {
+			return null;
+		}
+	},
 };

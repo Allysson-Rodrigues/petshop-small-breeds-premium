@@ -35,7 +35,13 @@ export default function Dashboard() {
   if (!user) return null;
 
   return (
-    <div className="bg-background-light text-primary font-display antialiased min-h-screen flex overflow-hidden">
+    <div
+      className="bg-background-light text-primary font-display antialiased min-h-screen flex overflow-hidden"
+      onKeyDown={() => undefined}
+    >
+      <a href="#main-content" className="sr-only focus:not-sr-only">
+        Pular para o conteúdo principal do painel
+      </a>
       {/* Sidebar Component */}
       <Sidebar
         activeTab={activeTab}
@@ -53,7 +59,7 @@ export default function Dashboard() {
       )}
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col h-screen overflow-hidden relative bg-background-light">
+      <main id="main-content" className="flex-1 flex flex-col h-screen overflow-hidden relative bg-background-light">
         {/* Header especializado */}
         <DashboardHeader
           activeTab={activeTab}

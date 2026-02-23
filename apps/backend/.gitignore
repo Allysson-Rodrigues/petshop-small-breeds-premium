@@ -18,6 +18,9 @@ npm-debug.log*
 # Prisma generated files
 /src/generated/prisma
 
+# Local Prisma databases
+prisma/*.db
+
 # OS and Editors
 .DS_Store
 .vscode/

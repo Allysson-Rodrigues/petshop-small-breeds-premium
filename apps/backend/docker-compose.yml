@@ -1,33 +1,18 @@
-version: '3.8'
-
 services:
-  # Sua API Node.js
   api:
-    build: .
-    container_name: node-api-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: petshop-backend-api
     ports:
-      - '5000:5000'
+      - "3000:3000"
     env_file:
       - .env
-    depends_on:
-      - mongodb
-    networks:
-      - app-network
-
-  # Seu Banco de Dados MongoDB
-  mongodb:
-    image: mongo:latest
-    container_name: mongodb-service
-    ports:
-      - '27017:27017'
+    environment:
+      NODE_ENV: production
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
     volumes:
-      - mongo-data:/data/db
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
+      - sqlite-data:/app/prisma
 
 volumes:
-  mongo-data:
+  sqlite-data:

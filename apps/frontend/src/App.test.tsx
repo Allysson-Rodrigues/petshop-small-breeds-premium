@@ -4,22 +4,22 @@ import { describe, expect, it } from "vitest";
 import App from "./App";
 
 describe("App Component", () => {
-  it("renders PetShop Small Breeds title", () => {
+  it("renders PetShop Small Breeds title", async () => {
     render(
       <HelmetProvider>
         <App />
       </HelmetProvider>
     );
-    const titleElements = screen.getAllByText(/PETSHOP/i);
+    const titleElements = await screen.findAllByText(/PETSHOP/i);
     expect(titleElements.length).toBeGreaterThan(0);
   });
 
-  it("renders Hero section text", () => {
+  it("renders Hero section text", async () => {
     render(
       <HelmetProvider>
         <App />
       </HelmetProvider>
     );
-    expect(screen.getByText(/Seu Melhor Amigo/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Seu Melhor Amigo/i)).toBeInTheDocument();
   });
 });

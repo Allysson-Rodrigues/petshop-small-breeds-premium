@@ -2,6 +2,12 @@ import type { CreateAppointmentUseCase } from "../../domain/use-cases/create-app
 import type { Controller } from "../protocols/controller.js";
 import type { HttpRequest, HttpResponse } from "../protocols/http.js";
 
+interface CreateAppointmentRequestBody {
+	date?: string;
+	type?: string;
+	petId?: string;
+}
+
 export class CreateAppointmentController implements Controller {
 	constructor(
 		private readonly createAppointmentUseCase: CreateAppointmentUseCase,
@@ -9,37 +15,42 @@ export class CreateAppointmentController implements Controller {
 
 	async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
 		try {
-			const userId = (httpRequest.headers as any)?.["x-user-id"];
-			const { date, type, petId } = httpRequest.body as any;
-			console.log("[CreateApp] Request payload:", {
-				date,
-				type,
-				petId,
-				userId,
-			});
+			const rawUserId = httpRequest.headers?.["x-user-id"];
+			const userId = Array.isArray(rawUserId) ? rawUserId[0] : rawUserId;
+			const body = (httpRequest.body ?? {}) as CreateAppointmentRequestBody;
+			const { date, type, petId } = body;
 
-			if (!userId)
+			if (!userId) {
 				return { statusCode: 401, body: { message: "Unauthorized" } };
-			if (!date || !type || !petId)
+			}
+
+			if (!date || !type || !petId) {
 				return { statusCode: 400, body: { message: "Missing params" } };
+			}
+
+			const parsedDate = new Date(date);
+			if (Number.isNaN(parsedDate.getTime())) {
+				return { statusCode: 400, body: { message: "Invalid date" } };
+			}
 
 			const appointment = await this.createAppointmentUseCase.execute({
-				date: new Date(date),
+				date: parsedDate,
 				type,
-				userId: userId as string,
+				userId,
 				petId,
 			});
-
-			console.log("[CreateApp] Success:", appointment.id);
 
 			return {
 				statusCode: 201,
 				body: appointment,
 			};
-		} catch (error: any) {
+		} catch (error: unknown) {
+			const message =
+				error instanceof Error ? error.message : "Unable to create appointment";
+
 			return {
 				statusCode: 500,
-				body: { message: error.message },
+				body: { message },
 			};
 		}
 	}

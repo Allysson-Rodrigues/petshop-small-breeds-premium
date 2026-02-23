@@ -2,12 +2,20 @@ import type { RegisterUserUseCase } from "../../domain/use-cases/register-user.u
 import type { Controller } from "../protocols/controller.js";
 import type { HttpRequest, HttpResponse } from "../protocols/http.js";
 
+interface RegisterRequestBody {
+	name?: string;
+	email?: string;
+	password?: string;
+}
+
 export class RegisterController implements Controller {
 	constructor(private readonly registerUserUseCase: RegisterUserUseCase) {}
 
 	async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
 		try {
-			const { name, email, password } = httpRequest.body as any;
+			const body = (httpRequest.body ?? {}) as RegisterRequestBody;
+			const { name, email, password } = body;
+
 			if (!name || !email || !password) {
 				return {
 					statusCode: 400,
@@ -20,14 +28,19 @@ export class RegisterController implements Controller {
 				email,
 				password,
 			});
+			const { password: _password, ...safeUser } = user;
+
 			return {
 				statusCode: 201,
-				body: user,
+				body: safeUser,
 			};
-		} catch (error: any) {
+		} catch (error: unknown) {
+			const message =
+				error instanceof Error ? error.message : "Unable to register user";
+
 			return {
 				statusCode: 400,
-				body: { message: error.message },
+				body: { message },
 			};
 		}
 	}

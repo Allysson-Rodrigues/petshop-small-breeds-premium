@@ -8,14 +8,21 @@ import express, {
 } from "express";
 import authRoutes from "./main/config/auth-routes.js";
 import dashboardRoutes from "./main/config/dashboard-routes.js";
+import { getAllowedCorsOrigins } from "./main/config/env.js";
 import healthRoutes from "./main/config/health-routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app: Application = express();
+const allowedCorsOrigins = getAllowedCorsOrigins();
 
-app.use(cors());
+app.use(
+	cors({
+		origin: allowedCorsOrigins,
+		credentials: true,
+	}),
+);
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "../public")));
 

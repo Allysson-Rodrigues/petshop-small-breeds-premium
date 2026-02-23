@@ -38,3 +38,6 @@ dist-ssr
 /playwright/.auth/
 .vercel
 ../frontend_backup
+
+# Workspace kit artifacts (do not commit)
+.agent/

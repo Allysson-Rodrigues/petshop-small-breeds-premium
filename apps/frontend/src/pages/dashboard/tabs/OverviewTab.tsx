@@ -43,7 +43,10 @@ export default function OverviewTab({ showToast, setActiveTab }: OverviewTabProp
   };
 
   return (
-    <div className="max-w-7xl mx-auto flex flex-col gap-6 md:gap-8">
+    <div
+      className="max-w-7xl mx-auto flex flex-col gap-6 md:gap-8"
+      onKeyDown={() => undefined}
+    >
       {/* Page Title */}
       <div>
         <h1 className="text-xl md:text-2xl font-bold text-primary tracking-tight">

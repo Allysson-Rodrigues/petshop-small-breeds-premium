@@ -104,7 +104,10 @@ export default function AppointmentsTab({ showToast }: AppointmentsTabProps) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto flex flex-col gap-6 md:gap-8">
+    <div
+      className="max-w-7xl mx-auto flex flex-col gap-6 md:gap-8"
+      onKeyDown={() => undefined}
+    >
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl md:text-2xl font-bold text-primary tracking-tight">
@@ -131,8 +134,11 @@ export default function AppointmentsTab({ showToast }: AppointmentsTabProps) {
             <h2 className="text-lg font-bold text-primary mb-4">Novo Agendamento</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div className="space-y-1">
-                <label className="text-xs font-medium text-gray-500">Nome do Pet</label>
+                <label htmlFor="appointment-pet" className="text-xs font-medium text-gray-500">
+                  Nome do Pet
+                </label>
                 <input
+                  id="appointment-pet"
                   type="text"
                   placeholder="Ex: Bella"
                   value={currentApp.pet}
@@ -141,8 +147,11 @@ export default function AppointmentsTab({ showToast }: AppointmentsTabProps) {
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-medium text-gray-500">Serviço</label>
+                <label htmlFor="appointment-service" className="text-xs font-medium text-gray-500">
+                  Serviço
+                </label>
                 <input
+                  id="appointment-service"
                   type="text"
                   placeholder="Ex: Banho e Tosa"
                   value={currentApp.service}
@@ -151,8 +160,11 @@ export default function AppointmentsTab({ showToast }: AppointmentsTabProps) {
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-medium text-gray-500">Data</label>
+                <label htmlFor="appointment-date" className="text-xs font-medium text-gray-500">
+                  Data
+                </label>
                 <input
+                  id="appointment-date"
                   type="text"
                   placeholder="Hoje, Amanhã ou Data"
                   value={currentApp.date}
@@ -161,8 +173,11 @@ export default function AppointmentsTab({ showToast }: AppointmentsTabProps) {
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-medium text-gray-500">Horário</label>
+                <label htmlFor="appointment-time" className="text-xs font-medium text-gray-500">
+                  Horário
+                </label>
                 <input
+                  id="appointment-time"
                   type="text"
                   placeholder="Ex: 14:30"
                   value={currentApp.time}
