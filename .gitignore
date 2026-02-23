@@ -72,3 +72,6 @@ test-results/
 __pycache__/
 *.pyc
 *.pid
+
+# Monorepo: keep a single lockfile at repo root
+apps/*/package-lock.json
