@@ -27,14 +27,14 @@ export default function Login() {
     }
 
     setIsLoading(true);
-    const success = await authService.login(email, password);
+    const result = await authService.login(email, password);
     setIsLoading(false);
 
-    if (success) {
+    if (result.ok) {
       showToast("Login realizado com sucesso!");
       navigate("/dashboard");
     } else {
-      setError("E-mail ou senha incorretos.");
+      setError(result.message);
     }
   };
   return (

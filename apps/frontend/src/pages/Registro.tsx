@@ -15,6 +15,7 @@ export default function Registro() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setSuccess(false);
 
     if (!name || !email || !password) {
       setError("Por favor, preencha todos os campos corretamente.");
@@ -24,10 +25,10 @@ export default function Registro() {
     setIsLoading(true);
 
     try {
-      const registered = await authService.register(name, email, password);
+      const result = await authService.register(name, email, password);
 
-      if (!registered) {
-        setError("Este e-mail já está cadastrado.");
+      if (!result.ok) {
+        setError(result.message);
         return;
       }
 

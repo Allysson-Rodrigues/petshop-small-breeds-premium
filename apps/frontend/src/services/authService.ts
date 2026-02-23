@@ -42,9 +42,33 @@ const mapApiUserToSessionUser = (user: AuthApiUser): User => ({
 	role: resolveRole(user.email),
 });
 
+type AuthResult =
+	| { ok: true }
+	| {
+			ok: false;
+			message: string;
+	  };
+
+const getErrorMessageFromResponse = async (response: Response): Promise<string> => {
+	try {
+		const payload = (await response.json()) as { message?: unknown };
+		if (typeof payload?.message === "string" && payload.message.trim()) {
+			return payload.message;
+		}
+	} catch {
+		// ignore parse errors
+	}
+
+	return response.status === 401
+		? "Credenciais inválidas."
+		: "Não foi possível concluir a solicitação.";
+};
+
 export const authService = {
-	login: async (email: string, pass: string): Promise<boolean> => {
-		if (!email || !pass) return false;
+	login: async (email: string, pass: string): Promise<AuthResult> => {
+		if (!email || !pass) {
+			return { ok: false, message: "Preencha e-mail e senha." };
+		}
 
 		try {
 			const response = await fetch(`${API_BASE_URL}/auth/login`, {
@@ -55,7 +79,12 @@ export const authService = {
 				body: JSON.stringify({ email, password: pass }),
 			});
 
-			if (!response.ok) return false;
+			if (!response.ok) {
+				return {
+					ok: false,
+					message: await getErrorMessageFromResponse(response),
+				};
+			}
 
 			const payload = (await response.json()) as {
 				token?: string;
@@ -63,18 +92,23 @@ export const authService = {
 			};
 
 			if (!payload.token || !payload.user?.email || !payload.user?.name) {
-				return false;
+				return {
+					ok: false,
+					message: "Resposta inválida do servidor.",
+				};
 			}
 
 			authService.saveSession(payload.token, mapApiUserToSessionUser(payload.user));
-			return true;
+			return { ok: true };
 		} catch {
-			return false;
+			return { ok: false, message: "Falha de conexão com o servidor." };
 		}
 	},
 
-	register: async (name: string, email: string, pass: string): Promise<boolean> => {
-		if (!name || !email || !pass) return false;
+	register: async (name: string, email: string, pass: string): Promise<AuthResult> => {
+		if (!name || !email || !pass) {
+			return { ok: false, message: "Preencha todos os campos." };
+		}
 
 		try {
 			const response = await fetch(`${API_BASE_URL}/auth/register`, {
@@ -85,9 +119,16 @@ export const authService = {
 				body: JSON.stringify({ name, email, password: pass }),
 			});
 
-			return response.ok;
+			if (!response.ok) {
+				return {
+					ok: false,
+					message: await getErrorMessageFromResponse(response),
+				};
+			}
+
+			return { ok: true };
 		} catch {
-			return false;
+			return { ok: false, message: "Falha de conexão com o servidor." };
 		}
 	},
 

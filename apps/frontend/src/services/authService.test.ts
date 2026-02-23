@@ -27,7 +27,7 @@ describe("authService", () => {
 
 		const result = await authService.login("admin@petshop.com", "admin123");
 
-		expect(result).toBe(true);
+		expect(result.ok).toBe(true);
 		expect(localStorage.getItem("auth_token")).toBe("jwt-token-123");
 		expect(authService.getUser()?.role).toBe("admin");
 	});
@@ -45,7 +45,7 @@ describe("authService", () => {
 
 		const result = await authService.login("wrong@email.com", "wrongpass");
 
-		expect(result).toBe(false);
+		expect(result.ok).toBe(false);
 		expect(localStorage.getItem("auth_token")).toBeNull();
 	});
 
@@ -61,7 +61,7 @@ describe("authService", () => {
 			"pass123",
 		);
 
-		expect(registered).toBe(true);
+		expect(registered.ok).toBe(true);
 	});
 
 	it("should fail to register an existing user when backend rejects", async () => {
@@ -81,7 +81,7 @@ describe("authService", () => {
 			"pass456",
 		);
 
-		expect(registeredAgain).toBe(false);
+		expect(registeredAgain.ok).toBe(false);
 	});
 
 	it("should handle logout correctly", () => {
@@ -97,12 +97,12 @@ describe("authService", () => {
 		expect(authService.getUser()).toBeNull();
 	});
 
-	it("should return false for invalid login inputs", async () => {
+	it("should fail login for invalid inputs", async () => {
 		const fetchMock = vi.fn();
 		vi.stubGlobal("fetch", fetchMock);
 		const result = await authService.login("", "");
 
-		expect(result).toBe(false);
+		expect(result.ok).toBe(false);
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
