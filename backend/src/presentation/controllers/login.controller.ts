@@ -12,11 +12,7 @@ export class LoginController implements Controller {
 
 	async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
 		try {
-<<<<<<< Updated upstream
-			const { email, password } = httpRequest.body as any;
-=======
 			const { email, password } = httpRequest.body as LoginRequestBody;
->>>>>>> Stashed changes
 
 			if (!email || !password) {
 				return {
