@@ -8,7 +8,7 @@ interface LoginRequestBody {
 }
 
 export class LoginController implements Controller {
-	constructor(private readonly loginUseCase: LoginUseCase) { }
+	constructor(private readonly loginUseCase: LoginUseCase) {}
 
 	async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
 		try {
@@ -27,7 +27,8 @@ export class LoginController implements Controller {
 				body: result,
 			};
 		} catch (error: unknown) {
-			const message = error instanceof Error ? error.message : "Authentication failed";
+			const message =
+				error instanceof Error ? error.message : "Authentication failed";
 			return {
 				statusCode: 401,
 				body: { message },

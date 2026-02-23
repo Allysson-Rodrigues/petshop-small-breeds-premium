@@ -218,7 +218,7 @@ export default function PetsTab({ showToast, searchQuery = "" }: PetsTabProps) {
               </button>
               <button
                 onClick={savePet}
-                className="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-black"
+                className="px-4 py-2 text-sm font-medium text-white bg-neutral-900 hover:bg-black rounded-md"
               >
                 Salvar
               </button>

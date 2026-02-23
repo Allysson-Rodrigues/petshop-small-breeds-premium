@@ -5,7 +5,7 @@ import type { HttpRequest, HttpResponse } from "../protocols/http.js";
 export class GetCustomerDashboardController implements Controller {
 	constructor(
 		private readonly getDashboardUseCase: GetCustomerDashboardUseCase,
-	) { }
+	) {}
 
 	async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
 		try {
@@ -23,10 +23,12 @@ export class GetCustomerDashboardController implements Controller {
 				statusCode: 200,
 				body: dashboardData,
 			};
-		} catch (error: any) {
+		} catch (error: unknown) {
+			const message =
+				error instanceof Error ? error.message : "Failed to load dashboard";
 			return {
 				statusCode: 500,
-				body: { message: error.message },
+				body: { message },
 			};
 		}
 	}

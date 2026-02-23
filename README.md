@@ -30,4 +30,4 @@ npm run dev:all
 ## Endereços padrão
 
 - Frontend: `http://localhost:5173`
-- Backend: `http://localhost:3000`
+- Backend: `http://localhost:3000` (ou a porta definida em `backend/.env` via `PORT`)
