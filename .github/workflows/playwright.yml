@@ -12,19 +12,43 @@ jobs:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
-        node-version: lts/*
+        node-version: 24
         cache: 'npm'
     
     - name: Install dependencies
-      run: npm install --legacy-peer-deps
+      run: npm ci --legacy-peer-deps
 
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-      working-directory: apps/frontend
+    - name: Setup backend env
+      run: npm run setup:env
 
-    - name: Run Playwright tests
-      run: npx playwright test
+    - name: Run Playwright tests (with backend)
       working-directory: apps/frontend
+      run: |
+        set -euo pipefail
+
+        # Start backend in background (required for Vite proxy /api -> :3000)
+        (cd ../backend && npx prisma generate && npx prisma migrate deploy && npm run dev) &
+        BACKEND_PID=$!
+        trap "kill $BACKEND_PID" EXIT
+
+        # Wait for backend health
+        for i in {1..60}; do
+          if curl -fsS http://localhost:3000/api/health >/dev/null; then
+            break
+          fi
+          sleep 1
+        done
+        curl -fsS http://localhost:3000/api/health >/dev/null
+
+        # Ensure admin user exists for UI tests (accept 201 or 409)
+        curl -sS -o /dev/null -w "%{http_code}" \
+          -X POST http://localhost:3000/api/auth/register \
+          -H "Content-Type: application/json" \
+          -d '{"name":"Admin Geral","email":"admin@petshop.com","password":"admin123"}' \
+          | grep -E "^(201|409)$" >/dev/null
+
+        npx playwright install --with-deps
+        npx playwright test
 
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
