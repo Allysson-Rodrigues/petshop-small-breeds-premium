@@ -18,7 +18,7 @@ const fadeVariants = {
     exit: { opacity: 0 },
 };
 
-const transition = { duration: 0.4, ease: [0.22, 1, 0.36, 1] };
+const transition = { duration: 0.4, ease: [0.22, 1, 0.36, 1] } as const;
 
 export default function PageTransition({ children, withSlide = true }: PageTransitionProps) {
     const variants = withSlide ? slideVariants : fadeVariants;
