@@ -8,6 +8,7 @@ export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [error, setError] = useState("");
   const [toastMessage, setToastMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -145,15 +146,20 @@ export default function Login() {
                     className="flex h-12 w-full border-b border-neutral-300 bg-transparent px-0 py-3 text-sm text-black placeholder:text-neutral-400 focus:border-black focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-200"
                     id="password"
                     placeholder="••••••••"
-                    type="password"
+                    type={isPasswordVisible ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
-                  <span className="absolute right-3 top-3 text-neutral-400 cursor-pointer hover:text-primary transition-colors">
+                  <button
+                    type="button"
+                    className="absolute right-3 top-3 text-neutral-400 hover:text-primary transition-colors"
+                    aria-label={isPasswordVisible ? "Ocultar senha" : "Mostrar senha"}
+                    onClick={() => setIsPasswordVisible((prev) => !prev)}
+                  >
                     <span className="material-symbols-outlined text-[20px]">
-                      visibility_off
+                      {isPasswordVisible ? "visibility" : "visibility_off"}
                     </span>
-                  </span>
+                  </button>
                 </div>
               </div>
 
