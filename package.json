@@ -2,12 +2,12 @@
   "name": "petshop-small-breeds-premium",
   "private": true,
   "workspaces": [
-    "frontend",
-    "backend"
+    "apps/*",
+    "packages/*"
   ],
   "scripts": {
     "setup": "npm install && npm run setup:env",
-    "setup:env": "bash -lc 'if [ ! -f backend/.env ]; then cp backend/.env.example backend/.env; echo \"Created backend/.env from template.\"; else echo \"backend/.env already exists.\"; fi'",
+    "setup:env": "bash -lc 'if [ ! -f apps/backend/.env ]; then cp apps/backend/.env.example apps/backend/.env; echo \"Created backend/.env from template.\"; else echo \"backend/.env already exists.\"; fi'",
     "dev:backend": "npm run dev -w backend",
     "dev:frontend": "npm run dev -w frontend",
     "dev:all": "bash -lc 'trap \"kill 0\" EXIT; npm run dev:backend & npm run dev:frontend & wait'",
