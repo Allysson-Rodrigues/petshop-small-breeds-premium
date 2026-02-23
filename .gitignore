@@ -64,6 +64,7 @@ apps/frontend/full-audit-resolution.md
 
 # Local-only template notes
 apps/backend/COMMANDS.md
+apps/backend/branch.txt
 
 # Common local artifacts (prevent accidental commits)
 .vercel/
