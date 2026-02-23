@@ -1,8 +1,6 @@
-# Backend TypeScript Foundations
+# Petshop Small Breeds Premium Backend
 
-![CI Status](https://github.com/Allysson-Rodrigues/backend-ts-foundations/actions/workflows/main.yml/badge.svg)
-
-A professional, high-performance, and production-ready foundation for scalable RESTful APIs. Built with **TypeScript**, **Node.js 24+**, and **Clean Architecture** principles.
+API do monorepo `petshop-small-breeds-premium` (Express + Prisma + TypeScript), seguindo separacao por camadas (Domain, Presentation, Main).
 
 ---
 
@@ -16,41 +14,57 @@ A professional, high-performance, and production-ready foundation for scalable R
 
 ---
 
-### Engineering Features
+### Features
 
 - **Strict Typing**: Full TypeScript implementation for maximum reliability.
 - **Modern ESM**: Native ECMAScript Modules support.
 - **Standards-First**: Pre-configured Biome (Fastest Lint/Format) and Vitest.
-- **Zero Vulnerabilities**: 100% dependency health audited for 2025 standards.
 - **Clean Architecture**: Strict separation between Domain, Presentation, and Main layers.
 
 ---
 
-### Getting Started
+### Requisitos
+- Node.js 24+ (ver `engines` em `package.json`)
+- npm 10+
 
-1. **Clone & Setup**
-   ```bash
-   git clone https://github.com/Allysson-Rodrigues/backend-ts-foundations.git
-   cd backend-ts-foundations
-   npm install
-   ```
+### Como rodar (monorepo)
+Na raiz do repo:
+```bash
+npm run setup
+npm run dev:backend
+```
 
-2. **Environment**
-   Create a `.env` file based on your infrastructure needs:
-   ```env
-   PORT=3000
-   NODE_ENV=development
-   ```
+Ou diretamente neste workspace:
+```bash
+cd apps/backend
+npm install
+cp .env.example .env
+npm run dev
+```
 
-3. **Development**
-   ```bash
-   npm run dev
-   ```
+### Variaveis de ambiente
+Baseado em `apps/backend/.env.example`:
+```env
+PORT=3000
+NODE_ENV=development
+DATABASE_URL="file:./dev.db"
+JWT_SECRET="development-secret"
+CORS_ORIGIN="http://localhost:5173"
+```
 
-4. **Testing**
-   ```bash
-   npm test
-   ```
+### Prisma (SQLite)
+Para aplicacao de migrations (quando necessario):
+```bash
+cd apps/backend
+npx prisma migrate deploy
+```
+
+### Testes e qualidade
+```bash
+cd apps/backend
+npm run lint
+npm test
+```
 
 ---
 
@@ -64,14 +78,15 @@ A professional, high-performance, and production-ready foundation for scalable R
 │   ├── main/          # Infrastructure, Adapters, and Composition
 │   ├── app.ts         # Express application bootstrap
 │   └── server.ts      # Application entry point
-├── dist/              # Compiled output (Gitignored)
-├── .env               # Infrastructure secrets
+├── dist/              # Compiled output (nao versionado)
+├── .env               # Secrets locais (nao versionado)
 └── package.json       # Scripts and dependencies
 ```
 
 ---
 
-### ⚠️ Technical Debt (Auditoria 21/02/2026)
+### Notas
+- `apps/backend/prisma/dev.db` e um banco local de desenvolvimento e nao entra no Git.
 
 - [ ] **Architecture**: Implementar Singleton para o `PrismaClient` para evitar esgotamento de conexões.
 - [ ] **Type Quality**: Corrigir cast de tipo pendente em `get-customer-dashboard.controller.ts`.

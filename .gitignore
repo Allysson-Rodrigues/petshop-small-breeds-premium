@@ -60,6 +60,10 @@ apps/frontend/.agent/
 
 # Local-only one-off scripts
 apps/frontend/get_image.mjs
+apps/frontend/full-audit-resolution.md
+
+# Local-only template notes
+apps/backend/COMMANDS.md
 
 # Common local artifacts (prevent accidental commits)
 .vercel/
