@@ -2,12 +2,21 @@ import type { LoginUseCase } from "../../domain/use-cases/login.use-case.js";
 import type { Controller } from "../protocols/controller.js";
 import type { HttpRequest, HttpResponse } from "../protocols/http.js";
 
+interface LoginRequestBody {
+	email: string;
+	password: string;
+}
+
 export class LoginController implements Controller {
-	constructor(private readonly loginUseCase: LoginUseCase) {}
+	constructor(private readonly loginUseCase: LoginUseCase) { }
 
 	async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
 		try {
+<<<<<<< Updated upstream
 			const { email, password } = httpRequest.body as any;
+=======
+			const { email, password } = httpRequest.body as LoginRequestBody;
+>>>>>>> Stashed changes
 
 			if (!email || !password) {
 				return {
@@ -21,10 +30,11 @@ export class LoginController implements Controller {
 				statusCode: 200,
 				body: result,
 			};
-		} catch (error: any) {
+		} catch (error: unknown) {
+			const message = error instanceof Error ? error.message : "Authentication failed";
 			return {
 				statusCode: 401,
-				body: { message: error.message },
+				body: { message },
 			};
 		}
 	}

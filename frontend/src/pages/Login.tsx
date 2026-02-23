@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
+import Toast from "../components/ui/Toast";
 import { authService } from "../services/authService";
 
 export default function Login() {
@@ -249,15 +250,7 @@ export default function Login() {
         </div>
       </div>
 
-      {/* Toast Notification */}
-      {toastMessage && (
-        <div className="fixed bottom-4 right-4 bg-[#1f1f1f] text-white px-4 py-3 rounded-lg shadow-xl z-50 flex items-center gap-2">
-          <span className="material-symbols-outlined text-[20px] text-green-400">
-            check_circle
-          </span>
-          <span className="font-medium text-sm">{toastMessage}</span>
-        </div>
-      )}
+      <Toast message={toastMessage} />
     </div>
   );
 }

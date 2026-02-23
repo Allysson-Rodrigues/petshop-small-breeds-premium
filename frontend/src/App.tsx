@@ -1,6 +1,7 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { useEffect } from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import PageTransition from "./components/ui/PageTransition";
 import MainLayout from "./MainLayout";
 import Agendamento from "./pages/Agendamento";
 import Catalogo from "./pages/Catalogo";
@@ -30,61 +31,38 @@ function AnimatedRoutes() {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/login" element={
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}>
-            <Login />
-          </motion.div>
+          <PageTransition withSlide={false}><Login /></PageTransition>
         } />
         <Route path="/registro" element={
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}>
-            <Registro />
-          </motion.div>
+          <PageTransition withSlide={false}><Registro /></PageTransition>
         } />
         <Route path="/dashboard" element={
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}>
-            <Dashboard />
-          </motion.div>
+          <PageTransition withSlide={false}><Dashboard /></PageTransition>
         } />
-        {/* Main Application Routes that need the Header */}
         <Route element={<MainLayout />}>
           <Route path="/" element={
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
-              <Home />
-            </motion.div>
+            <PageTransition><Home /></PageTransition>
           } />
           <Route path="/loja" element={
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
-              <Catalogo />
-            </motion.div>
+            <PageTransition><Catalogo /></PageTransition>
           } />
           <Route path="/sobre" element={
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
-              <Sobre />
-            </motion.div>
+            <PageTransition><Sobre /></PageTransition>
           } />
           <Route path="/servicos" element={
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
-              <Servicos />
-            </motion.div>
+            <PageTransition><Servicos /></PageTransition>
           } />
           <Route path="/catalogo" element={
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
-              <Catalogo />
-            </motion.div>
+            <PageTransition><Catalogo /></PageTransition>
           } />
           <Route path="/galeria" element={
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
-              <Galeria />
-            </motion.div>
+            <PageTransition><Galeria /></PageTransition>
           } />
           <Route path="/agendamento" element={
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
-              <Agendamento />
-            </motion.div>
+            <PageTransition><Agendamento /></PageTransition>
           } />
           <Route path="/galeria/:slug" element={
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
-              <RacaCuidados />
-            </motion.div>
+            <PageTransition><RacaCuidados /></PageTransition>
           } />
         </Route>
       </Routes>

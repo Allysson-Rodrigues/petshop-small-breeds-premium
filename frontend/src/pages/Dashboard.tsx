@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/layout/Sidebar";
+import Toast from "../components/ui/Toast";
 import { useAuth } from "../hooks/useAuth";
 import DashboardHeader from "./dashboard/components/DashboardHeader";
 import AppointmentsTab from "./dashboard/tabs/AppointmentsTab";
@@ -11,10 +12,7 @@ import PetsTab from "./dashboard/tabs/PetsTab";
 import SettingsTab from "./dashboard/tabs/SettingsTab";
 
 export default function Dashboard() {
-  // SEO: <title>Configurações de Conta | Small Breeds</title>
-  // <meta name="robots" content="noindex, nofollow" />
-  // SEO: <title>Painel de Controle | Small Breeds Admin</title>
-  // <meta name="robots" content="noindex, nofollow" />
+
   const navigate = useNavigate();
   const { user, isAdmin, isAuthenticated } = useAuth();
 
@@ -101,15 +99,7 @@ export default function Dashboard() {
         </div>
       </main>
 
-      {/* Toast Notification */}
-      {toastMessage && (
-        <div className="fixed bottom-4 right-4 bg-[#1f1f1f] text-white px-4 py-3 rounded-lg shadow-xl z-50 flex items-center gap-2">
-          <span className="material-symbols-outlined text-[20px] text-green-400">
-            check_circle
-          </span>
-          <span className="font-medium text-sm">{toastMessage}</span>
-        </div>
-      )}
+      <Toast message={toastMessage} />
     </div>
   );
 }

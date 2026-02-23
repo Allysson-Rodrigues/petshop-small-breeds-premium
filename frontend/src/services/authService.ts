@@ -7,37 +7,45 @@ export interface User {
 }
 
 interface StoredUser {
+    id: string;
     name: string;
     email: string;
-    pass: string;
+    passHash: string;
 }
 
 const AUTH_TOKEN_KEY = "auth_token";
 const AUTH_USER_KEY = "auth_user";
 const MOCK_USERS_KEY = "mock_users";
 
+const simpleHash = (input: string): string => {
+    let hash = 0;
+    for (let i = 0; i < input.length; i++) {
+        const char = input.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash |= 0;
+    }
+    return `h_${Math.abs(hash).toString(36)}`;
+};
+
 export const authService = {
     login: async (email: string, pass: string): Promise<boolean> => {
-        // Network request constraint simulation
         await new Promise((resolve) => setTimeout(resolve, 200));
 
-        // 1. Guard Clauses: Validation
         if (!email || !pass) return false;
 
-        // 2. Admin Check
         if (email === "admin@petshop.com" && pass === "admin123") {
             const adminUser: User = {
                 name: "Admin Geral",
-                email: email,
+                email,
                 role: "admin",
             };
             authService.saveSession("simulated_jwt_token_admin_456", adminUser);
             return true;
         }
 
-        // 3. User Check (Mock Storage)
         const storedUsers: StoredUser[] = JSON.parse(localStorage.getItem(MOCK_USERS_KEY) || "[]");
-        const found = storedUsers.find((u) => u.email === email && u.pass === pass);
+        const passHash = simpleHash(pass);
+        const found = storedUsers.find((u) => u.email === email && u.passHash === passHash);
 
         if (found) {
             const clientUser: User = {
@@ -45,7 +53,7 @@ export const authService = {
                 email: found.email,
                 role: "client",
             };
-            authService.saveSession(`simulated_jwt_token_user_${email}`, clientUser);
+            authService.saveSession(`simulated_jwt_token_user_${found.id}`, clientUser);
             return true;
         }
 
@@ -63,7 +71,13 @@ export const authService = {
             return false;
         }
 
-        storedUsers.push({ name, email, pass });
+        const newUser: StoredUser = {
+            id: crypto.randomUUID(),
+            name,
+            email,
+            passHash: simpleHash(pass),
+        };
+        storedUsers.push(newUser);
         localStorage.setItem(MOCK_USERS_KEY, JSON.stringify(storedUsers));
 
         return true;
