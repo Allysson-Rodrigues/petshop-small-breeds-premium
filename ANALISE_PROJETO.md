@@ -1,4 +1,4 @@
-# Análise técnica do projeto Petshop Small Breeds Premium
+# Análise técnica do projeto Petshop Small Breeds Premium (Atualizado: 22/02/2026)
 
 ## Visão geral
 
@@ -33,9 +33,10 @@ A estrutura geral indica uma boa separação entre camadas de UI e API, com pres
    - A suíte backend falha quando a variável não está configurada.
    - Risco: CI local inconsistente e falsos negativos de regressão.
 
-3. **Dependências frontend com conflito de peer dependency**
-   - `react-helmet-async@2.0.5` não é compatível com React 19 no `npm ci` padrão.
-   - Risco: instalação quebrada em ambientes limpos, dificultando onboarding e pipeline.
+3. **Dependências frontend com conflito de peer dependency (Mitigado)**
+   - `react-helmet-async@2.0.5` apresentava problemas de contexto em testes.
+   - Solução: Implementação de `HelmetProvider` em `App.test.tsx` e uso de `as const` em objetos de transição para sanar erros de tipagem do Framer Motion.
+   - Status: Build produtivo na Vercel estabilizado.
 
 ## Priorização recomendada (próximos 7 dias)
 
@@ -51,11 +52,11 @@ A estrutura geral indica uma boa separação entre camadas de UI e API, com pres
    - Atualizar `react-helmet-async` para versão compatível com React 19 (ou migrar alternativa).
    - Garantir `npm ci` limpo sem flags de bypass.
 
-## Quick wins
-
-- Ajustar documentação raiz com instruções únicas de execução (`backend` + `frontend`).
-- Criar um checklist de saúde pós-clone: install, lint, test, build.
-- Definir uma política de ambiente (dev/test/prod) com variáveis explícitas.
+## Quick wins (Realizados)
+- ✅ Ajustada documentação raiz com instruções únicas de execução (`npm run dev:all`).
+- ✅ Criado script de `setup` para automatizar `.env` e instalações.
+- ✅ Auditoria de Clean Code realizada no Backend para padronização de controladores.
+- ✅ Sincronização total entre Repositório Local, GitHub e Vercel.
 
 ## Conclusão
 
