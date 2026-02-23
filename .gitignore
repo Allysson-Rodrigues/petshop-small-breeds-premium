@@ -47,3 +47,6 @@ coverage/
 # Local-only folders (keep out of repo)
 apps/frontend/design-system/
 docs/
+
+# Local-only database (SQLite)
+apps/backend/prisma/dev.db
