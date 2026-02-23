@@ -54,3 +54,17 @@ apps/backend/prisma/dev.db
 # Local-only helper scripts
 apps/frontend/download_img.py
 apps/frontend/download_cushion.py
+
+# Local-only workspace tooling
+apps/frontend/.agent/
+
+# Local-only one-off scripts
+apps/frontend/get_image.mjs
+
+# Common local artifacts (prevent accidental commits)
+.vercel/
+playwright-report/
+test-results/
+__pycache__/
+*.pyc
+*.pid
