@@ -1,33 +1,49 @@
-# Petshop Small Breeds Premium
+# Petshop Small Breeds Premium 🐾
 
-Monorepo com frontend (React + Vite) e backend (Express + Prisma).
+Monorepo estruturado profissionalmente com **npm Workspaces**, integrando frontend (React + Vite) e backend (Express + Prisma).
 
-## Pré-requisitos
+## 🏗️ Estrutura do Projeto
 
+```text
+.
+├── .github/workflows/ CI Automado (Lint/Tests)
+├── apps/ (Em evolução)
+├── backend/           API Express + Prisma
+├── frontend/          SPA React + Vite
+├── docs/              Documentação Técnica e Análises
+├── package.json       Configuração de Monorepo (Workspaces)
+└── vercel.json        Deployment Unificado
+```
+
+## 🚀 Como Iniciar
+
+### Pré-requisitos
 - Node.js 24+
 - npm 10+
 
-## Rodando localmente (fluxo recomendado)
-
-1. Instalar dependências e criar `.env` do backend automaticamente:
+### Setup Rápido
+Instale todas as dependências do monorepo e configure o ambiente com um único comando:
 
 ```bash
 npm run setup
 ```
 
-2. Subir frontend + backend com um comando:
+### Desenvolvimento
+Suba ambos os serviços simultaneamente:
 
 ```bash
 npm run dev:all
 ```
 
-## Scripts úteis
+Ou individualmente utilizando o padrão de Workspaces:
+- `npm run dev -w backend`
+- `npm run dev -w frontend`
 
-- `npm run dev:backend` → sobe apenas o backend
-- `npm run dev:frontend` → sobe apenas o frontend
-- `npm run setup:env` → cria `backend/.env` a partir de `backend/.env.example` se ainda não existir
+## 🧪 Qualidade de Código (CI/CD)
 
-## Endereços padrão
+O projeto conta com automação via GitHub Actions. Toda contribuição é validada automaticamente:
+- **Lint**: `npm run lint`
+- **Tests**: `npm run test`
 
-- Frontend: `http://localhost:5173`
-- Backend: `http://localhost:3000` (ou a porta definida em `backend/.env` via `PORT`)
+---
+*Este projeto segue as melhores práticas de Clean Core e Monorepo Management de 2025.*
