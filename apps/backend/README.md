@@ -1,19 +1,18 @@
-# Petshop Small Breeds Premium Backend
+# Petshop Small Breeds Premium — Backend
 
-API do monorepo `petshop-small-breeds-premium` (Express + Prisma + TypeScript), com separacao por camadas (Domain, Presentation, Main).
+Backend API for the `petshop-small-breeds-premium` monorepo (Express + Prisma + TypeScript), organized in layers (`domain`, `presentation`, `main`).
 
-## Requisitos
-- Node.js 24+ (ver `engines` em `package.json`)
+## Requirements
+- Node.js 24+ (see `engines` in the root `package.json`)
 - npm 10+
 
-## Como rodar (monorepo)
-Na raiz do repo:
+## Run (from monorepo root)
 ```bash
 npm run setup
 npm run dev:backend
 ```
 
-Ou diretamente no workspace:
+## Run (backend only)
 ```bash
 cd apps/backend
 npm install
@@ -21,8 +20,8 @@ cp .env.example .env
 npm run dev
 ```
 
-## Variaveis de ambiente
-Baseado em `apps/backend/.env.example`:
+## Environment Variables
+Based on `apps/backend/.env.example`:
 ```env
 PORT=3000
 NODE_ENV=development
@@ -32,33 +31,32 @@ CORS_ORIGIN="http://localhost:5173"
 ```
 
 ## Prisma (SQLite)
-Para aplicacao de migrations (quando necessario):
+Apply migrations when needed:
 ```bash
 cd apps/backend
 npx prisma migrate deploy
 ```
 
-## Testes e qualidade
+## Tests & Quality
 ```bash
 cd apps/backend
 npm run lint
 npm test
 ```
 
-## Estrutura
-
-```plaintext
+## Structure
+```text
 .
 ├── src/
-│   ├── domain/        # Entities and Use Cases (Pure Business Logic)
-│   ├── presentation/  # Controllers (Framework Independent)
-│   ├── main/          # Infrastructure, Adapters, and Composition
-│   ├── app.ts         # Express application bootstrap
-│   └── server.ts      # Application entry point
-├── dist/              # Compiled output (nao versionado)
-├── .env               # Secrets locais (nao versionado)
+│   ├── domain/        # Entities and use cases (pure business logic)
+│   ├── presentation/  # Controllers (framework-independent)
+│   ├── main/          # Infrastructure, adapters, composition root
+│   ├── app.ts         # Express app bootstrap
+│   └── server.ts      # App entry point
+├── dist/              # Compiled output (not versioned)
+├── .env               # Local secrets (not versioned)
 └── package.json       # Scripts and dependencies
 ```
 
-## Notas
-- `apps/backend/prisma/dev.db` e um banco local de desenvolvimento e nao entra no Git.
+## Notes
+- `apps/backend/prisma/dev.db` is a local development database and is not committed to Git.
