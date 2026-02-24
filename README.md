@@ -1,44 +1,44 @@
 # Petshop Small Breeds Premium
 
-Monorepo com npm Workspaces, integrando frontend (React + Vite) e backend (Express + Prisma).
+Monorepo using npm Workspaces, integrating a frontend (React + Vite) and a backend (Express + Prisma).
 
-## Estrutura do Projeto
+## Project Structure
 
 ```text
 .
-├── .github/workflows/ CI (lint/tests/e2e)
+├── .github/workflows/  CI (lint/tests/e2e)
 ├── apps/
-│   ├── backend/       API Express + Prisma
-│   └── frontend/      SPA React + Vite
-├── package.json       Configuração de Monorepo (Workspaces)
-└── vercel.json        Deployment Unificado
+│   ├── backend/        Express API + Prisma
+│   └── frontend/       React + Vite SPA
+├── package.json        Monorepo configuration (Workspaces)
+└── vercel.json         Unified deployment
 ```
 
-## Como Iniciar
+## Getting Started
 
-### Requisitos
-- Node.js 24+ e npm 10+ (para rodar backend e scripts do monorepo)
-- Se seu Node local for menor, use Docker (abaixo)
+### Requirements
+- Node.js 24+ and npm 10+ (to run the backend and monorepo scripts)
+- If your local Node version is lower, use Docker (below)
 
 ### Setup
-Instala dependências e cria `apps/backend/.env` a partir do template:
+Installs dependencies and creates `apps/backend/.env` from the template:
 
 ```bash
 npm run setup
 ```
 
-### Desenvolvimento
-Subir backend + frontend:
+### Development
+Start backend + frontend:
 
 ```bash
 npm run dev:all
 ```
 
-Ou individualmente utilizando o padrão de Workspaces:
+Or individually using the Workspaces pattern:
 - `npm run dev -w backend`
 - `npm run dev -w frontend`
 
-### Desenvolvimento via Docker
+### Development via Docker
 ```bash
 docker run --rm -it -p 5173:5173 -p 3000:3000 \
   -v "$PWD":/app -v petshop_small_breeds_node_modules:/app/node_modules \
@@ -46,16 +46,16 @@ docker run --rm -it -p 5173:5173 -p 3000:3000 \
   'npm install && npm run setup:env && (npm run dev -w backend & npm run dev -w frontend -- --host 0.0.0.0 --port 5173) && wait'
 ```
 
-Abra:
+Open:
 - Frontend: http://localhost:5173
 - Backend health: http://localhost:3000/api/health
 
-## Qualidade
+## Quality
 
 - **Lint**: `npm run lint`
 - **Tests**: `npm run test`
 
-## Pastas locais (nao versionadas)
-Por decisao de repositorio, estas pastas ficam apenas localmente:
+## Local folders (not versioned)
+By repository decision, these folders exist only locally:
 - `apps/frontend/design-system/`
 - `docs/`
