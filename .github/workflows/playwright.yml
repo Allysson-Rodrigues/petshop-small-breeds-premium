@@ -48,7 +48,7 @@ jobs:
           curl -sS -o /dev/null -w "%{http_code}" \
             -X POST http://localhost:3000/api/auth/register \
             -H "Content-Type: application/json" \
-            -d '{"name":"Admin Geral","email":"admin@petshop.com","password":"admin123"}' \
+            -d "{\"name\":\"Admin Geral\",\"email\":\"admin@petshop.com\",\"password\":\"${{ secrets.TEST_ADMIN_PASSWORD || 'Admin@Test123!' }}\"}" \
             | grep -E "^(201|409)$" >/dev/null
 
           npx playwright install --with-deps chromium
@@ -98,7 +98,7 @@ jobs:
           curl -sS -o /dev/null -w "%{http_code}" \
             -X POST http://localhost:3000/api/auth/register \
             -H "Content-Type: application/json" \
-            -d '{"name":"Admin Geral","email":"admin@petshop.com","password":"admin123"}' \
+            -d "{\"name\":\"Admin Geral\",\"email\":\"admin@petshop.com\",\"password\":\"${{ secrets.TEST_ADMIN_PASSWORD || 'Admin@Test123!' }}\"}" \
             | grep -E "^(201|409)$" >/dev/null
 
           npx playwright install --with-deps ${{ matrix.browser }}

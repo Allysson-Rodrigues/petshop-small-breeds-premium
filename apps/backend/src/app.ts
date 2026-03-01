@@ -5,6 +5,7 @@ import express, {
     type Request,
     type Response,
 } from "express";
+import helmet from "helmet";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import authRoutes from "./main/config/auth-routes.js";
@@ -18,14 +19,22 @@ const __dirname = path.dirname(__filename);
 const app: Application = express();
 const allowedCorsOrigins = getAllowedCorsOrigins();
 
+// Security headers (X-Content-Type-Options, X-Frame-Options, HSTS, etc.)
+// CSP disabled to prevent blocking external resources like Google Fonts/Icons during dev.
+app.use(
+	helmet({
+		contentSecurityPolicy: false,
+	}),
+);
+
 app.use(
 	cors({
 		origin: allowedCorsOrigins,
 		credentials: true,
 	}),
 );
-app.use(express.json());
-app.use(express.static(path.join(__dirname, "../public")));
+app.use(express.json({ limit: "1mb" }));
+app.use(express.static(path.join(__dirname, "../public"), { maxAge: "1d" }));
 
 // Root endpoint serves the Dashboard
 app.get("/", (_req: Request, res: Response) => {
