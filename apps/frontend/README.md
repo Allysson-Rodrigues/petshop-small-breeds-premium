@@ -1,89 +1,89 @@
 # Petshop Small Breeds Premium — Frontend
 
-SPA (Single Page Application) construída com React 19, Vite 7, Tailwind CSS 4 e Framer Motion.
+Single Page Application (SPA) built with React 19, Vite 7, Tailwind CSS 4, and Framer Motion.
 
 ## Stack
 
 - **Framework:** React 19 + TypeScript
-- **Build:** Vite 7 (com SWC)
-- **Estilos:** Tailwind CSS 4
-- **Animações:** Framer Motion
-- **Roteamento:** React Router 7
-- **Ícones:** Lucide React
-- **Testes:** Vitest (unit) + Playwright (E2E)
+- **Build Tool:** Vite 7 (with SWC)
+- **Styling:** Tailwind CSS 4
+- **Animations:** Framer Motion
+- **Routing:** React Router 7
+- **Icons:** Lucide React
+- **Testing:** Vitest (unit) + Playwright (E2E)
 
-## Desenvolvimento
+## Development
 
 ```bash
-# A partir da raiz do monorepo
+# From the monorepo root
 npm run dev:frontend
 
-# Ou diretamente
+# Or directly from the frontend directory
 cd apps/frontend && npm run dev
 ```
 
-O dev server inicia em http://localhost:5173 com proxy automático para a API (`/api` → `http://127.0.0.1:3000`).
+The dev server starts at http://localhost:5173 with automatic API proxying (`/api` → `http://127.0.0.1:3000`).
 
-> Se o backend não estiver rodando, login/registro não funcionarão.
+> If the backend is not running, login and registration functionality will not work.
 
-## Variáveis de Ambiente
+## Environment Variables
 
-| Variável | Descrição | Default |
-|----------|-----------|---------|
-| `VITE_API_BASE_URL` | URL base da API | `/api` (proxy local) |
-| `VITE_ADMIN_EMAILS` | E-mails admin para RBAC client-side | `admin@petshop.com` |
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `VITE_API_BASE_URL` | API base URL | `/api` (local proxy) |
+| `VITE_ADMIN_EMAILS` | Admin emails for client-side RBAC | `admin@example.com` |
 
 ## Scripts
 
-| Comando | Descrição |
-|---------|-----------|
-| `npm run dev` | Dev server com HMR |
-| `npm run build` | Build de produção (`tsc + vite build`) |
-| `npm run lint` | ESLint |
-| `npm run test` | Testes unitários (Vitest) |
-| `npm run preview` | Preview do build local |
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Dev server with HMR |
+| `npm run build` | Production build (`tsc + vite build`) |
+| `npm run lint` | ESLint check |
+| `npm run test` | Unit tests (Vitest) |
+| `npm run preview` | Local build preview |
 
-## Testes E2E (Playwright)
+## E2E Testing (Playwright)
 
 ```bash
-# Instalar browsers (primeira vez)
+# Install browsers (first time only)
 npx playwright install
 
-# Rodar testes (requer backend rodando)
+# Run tests (requires backend to be running)
 npx playwright test
 ```
 
-### Specs disponíveis
+### Available Specs
 
-| Arquivo | Cobertura |
-|---------|-----------|
-| `tests/home.spec.ts` | Home page, heading, links |
-| `tests/login.spec.ts` | Validação, credenciais erradas, login com sucesso |
-| `tests/dashboard.spec.ts` | Navegação entre tabs, modais |
-| `tests/auth_full_flow.spec.ts` | Registro → Login → RBAC (admin vs client) |
+| File | Coverage |
+|------|----------|
+| `tests/home.spec.ts` | Home page layout, headings, and links |
+| `tests/login.spec.ts` | Validation, incorrect credentials, successful login |
+| `tests/dashboard.spec.ts` | Navigation between tabs and modals |
+| `tests/auth_full_flow.spec.ts`| End-to-end integration: Registration → Login → RBAC |
 
-## Estrutura
+## Structure
 
 ```text
 src/
-├── components/        # UI reutilizável (layout, ui)
-├── pages/             # Páginas e rotas
-│   └── dashboard/     # Dashboard admin/client (tabs, components)
-├── services/          # Auth service, dashboard API
-├── App.tsx            # Router principal
-└── index.css          # Design tokens + Tailwind
+├── components/        # Reusable UI components (layout, shared UI)
+├── pages/             # Page views and routing components
+│   └── dashboard/     # Dashboard for admins/clients (tabs, sub-components)
+├── services/          # Authentication service, dashboard API client
+├── App.tsx            # Main application router
+└── index.css          # Design tokens and Tailwind configuration
 ```
 
-## Docker (se seu Node for antigo)
+## Docker (Alternative)
 
 ```bash
-# Da raiz do monorepo
+# From the monorepo root
 docker run --rm -it -p 5173:5173 -p 3000:3000 \
   -v "$PWD":/app -v petshop_node_modules:/app/node_modules \
   -w /app node:24 bash -lc \
   'npm install && npm run setup:env && (npm run dev -w backend & npm run dev -w frontend -- --host 0.0.0.0 --port 5173) && wait'
 ```
 
-## Build & Deploy
+## Build & Deployment
 
-O build gera arquivos estáticos em `dist/`. Deployado automaticamente na Vercel via `vercel.json` na raiz do monorepo.
+The build process generates static files in the `dist/` directory. It is automatically deployed to Vercel using the `vercel.json` configuration in the monorepo root.
