@@ -17,9 +17,12 @@
     "test": "vitest run",
     "test:watch": "vitest"
   },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "license": "MIT",
   "dependencies": {
-    "@prisma/client": "^7.4.2",
+    "@prisma/client": "^6.4.1",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
@@ -38,7 +41,7 @@
     "@types/qs": "^6.9.18",
     "@types/supertest": "^6.0.3",
     "prettier": "^3.5.1",
-    "prisma": "^7.4.2",
+    "prisma": "^6.4.1",
     "supertest": "^7.2.2",
     "tsx": "^4.19.3",
     "typescript": "^5.7.3",
