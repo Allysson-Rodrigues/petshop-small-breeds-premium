@@ -14,6 +14,7 @@ export interface LoginResult {
 		id: string;
 		name: string;
 		email: string;
+		role: string;
 	};
 }
 
@@ -47,6 +48,7 @@ export class LoginUseCase {
 				id: user.id,
 				name: user.name,
 				email: user.email,
+				role: user.role,
 			},
 		};
 	}

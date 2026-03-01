@@ -1,12 +1,12 @@
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import cors from "cors";
 import express, {
-	type Application,
-	type NextFunction,
-	type Request,
-	type Response,
+    type Application,
+    type NextFunction,
+    type Request,
+    type Response,
 } from "express";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import authRoutes from "./main/config/auth-routes.js";
 import dashboardRoutes from "./main/config/dashboard-routes.js";
 import { getAllowedCorsOrigins } from "./main/config/env.js";
@@ -37,10 +37,24 @@ app.use("/api", healthRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
+import { AppError } from "./domain/errors/app-error.js";
+
 // Global error handler — prevents stack traces leaking to client
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
-	console.error(`[ERROR] ${err.message}`);
-	res.status(500).json({ message: "Internal server error" });
+	const statusCode = err instanceof AppError ? err.statusCode : 500;
+	const message = err.message || "Internal server error";
+
+	if (statusCode === 500) {
+		console.error(`[CRITICAL] ${err.stack || err.message}`);
+	} else {
+		console.warn(`[APP_ERROR] ${err.name}: ${err.message}`);
+	}
+
+	res.status(statusCode).json({
+		status: "error",
+		type: err.name,
+		message,
+	});
 });
 
 export default app;

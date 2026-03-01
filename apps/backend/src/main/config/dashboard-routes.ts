@@ -1,6 +1,7 @@
-import { type Request, type Response, Router } from "express";
+import { Router } from "express";
 import { CreateAppointmentUseCase } from "../../domain/use-cases/create-appointment.use-case.js";
 import { CreatePetUseCase } from "../../domain/use-cases/create-pet.use-case.js";
+import { GetAdminDashboardUseCase } from "../../domain/use-cases/get-admin-dashboard.use-case.js";
 import { GetCustomerDashboardUseCase } from "../../domain/use-cases/get-customer-dashboard.use-case.js";
 import { PrismaAppointmentRepository } from "../../infrastructure/prisma/prisma-appointment.repository.js";
 import { PrismaPetRepository } from "../../infrastructure/prisma/prisma-pet.repository.js";
@@ -8,8 +9,9 @@ import { PrismaProductRepository } from "../../infrastructure/prisma/prisma-prod
 import { PrismaUserRepository } from "../../infrastructure/prisma/prisma-user.repository.js";
 import { CreateAppointmentController } from "../../presentation/controllers/create-appointment.controller.js";
 import { CreatePetController } from "../../presentation/controllers/create-pet.controller.js";
+import { GetAdminDashboardController } from "../../presentation/controllers/get-admin-dashboard.controller.js";
 import { GetCustomerDashboardController } from "../../presentation/controllers/get-customer-dashboard.controller.js";
-import { adaptRoute } from "../adapters/express-route-adapter.js";
+import { adaptAsyncHandler, adaptRoute } from "../adapters/express-route-adapter.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 
 const router = Router();
@@ -29,6 +31,16 @@ const getDashboardController = new GetCustomerDashboardController(
 	getDashboardUseCase,
 );
 
+const getAdminDashboardUseCase = new GetAdminDashboardUseCase(
+	petRepository,
+	appointmentRepository,
+	userRepository,
+	productRepository,
+);
+const getAdminDashboardController = new GetAdminDashboardController(
+	getAdminDashboardUseCase,
+);
+
 const createPetUseCase = new CreatePetUseCase(petRepository);
 const createPetController = new CreatePetController(createPetUseCase);
 
@@ -40,6 +52,7 @@ const createAppointmentController = new CreateAppointmentController(
 );
 
 router.get("/customer", authMiddleware, adaptRoute(getDashboardController));
+router.get("/admin", authMiddleware, adaptRoute(getAdminDashboardController));
 router.post("/pets", authMiddleware, adaptRoute(createPetController));
 router.post(
 	"/appointments",
@@ -48,179 +61,146 @@ router.post(
 );
 
 // ── Pets CRUD ─────────────────────────────────────────────────
-router.get("/pets", authMiddleware, async (req: Request, res: Response) => {
-	try {
+router.get(
+	"/pets",
+	authMiddleware,
+	adaptAsyncHandler(async (req, res) => {
 		const userId = req.headers["x-user-id"] as string;
-		const pets = await petRepository.findByUserId(userId);
-		res.json(pets);
-	} catch (_error) {
-		res.status(500).json({ message: "Failed to fetch pets" });
-	}
-});
+		const user = await userRepository.findById(userId);
 
-router.put("/pets/:id", authMiddleware, async (req: Request, res: Response) => {
-	try {
+		let pets;
+		if (user?.role === "admin") {
+			pets = await petRepository.findAll();
+		} else {
+			pets = await petRepository.findByUserId(userId);
+		}
+		res.json(pets);
+	}),
+);
+
+router.put(
+	"/pets/:id",
+	authMiddleware,
+	adaptAsyncHandler(async (req, res) => {
 		const pet = await petRepository.update(String(req.params.id), req.body);
 		res.json(pet);
-	} catch (_error) {
-		res.status(500).json({ message: "Failed to update pet" });
-	}
-});
+	}),
+);
 
 router.delete(
 	"/pets/:id",
 	authMiddleware,
-	async (req: Request, res: Response) => {
-		try {
-			await petRepository.delete(String(req.params.id));
-			res.json({ message: "Pet deleted" });
-		} catch (_error) {
-			res.status(500).json({ message: "Failed to delete pet" });
-		}
-	},
+	adaptAsyncHandler(async (req, res) => {
+		await petRepository.delete(String(req.params.id));
+		res.json({ message: "Pet deleted" });
+	}),
 );
 
 // ── Appointments CRUD ─────────────────────────────────────────
 router.get(
 	"/appointments",
 	authMiddleware,
-	async (req: Request, res: Response) => {
-		try {
-			const userId = req.headers["x-user-id"] as string;
-			const appointments = await appointmentRepository.findByUserId(userId);
-			res.json(appointments);
-		} catch (_error) {
-			res.status(500).json({ message: "Failed to fetch appointments" });
-		}
-	},
+	adaptAsyncHandler(async (req, res) => {
+		const userId = req.headers["x-user-id"] as string;
+		const appointments = await appointmentRepository.findByUserId(userId);
+		res.json(appointments);
+	}),
 );
 
 router.put(
 	"/appointments/:id",
 	authMiddleware,
-	async (req: Request, res: Response) => {
-		try {
-			const { status } = req.body;
-			const appointment = await appointmentRepository.updateStatus(
-				String(req.params.id),
-				status,
-			);
-			res.json(appointment);
-		} catch (_error) {
-			res.status(500).json({ message: "Failed to update appointment" });
-		}
-	},
+	adaptAsyncHandler(async (req, res) => {
+		const { status } = req.body;
+		const appointment = await appointmentRepository.updateStatus(
+			String(req.params.id),
+			status,
+		);
+		res.json(appointment);
+	}),
 );
 
 router.delete(
 	"/appointments/:id",
 	authMiddleware,
-	async (req: Request, res: Response) => {
-		try {
-			await appointmentRepository.delete(String(req.params.id));
-			res.json({ message: "Appointment deleted" });
-		} catch (_error) {
-			res.status(500).json({ message: "Failed to delete appointment" });
-		}
-	},
+	adaptAsyncHandler(async (req, res) => {
+		await appointmentRepository.delete(String(req.params.id));
+		res.json({ message: "Appointment deleted" });
+	}),
 );
 
 // ── Clients (Users) CRUD ──────────────────────────────────────
-router.get("/clients", authMiddleware, async (_req: Request, res: Response) => {
-	try {
+router.get(
+	"/clients",
+	authMiddleware,
+	adaptAsyncHandler(async (_req, res) => {
 		const users = await userRepository.findAll();
 		const safeUsers = users.map(({ password: _, ...user }) => ({
 			...user,
 			petsCount: 0,
 		}));
 		res.json(safeUsers);
-	} catch (_error) {
-		res.status(500).json({ message: "Failed to fetch clients" });
-	}
-});
+	}),
+);
 
 router.put(
 	"/clients/:id",
 	authMiddleware,
-	async (req: Request, res: Response) => {
-		try {
-			const { password: _, ...data } = req.body;
-			const user = await userRepository.update(String(req.params.id), data);
-			const { password: __, ...safeUser } = user;
-			res.json(safeUser);
-		} catch (_error) {
-			res.status(500).json({ message: "Failed to update client" });
-		}
-	},
+	adaptAsyncHandler(async (req, res) => {
+		const { password: _, ...data } = req.body;
+		const user = await userRepository.update(String(req.params.id), data);
+		const { password: __, ...safeUser } = user;
+		res.json(safeUser);
+	}),
 );
 
 router.delete(
 	"/clients/:id",
 	authMiddleware,
-	async (req: Request, res: Response) => {
-		try {
-			await userRepository.delete(String(req.params.id));
-			res.json({ message: "Client deleted" });
-		} catch (_error) {
-			res.status(500).json({ message: "Failed to delete client" });
-		}
-	},
+	adaptAsyncHandler(async (req, res) => {
+		await userRepository.delete(String(req.params.id));
+		res.json({ message: "Client deleted" });
+	}),
 );
 
 // ── Products (Inventory) CRUD ─────────────────────────────────
 router.get(
 	"/products",
 	authMiddleware,
-	async (_req: Request, res: Response) => {
-		try {
-			const products = await productRepository.findAll();
-			res.json(products);
-		} catch (_error) {
-			res.status(500).json({ message: "Failed to fetch products" });
-		}
-	},
+	adaptAsyncHandler(async (_req, res) => {
+		const products = await productRepository.findAll();
+		res.json(products);
+	}),
 );
 
 router.post(
 	"/products",
 	authMiddleware,
-	async (req: Request, res: Response) => {
-		try {
-			const product = await productRepository.create(req.body);
-			res.status(201).json(product);
-		} catch (_error) {
-			res.status(500).json({ message: "Failed to create product" });
-		}
-	},
+	adaptAsyncHandler(async (req, res) => {
+		const product = await productRepository.create(req.body);
+		res.status(201).json(product);
+	}),
 );
 
 router.put(
 	"/products/:id",
 	authMiddleware,
-	async (req: Request, res: Response) => {
-		try {
-			const product = await productRepository.update(
-				String(req.params.id),
-				req.body,
-			);
-			res.json(product);
-		} catch (_error) {
-			res.status(500).json({ message: "Failed to update product" });
-		}
-	},
+	adaptAsyncHandler(async (req, res) => {
+		const product = await productRepository.update(
+			String(req.params.id),
+			req.body,
+		);
+		res.json(product);
+	}),
 );
 
 router.delete(
 	"/products/:id",
 	authMiddleware,
-	async (req: Request, res: Response) => {
-		try {
-			await productRepository.delete(String(req.params.id));
-			res.json({ message: "Product deleted" });
-		} catch (_error) {
-			res.status(500).json({ message: "Failed to delete product" });
-		}
-	},
+	adaptAsyncHandler(async (req, res) => {
+		await productRepository.delete(String(req.params.id));
+		res.json({ message: "Product deleted" });
+	}),
 );
 
 export default router;

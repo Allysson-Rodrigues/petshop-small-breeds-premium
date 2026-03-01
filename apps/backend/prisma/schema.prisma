@@ -3,7 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -11,9 +12,10 @@ model User {
   name         String
   email        String        @unique
   password     String
+  role         String        @default("user")
   createdAt    DateTime      @default(now())
-  pets         Pet[]
   appointments Appointment[]
+  pets         Pet[]
 }
 
 model Pet {
@@ -22,28 +24,28 @@ model Pet {
   breed        String
   age          Int
   userId       String
-  owner        User          @relation(fields: [userId], references: [id])
   appointments Appointment[]
+  owner        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Product {
-  id          String   @id @default(uuid())
+  id          String @id @default(uuid())
   name        String
   description String
   price       Float
-  category    String   // FOOD, ACCESSORY
+  category    String
   stock       Int
 }
 
 model Appointment {
-  id        String   @id @default(uuid())
-  date      DateTime
-  type      String   // BATH, GROOMING, CONSULTATION
-  status    String   @default("PENDING") // PENDING, CONFIRMED, CANCELLED
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  petId     String
-  pet       Pet      @relation(fields: [petId], references: [id])
+  id     String   @id @default(uuid())
+  date   DateTime
+  type   String
+  status String   @default("PENDING")
+  userId String
+  petId  String
+  pet    Pet      @relation(fields: [petId], references: [id], onDelete: Cascade)
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Breed {

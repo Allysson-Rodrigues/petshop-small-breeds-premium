@@ -1,8 +1,6 @@
 import type { User } from "../entities/user.entity.js";
-import {
-	DuplicateEmailError,
-	InputValidationError,
-} from "../errors/auth-errors.js";
+import { InputValidationError } from "../errors/app-error.js";
+import { DuplicateEmailError } from "../errors/auth-errors.js";
 import type { UserRepository } from "../repositories/user.repository.js";
 import type { Hasher } from "../services/hasher.js";
 
@@ -48,6 +46,7 @@ export class RegisterUserUseCase {
 			name: normalizedName,
 			email: normalizedEmail,
 			password: hashedPassword,
+			role: "client",
 		});
 	}
 }
