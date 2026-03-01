@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { authService } from "../../services/authService";
+import { useAuth } from "../../hooks/useAuth";
 
 const navLinks = [
   { name: "Serviços", path: "/servicos" },
@@ -11,9 +11,8 @@ const navLinks = [
 ];
 
 export default function Header() {
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    () => !!localStorage.getItem("auth_token"),
-  );
+  const { isAuthenticated, logout } = useAuth();
+  const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -21,10 +20,9 @@ export default function Header() {
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
-    // Pequeno delay para feedback visual e suavidade
     await new Promise(resolve => setTimeout(resolve, 300));
 
-    authService.logout();
+    logout();
     setIsLoggedIn(false);
     navigate("/");
     setIsMobileMenuOpen(false);
@@ -34,18 +32,17 @@ export default function Header() {
   return (
     <header
       className="sticky top-0 z-50 w-full border-b border-border-grey bg-white/95 backdrop-blur-md"
-      onKeyDown={() => undefined}
     >
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 gap-4">
 
         {/* Logo */}
         <Link
           to="/"
-          className="group text-xl font-bold tracking-tighter hover:opacity-80 transition-opacity duration-300 text-charcoal shrink-0 flex items-center gap-2"
+          className="group text-xl font-light tracking-tighter hover:opacity-80 transition-opacity duration-300 text-charcoal shrink-0 flex items-center gap-2"
           onClick={() => window.scrollTo(0, 0)}
         >
           <span className="material-symbols-outlined text-2xl transition-transform group-hover:rotate-12">pets</span>
-          <span className="font-display font-black tracking-tight">PETSHOP</span>{" "}
+          <span className="font-display font-light tracking-tight">PETSHOP</span>{" "}
           <span className="font-display font-light italic text-medium-grey underline decoration-charcoal/20 underline-offset-4">
             Small Breeds
           </span>
@@ -60,7 +57,7 @@ export default function Header() {
                 key={link.path}
                 to={link.path}
                 className={`
-                  relative text-[10px] font-black uppercase tracking-[0.3em] transition-colors duration-300
+                  relative text-[10px] font-medium uppercase tracking-[0.3em] transition-colors duration-300
                   hover:text-black group
                   ${isActive ? "text-black" : "text-medium-grey"}
                 `}
@@ -70,7 +67,7 @@ export default function Header() {
                 {/* Animated underline */}
                 <span
                   className={`
-                    absolute -bottom-2 left-0 h-[1.5px] bg-black transition-all duration-500 ease-out
+                    absolute -bottom-2 left-0 h-[1.5px] bg-black transition-[width] duration-500 ease-out
                     ${isActive ? "w-full" : "w-0 group-hover:w-full"}
                   `}
                 />
@@ -85,14 +82,14 @@ export default function Header() {
             <>
               <Link
                 to="/dashboard"
-                className="hover-underline-magnetic text-[10px] font-black uppercase tracking-[0.2em] text-charcoal"
+                className="hover-underline-magnetic text-[10px] font-medium uppercase tracking-[0.2em] text-charcoal"
               >
                 Painel
               </Link>
               <button
                 onClick={handleLogout}
                 disabled={isLoggingOut}
-                className="inline-flex items-center justify-center bg-black text-white px-6 py-2.5 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-neutral-800 transition-all duration-300 shadow-sm disabled:opacity-50"
+                className="inline-flex items-center justify-center bg-black text-white px-6 py-2.5 text-[10px] font-medium uppercase tracking-[0.2em] hover:bg-neutral-800 transition-colors duration-300 shadow-sm disabled:opacity-50"
               >
                 {isLoggingOut ? "Saindo..." : "Sair"}
               </button>
@@ -101,13 +98,13 @@ export default function Header() {
             <>
               <Link
                 to="/login"
-                className="hover-underline-magnetic text-[10px] font-black uppercase tracking-[0.2em] text-charcoal"
+                className="hover-underline-magnetic text-[10px] font-medium uppercase tracking-[0.2em] text-charcoal"
               >
                 Entrar
               </Link>
               <Link
                 to="/agendamento"
-                className="inline-flex items-center justify-center bg-black text-white px-8 py-3 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-neutral-800 transition-all duration-300 shadow-sm"
+                className="inline-flex items-center justify-center bg-black text-white px-8 py-3 text-[10px] font-medium uppercase tracking-[0.2em] hover:bg-neutral-800 transition-colors duration-300 shadow-sm"
               >
                 Reservar
               </Link>
@@ -130,7 +127,7 @@ export default function Header() {
       {/* Mobile Menu */}
       <div
         className={`
-          md:hidden overflow-hidden transition-all duration-500 ease-in-out
+          md:hidden overflow-hidden transition-[max-height,opacity] duration-500 ease-in-out
           ${isMobileMenuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}
           bg-white border-b border-border-grey shadow-lg
         `}
@@ -144,7 +141,7 @@ export default function Header() {
                 key={link.path}
                 to={link.path}
                 className={`
-                  flex items-center justify-between py-3 text-sm font-bold uppercase tracking-widest
+                  flex items-center justify-between py-3 text-sm font-medium uppercase tracking-widest
                   border-b border-border-grey last:border-none transition-colors duration-200
                   ${isActive ? "text-black" : "text-charcoal hover:text-black"}
                 `}
@@ -171,7 +168,7 @@ export default function Header() {
               <div className="flex flex-col gap-3">
                 <Link
                   to="/dashboard"
-                  className="flex items-center justify-center bg-black px-6 py-4 text-sm font-bold uppercase tracking-widest text-white primary-cta"
+                  className="flex items-center justify-center bg-black px-6 py-4 text-sm font-medium uppercase tracking-widest text-white primary-cta"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Dashboard
@@ -179,7 +176,7 @@ export default function Header() {
                 <button
                   onClick={handleLogout}
                   disabled={isLoggingOut}
-                  className="flex items-center justify-center border border-charcoal px-6 py-4 text-sm font-bold uppercase tracking-widest text-charcoal disabled:opacity-50"
+                  className="flex items-center justify-center border border-charcoal px-6 py-4 text-sm font-medium uppercase tracking-widest text-charcoal disabled:opacity-50"
                 >
                   {isLoggingOut ? "Saindo..." : "Sair"}
                 </button>
@@ -188,14 +185,14 @@ export default function Header() {
               <div className="flex flex-col gap-3">
                 <Link
                   to="/login"
-                  className="flex items-center justify-center border border-charcoal px-6 py-4 text-sm font-bold uppercase tracking-widest text-charcoal"
+                  className="flex items-center justify-center border border-charcoal px-6 py-4 text-sm font-medium uppercase tracking-widest text-charcoal"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Entrar
                 </Link>
                 <Link
                   to="/agendamento"
-                  className="flex items-center justify-center bg-black px-6 py-4 text-sm font-bold uppercase tracking-widest text-white primary-cta"
+                  className="flex items-center justify-center bg-black px-6 py-4 text-sm font-medium uppercase tracking-widest text-white primary-cta"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Agendar Horário

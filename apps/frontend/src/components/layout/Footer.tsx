@@ -1,31 +1,20 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function Footer() {
-  const [email, setEmail] = useState("");
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    setEmail("");
-    setSubscribed(true);
-    setTimeout(() => setSubscribed(false), 4000);
-  };
 
   return (
     <footer
       className="bg-white border-t border-border-grey pt-24 pb-16 mt-auto"
-      onKeyDown={() => undefined}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Main Footer Grid */}
         <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-12 mb-20">
 
-          {/* Column 1: Brand & Manifesto (3/12) */}
-          <div className="lg:col-span-3 space-y-8">
+          {/* Column 1: Brand & Manifesto */}
+          <div className="lg:col-span-12 flex flex-col items-center justify-center space-y-4 text-center">
             <Link
               to="/"
-              className="text-2xl font-bold tracking-tighter hover:opacity-80 transition-opacity text-black inline-flex items-center gap-2"
+              className="text-2xl font-light tracking-tighter hover:opacity-80 transition-opacity text-black inline-flex items-center gap-2"
               onClick={() => window.scrollTo(0, 0)}
             >
               <span className="material-symbols-outlined text-2xl">pets</span>
@@ -34,141 +23,10 @@ export default function Footer() {
                 SMALL BREEDS
               </span>
             </Link>
-            <p className="text-sm text-neutral-500 leading-relaxed font-light italic">
+            <p className="text-sm text-neutral-500 leading-relaxed font-light italic max-w-xl">
               "Redefinindo o luxo no cuidado pet. Onde a sofisticação encontra o carinho mais puro, criando experiências inesquecíveis para seu companheiro."
             </p>
           </div>
-
-          {/* Column 2: Navigation (2/12) */}
-          <div className="lg:col-span-2">
-            <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-black mb-8">
-              Descubra
-            </h3>
-            <ul className="space-y-4 text-[11px] font-bold uppercase tracking-widest text-neutral-400">
-              <li><Link className="hover:text-black transition-colors hover-underline-magnetic" to="/sobre" onClick={() => window.scrollTo(0, 0)}>Sobre Nós</Link></li>
-              <li><Link className="hover:text-black transition-colors hover-underline-magnetic" to="/servicos" onClick={() => window.scrollTo(0, 0)}>Serviços Premium</Link></li>
-              <li><Link className="hover:text-black transition-colors hover-underline-magnetic" to="/loja" onClick={() => window.scrollTo(0, 0)}>Loja Exclusiva</Link></li>
-              <li><Link className="hover:text-black transition-colors hover-underline-magnetic" to="/galeria" onClick={() => window.scrollTo(0, 0)}>Galeria de Estilo</Link></li>
-            </ul>
-          </div>
-
-          {/* Column 3: Services (2/12) */}
-          <div className="lg:col-span-2">
-            <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-black mb-8">
-              Especialidades
-            </h3>
-            <ul className="space-y-4 text-[11px] font-bold uppercase tracking-widest text-neutral-400">
-              <li>
-                <Link
-                  className="hover:text-black transition-colors hover-underline-magnetic"
-                  to="/servicos#tosa"
-                  onClick={() => {
-                    if (window.location.pathname === "/servicos") {
-                      document.getElementById("tosa")?.scrollIntoView({ behavior: "smooth" });
-                    }
-                  }}
-                >
-                  Estética Canina
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="hover:text-black transition-colors hover-underline-magnetic"
-                  to="/servicos#banho"
-                  onClick={() => {
-                    if (window.location.pathname === "/servicos") {
-                      document.getElementById("banho")?.scrollIntoView({ behavior: "smooth" });
-                    }
-                  }}
-                >
-                  SPA & Relaxamento
-                </Link>
-              </li>
-              <li>
-                <Link
-                  className="hover:text-black transition-colors hover-underline-magnetic"
-                  to="/servicos#veterinario"
-                  onClick={() => {
-                    if (window.location.pathname === "/servicos") {
-                      document.getElementById("veterinario")?.scrollIntoView({ behavior: "smooth" });
-                    }
-                  }}
-                >
-                  Check-up VIP
-                </Link>
-              </li>
-              <li><Link className="hover:text-black transition-colors hover-underline-magnetic" to="/loja" onClick={() => window.scrollTo(0, 0)}>Acessórios de Luxo</Link></li>
-            </ul>
-          </div>
-
-          {/* Column 4: Contact/Support (2/12) */}
-          <div className="lg:col-span-2">
-            <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-black mb-8">
-              Atendimento
-            </h3>
-            <ul className="space-y-4 text-[11px] font-bold uppercase tracking-widest text-neutral-400">
-              <li className="text-black font-black">(11) 99999-9999</li>
-              <li className="lowercase tracking-normal text-[12px]">contato@smallbreeds.com</li>
-              <li className="pt-2">Seg - Sex: 08h - 20h</li>
-              <li>Sáb: 09h - 18h</li>
-            </ul>
-          </div>
-
-          {/* Column 5: Newsletter (3/12) */}
-          <div className="lg:col-span-3">
-            <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-black mb-8">
-              Newsletter
-            </h3>
-            <p className="text-[11px] text-neutral-500 mb-6 font-light leading-relaxed">
-              Assine para convites exclusivos e novidades curadas.
-            </p>
-            <form onSubmit={handleSubscribe} className="relative group">
-              <label htmlFor="newsletter-email" className="sr-only">
-                E-mail para newsletter
-              </label>
-              <input
-                id="newsletter-email"
-                type="email"
-                required
-                placeholder="E-mail"
-                className="w-full bg-transparent border-b border-neutral-200 py-3 pr-10 text-[11px] font-light tracking-widest placeholder:text-neutral-300 focus:outline-none focus:border-black transition-all"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <button
-                type="submit"
-                className="absolute right-0 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-black transition-colors"
-                aria-label="Inscrever-se"
-              >
-                <span className="material-symbols-outlined text-[18px]">
-                  east
-                </span>
-              </button>
-            </form>
-            {subscribed && (
-              <div className="mt-3 flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-black animate-fade-in">
-                <span className="material-symbols-outlined text-xs">done_all</span>
-                Pronto.
-              </div>
-            )}
-
-            {/* Trust Markers */}
-            <div className="mt-12 pt-8 border-t border-neutral-100 flex flex-wrap gap-6">
-              <div className="flex items-center gap-2 opacity-40 hover:opacity-100 transition-opacity grayscale hover:grayscale-0 cursor-default">
-                <span className="material-symbols-outlined text-lg">workspace_premium</span>
-                <span className="text-[8px] font-black uppercase tracking-widest">Premium Care</span>
-              </div>
-              <div className="flex items-center gap-2 opacity-40 hover:opacity-100 transition-opacity grayscale hover:grayscale-0 cursor-default">
-                <span className="material-symbols-outlined text-lg">medical_expert</span>
-                <span className="text-[8px] font-black uppercase tracking-widest">Expert Vet</span>
-              </div>
-              <div className="flex items-center gap-2 opacity-40 hover:opacity-100 transition-opacity grayscale hover:grayscale-0 cursor-default">
-                <span className="material-symbols-outlined text-lg">verified_user</span>
-                <span className="text-[8px] font-black uppercase tracking-widest">Safe Stay</span>
-              </div>
-            </div>
-          </div>
-
         </div>
 
         {/* Bottom Bar: Copyright & Location & Socials */}

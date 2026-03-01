@@ -5,6 +5,13 @@ import { prisma } from "./client.js";
 export class PrismaPetRepository implements PetRepository {
 	private prisma = prisma;
 
+	async findAll(): Promise<Pet[]> {
+		const pets = await this.prisma.pet.findMany({
+			orderBy: { name: "asc" },
+		});
+		return pets as Pet[];
+	}
+
 	async findByUserId(userId: string): Promise<Pet[]> {
 		const pets = await this.prisma.pet.findMany({
 			where: { userId },
@@ -22,5 +29,17 @@ export class PrismaPetRepository implements PetRepository {
 			},
 		});
 		return createdPet as Pet;
+	}
+
+	async update(id: string, data: Partial<Omit<Pet, "id">>): Promise<Pet> {
+		const updated = await this.prisma.pet.update({
+			where: { id },
+			data,
+		});
+		return updated as Pet;
+	}
+
+	async delete(id: string): Promise<void> {
+		await this.prisma.pet.delete({ where: { id } });
 	}
 }

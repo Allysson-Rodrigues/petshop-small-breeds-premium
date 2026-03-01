@@ -5,6 +5,13 @@ import { prisma } from "./client.js";
 export class PrismaUserRepository implements UserRepository {
 	private prisma = prisma;
 
+	async findAll(): Promise<User[]> {
+		const users = await this.prisma.user.findMany({
+			orderBy: { createdAt: "desc" },
+		});
+		return users as User[];
+	}
+
 	async create(user: Omit<User, "id" | "createdAt">): Promise<User> {
 		const createdUser = await this.prisma.user.create({
 			data: {
@@ -28,5 +35,20 @@ export class PrismaUserRepository implements UserRepository {
 			where: { id },
 		});
 		return user as User | null;
+	}
+
+	async update(
+		id: string,
+		data: Partial<Omit<User, "id" | "createdAt">>,
+	): Promise<User> {
+		const updated = await this.prisma.user.update({
+			where: { id },
+			data,
+		});
+		return updated as User;
+	}
+
+	async delete(id: string): Promise<void> {
+		await this.prisma.user.delete({ where: { id } });
 	}
 }

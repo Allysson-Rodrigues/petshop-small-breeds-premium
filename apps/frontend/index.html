@@ -8,7 +8,7 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
     rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap"
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap"
     rel="stylesheet" />
 
   <!-- SEO Primário -->
@@ -35,23 +35,9 @@
 </head>
 
 <body>
-  <a href="#main-content" class="skip-to-main">Pular para o conteúdo principal</a>
   <div id="root" aria-label="Aplicação Principal"></div>
   <script type="module" src="/src/main.tsx"></script>
-  <!-- UX Audit: label placeholder aria-label -->
-  <script>
-    // UX Audit: Performance optimization (rAF)
-    let isMoving = false;
-    window.addEventListener('scroll', () => {
-      if (!isMoving) {
-        requestAnimationFrame(() => {
-          // Optimized layout string
-          isMoving = false;
-        });
-        isMoving = true;
-      }
-    }, { passive: true });
-  </script>
+
 </body>
 
 </html>

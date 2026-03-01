@@ -1,9 +1,16 @@
 import type { Appointment } from "../../domain/entities/appointment.entity.js";
-import type { AppointmentRepository } from "../../domain/repositories/appointment.repository.ts";
+import type { AppointmentRepository } from "../../domain/repositories/appointment.repository.js";
 import { prisma } from "./client.js";
 
 export class PrismaAppointmentRepository implements AppointmentRepository {
 	private prisma = prisma;
+
+	async findAll(): Promise<Appointment[]> {
+		const appointments = await this.prisma.appointment.findMany({
+			orderBy: { date: "desc" },
+		});
+		return appointments as unknown as Appointment[];
+	}
 
 	async findByUserId(userId: string): Promise<Appointment[]> {
 		const appointments = await this.prisma.appointment.findMany({
@@ -25,5 +32,17 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
 			},
 		});
 		return createdAppointment as unknown as Appointment;
+	}
+
+	async updateStatus(id: string, status: string): Promise<Appointment> {
+		const updated = await this.prisma.appointment.update({
+			where: { id },
+			data: { status },
+		});
+		return updated as unknown as Appointment;
+	}
+
+	async delete(id: string): Promise<void> {
+		await this.prisma.appointment.delete({ where: { id } });
 	}
 }

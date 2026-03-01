@@ -4,12 +4,14 @@ export interface User {
 	name: string;
 	email: string;
 	role: UserRole;
+	gender?: "male" | "female";
 }
 
 interface AuthApiUser {
 	id: string;
 	name: string;
 	email: string;
+	gender?: "male" | "female";
 }
 
 const AUTH_TOKEN_KEY = "auth_token";
@@ -40,6 +42,7 @@ const mapApiUserToSessionUser = (user: AuthApiUser): User => ({
 	name: user.name,
 	email: user.email,
 	role: resolveRole(user.email),
+	gender: user.gender || (user.name.toLowerCase().endsWith("a") ? "female" : "male"), // Simple gender guess for demo
 });
 
 type AuthResult =
@@ -85,6 +88,10 @@ const mapBackendMessageToPtBr = (
 
 	if (status === 422) {
 		return "Dados inválidos. Revise os campos e tente novamente.";
+	}
+
+	if (normalized === "unable to register user") {
+		return "Não foi possível criar a conta no servidor. Tente novamente.";
 	}
 
 	return null;

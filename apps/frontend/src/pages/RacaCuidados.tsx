@@ -237,10 +237,10 @@ export default function RacaCuidados() {
 
                     {/* Left — Text */}
                     <div className="flex flex-col justify-center px-8 py-20 lg:px-16 lg:py-28">
-                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-medium-grey mb-6 block">
+                        <span className="text-[10px] font-medium uppercase tracking-[0.4em] text-medium-grey mb-6 block">
                             {breed.label}
                         </span>
-                        <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight text-black leading-[0.95] mb-8">
+                        <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-light tracking-tight text-black leading-[0.95] mb-8">
                             {breed.name}
                         </h1>
                         <div className="w-16 h-[2px] bg-black mb-8" />
@@ -250,7 +250,7 @@ export default function RacaCuidados() {
                         <div className="mt-12">
                             <Link
                                 to="/agendamento"
-                                className="inline-flex items-center gap-3 bg-black text-white px-8 py-4 text-xs font-bold uppercase tracking-[0.2em] hover:bg-neutral-800 transition-all duration-300 group"
+                                className="inline-flex items-center gap-3 bg-black text-white px-8 py-4 text-xs font-medium uppercase tracking-[0.2em] hover:bg-neutral-800 transition-all duration-300 group"
                             >
                                 Agendar para {breed.name}
                                 <span className="material-symbols-outlined text-base transition-transform duration-300 group-hover:translate-x-1">
@@ -281,7 +281,7 @@ export default function RacaCuidados() {
                                 <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-neutral-400 mb-2">
                                     {stat.label}
                                 </span>
-                                <span className="text-xl font-black tracking-tight text-white">
+                                <span className="text-xl font-light tracking-tight text-white">
                                     {stat.value}
                                 </span>
                             </div>
@@ -293,7 +293,7 @@ export default function RacaCuidados() {
             {/* ── CARE SECTIONS ── */}
             <section className="py-24 max-w-7xl mx-auto px-8 lg:px-16">
                 <div className="mb-16">
-                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-medium-grey">
+                    <span className="text-[10px] font-medium uppercase tracking-[0.4em] text-medium-grey">
                         Protocolo de Cuidados
                     </span>
                 </div>
@@ -318,10 +318,10 @@ export default function RacaCuidados() {
                                 <span className="material-symbols-outlined text-3xl text-charcoal mb-4 block opacity-60 group-hover:opacity-100 transition-opacity duration-300">
                                     {item.icon}
                                 </span>
-                                <h2 className="text-xl font-black uppercase tracking-tight text-black mb-1">
+                                <h2 className="text-xl font-medium uppercase tracking-tight text-black mb-1">
                                     {item.title}
                                 </h2>
-                                <span className="text-xs font-bold uppercase tracking-widest text-medium-grey">
+                                <span className="text-xs font-medium uppercase tracking-widest text-medium-grey">
                                     {item.subtitle}
                                 </span>
                             </div>
@@ -340,10 +340,10 @@ export default function RacaCuidados() {
             {/* ── CTA ── */}
             <section className="bg-neutral-50 border-t border-border-grey py-24">
                 <div ref={ctaRef} className="reveal-up max-w-4xl mx-auto px-8 text-center">
-                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-medium-grey mb-6 block">
+                    <span className="text-[10px] font-medium uppercase tracking-[0.4em] text-medium-grey mb-6 block">
                         Consultas disponíveis Seg — Sáb
                     </span>
-                    <h2 className="text-4xl md:text-5xl font-black tracking-tight text-black mb-4">
+                    <h2 className="text-4xl md:text-5xl font-light tracking-tight text-black mb-4">
                         Pronto para agendar?
                     </h2>
                     <p className="text-base text-medium-grey font-light mb-12 max-w-lg mx-auto leading-relaxed">
@@ -352,7 +352,7 @@ export default function RacaCuidados() {
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Link
                             to="/agendamento"
-                            className="inline-flex items-center justify-center gap-2 bg-black text-white px-10 py-5 text-xs font-bold uppercase tracking-[0.2em] hover:bg-neutral-800 transition-all duration-300 group"
+                            className="inline-flex items-center justify-center gap-2 bg-black text-white px-10 py-5 text-xs font-medium uppercase tracking-[0.2em] hover:bg-neutral-800 transition-all duration-300 group"
                         >
                             Agendar para {breed.name}
                             <span className="material-symbols-outlined text-base transition-transform duration-300 group-hover:translate-x-1">
@@ -361,7 +361,7 @@ export default function RacaCuidados() {
                         </Link>
                         <Link
                             to="/servicos"
-                            className="inline-flex items-center justify-center border border-charcoal px-10 py-5 text-xs font-bold uppercase tracking-[0.2em] text-charcoal hover:bg-charcoal hover:text-white transition-all duration-300"
+                            className="inline-flex items-center justify-center border border-charcoal px-10 py-5 text-xs font-medium uppercase tracking-[0.2em] text-charcoal hover:bg-charcoal hover:text-white transition-all duration-300"
                         >
                             Ver todos os serviços
                         </Link>

@@ -20,6 +20,6 @@ describe("App Component", () => {
         <App />
       </HelmetProvider>
     );
-    expect(await screen.findByText(/Seu Melhor Amigo/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Para seu melhor amigo/i)).toBeInTheDocument();
   });
 });

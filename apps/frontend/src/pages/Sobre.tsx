@@ -18,7 +18,7 @@ export default function Sobre() {
           <RevealSection>
             <div className="grid lg:grid-cols-2 items-center gap-16">
               <div className="relative z-10 pt-8">
-                <h1 className="font-display text-4xl font-black leading-tight tracking-tight text-black sm:text-5xl lg:text-6xl mb-6">
+                <h1 className="font-display text-4xl font-light leading-tight tracking-tight text-black sm:text-5xl lg:text-6xl mb-6">
                   Paixão e Cuidado
                   <br />
                   <span className="text-medium-grey">em Cada Detalhe</span>
@@ -33,18 +33,20 @@ export default function Sobre() {
                 <div className="flex gap-4">
                   <Link
                     to="/servicos"
-                    className="inline-flex items-center justify-center bg-black px-8 py-4 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all hover:bg-neutral-800"
+                    className="inline-flex items-center justify-center bg-black px-8 py-4 text-xs font-medium uppercase tracking-[0.2em] text-white transition-colors hover:bg-neutral-800"
                   >
                     Nossos Serviços
                   </Link>
                 </div>
               </div>
-              <div className="relative h-[600px] overflow-hidden mt-8 lg:mt-0">
-                <img
-                  alt="Pug em estúdio com fundo claro, estética minimalista"
-                  className="h-full w-full object-cover grayscale brightness-95 contrast-125"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCK_Gchu2mVI8m1UUlFcukeV40uiko9l__41-7EO_qvTsGcCcbHy71MFTf2lXav-z9cV_MTjkK_2NdrQYtc2DMmNRFUsA3HO8XFfOiUwBqXtLxLxpeMygS3Axdq11bCaOusmc7JjLhgrZoKTt4U6VqwHsvTln-Uq8Uxnox1OxF-8LOf5HfmpascJuEfZZ-jEkFg1ImDH_tIpZpjeTLeGekTyRI7JsCzOf0ZJXVxUgR9oNxEXZg8zfLvYIhjIIS09DIiB40DHAnwQSk"
-                />
+              <div className="relative h-[600px] mt-8 lg:mt-0 premium-img-container">
+                  <img
+                    alt="Pug em estúdio com fundo claro, estética minimalista"
+                    className="h-full w-full object-cover grayscale brightness-95 contrast-125"
+                    width={800}
+                    height={600}
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCK_Gchu2mVI8m1UUlFcukeV40uiko9l__41-7EO_qvTsGcCcbHy71MFTf2lXav-z9cV_MTjkK_2NdrQYtc2DMmNRFUsA3HO8XFfOiUwBqXtLxLxpeMygS3Axdq11bCaOusmc7JjLhgrZoKTt4U6VqwHsvTln-Uq8Uxnox1OxF-8LOf5HfmpascJuEfZZ-jEkFg1ImDH_tIpZpjeTLeGekTyRI7JsCzOf0ZJXVxUgR9oNxEXZg8zfLvYIhjIIS09DIiB40DHAnwQSk"
+                  />
               </div>
             </div>
           </RevealSection>
@@ -56,10 +58,10 @@ export default function Sobre() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <RevealSection>
             <div className="mb-16 text-center">
-              <h2 className="text-xs font-black uppercase tracking-[0.3em] text-medium-grey mb-4">
+              <h2 className="text-xs font-medium uppercase tracking-[0.3em] text-medium-grey mb-4">
                 Nossa Filosofia
               </h2>
-              <h3 className="text-3xl font-black tracking-tight text-black sm:text-4xl">
+              <h3 className="text-3xl font-light tracking-tight text-black sm:text-4xl">
                 Herança de Excelência
               </h3>
             </div>
@@ -72,7 +74,7 @@ export default function Sobre() {
               { icon: "medical_services", title: "Corpo Clínico", desc: "Nossa equipe veterinária possui anos de experiência acadêmica e prática voltada inteiramente para raças pequenas." },
             ].map((v, i) => (
               <RevealSection key={v.title} delay={i * 100}>
-                <div className="bg-white p-12 border border-border-grey hover:shadow-xl transition-all duration-500 ease-in-out h-full">
+                <div className="bg-white p-12 border border-border-grey hover:shadow-xl transition-shadow duration-500 ease-in-out h-full">
                   <span className="material-symbols-outlined text-4xl text-charcoal mb-6 block">
                     {v.icon}
                   </span>
@@ -93,7 +95,7 @@ export default function Sobre() {
       <section className="bg-black text-white py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <RevealSection>
-            <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-6">
+            <h2 className="text-4xl md:text-5xl font-light tracking-tight mb-6">
               Faça Parte da Nossa História
             </h2>
             <p className="text-lg text-neutral-400 font-light max-w-2xl mx-auto mb-10 leading-relaxed">
@@ -103,13 +105,13 @@ export default function Sobre() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link
                 to="/agendamento"
-                className="inline-flex items-center justify-center bg-white text-black px-10 py-5 text-xs font-bold uppercase tracking-[0.2em] transition-all hover:bg-neutral-200"
+                className="inline-flex items-center justify-center bg-white text-black px-10 py-5 text-xs font-medium uppercase tracking-[0.2em] transition-colors hover:bg-neutral-200"
               >
                 Agendar Horário
               </Link>
               <Link
                 to="/galeria"
-                className="inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-colors"
+                className="inline-flex items-center gap-3 text-xs font-medium uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-colors"
               >
                 <span className="material-symbols-outlined text-lg">pets</span>
                 Ver Galeria de Raças

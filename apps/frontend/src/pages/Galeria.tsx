@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
+import RevealSection from "../components/ui/RevealSection";
 
 const breeds = [
   {
@@ -57,7 +58,7 @@ export default function Galeria() {
 
       <section className="bg-light-grey pt-32 pb-24 border-b border-border-grey">
         <div className="max-w-7xl mx-auto px-6 md:px-12 text-center">
-          <h2 className="text-xs font-black uppercase tracking-[0.3em] text-medium-grey mb-4">
+          <h2 className="text-xs font-medium uppercase tracking-[0.3em] text-medium-grey mb-4">
             Nossa Especialidade
           </h2>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-light tracking-tight text-black mb-6">
@@ -74,52 +75,53 @@ export default function Galeria() {
 
       <section className="py-24 px-6 md:px-12 max-w-7xl mx-auto w-full">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
-          {breeds.map((b) => (
-            <Link
-              key={b.name}
-              to={`/galeria/${b.slug}`}
-              className="group flex flex-col border-l border-medium-grey/10 pl-6 transition-all duration-500 hover:border-black"
-            >
-              <div className="aspect-[4/5] bg-light-grey mb-8 overflow-hidden relative rounded-none">
-                <img
-                  src={b.image}
-                  alt={b.name}
-                  className="w-full h-full object-cover object-center grayscale contrast-110 transition-all duration-[2000ms] ease-out group-hover:scale-105 group-hover:grayscale-0 group-hover:brightness-105"
-                />
+          {breeds.map((b, i) => (
+            <RevealSection key={b.name} delay={i * 80}>
+              <Link
+                to={`/galeria/${b.slug}`}
+                className="group flex flex-col border-l border-medium-grey/10 pl-6 transition-all duration-500 hover:border-black"
+              >
+                <div className="aspect-[4/5] bg-light-grey mb-8 relative rounded-none premium-img-container">
+                  <img
+                    src={b.image}
+                    alt={b.name}
+                    className="w-full h-full object-cover object-center grayscale contrast-110 transition-all duration-[2000ms] ease-out group-hover:scale-105 group-hover:grayscale-0 group-hover:brightness-105"
+                  />
 
-                {/* Subtle Premium Overlay */}
-                <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                  {/* Subtle Premium Overlay */}
+                  <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
-                {/* Minimalist Indicator */}
-                <div className="absolute bottom-6 left-6 overflow-hidden">
-                  <div className="flex items-center gap-3 translate-y-full group-hover:translate-y-0 transition-transform duration-700 ease-expo">
-                    <span className="h-[1px] w-8 bg-black/40" />
-                    <span className="text-[9px] font-black uppercase tracking-[0.3em] text-black/60">
-                      Ver Perfil
+                  {/* Minimalist Indicator */}
+                  <div className="absolute bottom-6 left-6 overflow-hidden">
+                    <div className="flex items-center gap-3 translate-y-full opacity-0 lg:opacity-100 lg:translate-y-full group-hover:translate-y-0 reveal-child transition-all duration-700 ease-expo">
+                      <span className="h-[1px] w-8 bg-black/40" />
+                      <span className="text-[9px] font-medium uppercase tracking-[0.3em] text-black/60">
+                        Ver Perfil
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col flex-1">
+                  <span className="text-[9px] font-bold tracking-[0.3em] text-medium-grey uppercase mb-3 opacity-60 group-hover:opacity-100 transition-opacity duration-500">
+                    {b.type}
+                  </span>
+                  <h3 className="text-2xl font-display font-light tracking-tight text-black mb-4 group-hover:translate-x-1 transition-transform duration-500">
+                    {b.name}
+                  </h3>
+                  <p className="text-charcoal font-light leading-relaxed text-sm flex-1 opacity-70 group-hover:opacity-100 transition-opacity duration-500">
+                    {b.desc}
+                  </p>
+
+                  <div className="mt-8 flex items-center gap-4 group/arrow">
+                    <div className="h-[1px] w-0 bg-black group-hover:w-12 transition-all duration-700 ease-expo" />
+                    <span className="material-symbols-outlined text-sm -translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-700 delay-100">
+                      arrow_forward
                     </span>
                   </div>
                 </div>
-              </div>
-
-              <div className="flex flex-col flex-1">
-                <span className="text-[9px] font-bold tracking-[0.3em] text-medium-grey uppercase mb-3 opacity-60 group-hover:opacity-100 transition-opacity duration-500">
-                  {b.type}
-                </span>
-                <h3 className="text-2xl font-display font-light tracking-tight text-black mb-4 group-hover:translate-x-1 transition-transform duration-500">
-                  {b.name}
-                </h3>
-                <p className="text-charcoal font-light leading-relaxed text-sm flex-1 opacity-70 group-hover:opacity-100 transition-opacity duration-500">
-                  {b.desc}
-                </p>
-
-                <div className="mt-8 flex items-center gap-4 group/arrow">
-                  <div className="h-[1px] w-0 bg-black group-hover:w-12 transition-all duration-700 ease-expo" />
-                  <span className="material-symbols-outlined text-sm -translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-700 delay-100">
-                    arrow_forward
-                  </span>
-                </div>
-              </div>
-            </Link>
+              </Link>
+            </RevealSection>
           ))}
         </div>
       </section>

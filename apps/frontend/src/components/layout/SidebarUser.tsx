@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import NotionAvatar from "../../pages/dashboard/components/NotionAvatar";
 
 export default function SidebarUser({ isCollapsed }: { isCollapsed?: boolean }) {
-    const { user, getInitials, logout } = useAuth();
+    const { user, logout } = useAuth();
     const navigate = useNavigate();
 
     if (!user) return null;
@@ -15,12 +16,15 @@ export default function SidebarUser({ isCollapsed }: { isCollapsed?: boolean }) 
     return (
         <div
             className="p-4 pb-8 lg:pb-4 border-t border-white/10 flex items-center justify-between overflow-hidden shrink-0"
-            onKeyDown={() => undefined}
         >
             <div className="flex items-center gap-3 whitespace-nowrap">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-500 to-gray-700 flex items-center justify-center text-xs font-bold text-white uppercase shrink-0 border border-white/10">
-                    {getInitials(user.name)}
-                </div>
+                <NotionAvatar
+                    name={user.name}
+                    type="human"
+                    gender={user.gender}
+                    size="md"
+                    className="rounded-full shadow-sm"
+                />
                 <div className={`flex flex-col transition-opacity duration-500 ease-in-out ${isCollapsed ? "opacity-0 invisible w-0" : "opacity-100"}`}>
                     <span className="text-xs font-medium text-white truncate max-w-[120px]">
                         {user.name}

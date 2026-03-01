@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import RevealSection from "../components/ui/RevealSection";
 import { categories, products, type Product } from "../data/products";
@@ -19,10 +19,18 @@ export default function Catalogo() {
     return 0;
   });
 
+  // Close modal on Escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelectedProduct(null);
+    };
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, []);
+
   return (
     <div
       className="min-h-screen bg-white font-sans text-charcoal flex flex-col"
-      onKeyDown={() => undefined}
     >
       <Helmet>
         <title>Catálogo | Small Breeds</title>
@@ -55,7 +63,7 @@ export default function Catalogo() {
         {/* Sidebar / Filters */}
         <aside className="w-full md:w-48 flex-shrink-0">
           <div className="sticky top-32">
-            <h3 className="text-xs font-bold uppercase tracking-[0.2em] mb-8 text-black border-b border-border-grey pb-4">
+            <h3 className="text-xs font-medium uppercase tracking-[0.2em] mb-8 text-black border-b border-border-grey pb-4">
               Categorias
             </h3>
             <ul className="space-y-5">
@@ -101,28 +109,28 @@ export default function Catalogo() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16">
             {sortedProducts.map((p, i) => (
               <RevealSection key={p.id} delay={i * 80}>
-                <article className="group flex flex-col border-l border-medium-grey/10 pl-6 transition-all duration-500 hover:border-black">
-                  <div className="aspect-[4/5] bg-light-grey mb-8 overflow-hidden relative">
+                <article className="group flex flex-col border-l border-medium-grey/10 pl-6 transition-colors duration-500 hover:border-black">
+                  <div className="aspect-square bg-light-grey mb-8 relative premium-img-container group/img overflow-hidden">
                     <img
                       src={p.image}
                       alt={p.name}
                       loading="lazy"
                       decoding="async"
-                      className="w-full h-full object-cover object-center grayscale contrast-110 transition-all duration-[2000ms] ease-out group-hover:scale-105 group-hover:grayscale-0 group-hover:brightness-105"
+                      className="w-full h-full object-cover object-center grayscale contrast-110 transition-[filter,transform] duration-[2000ms] ease-out group-hover:scale-105 group-hover:grayscale-0 group-hover:brightness-105"
                     />
 
                     {/* Subtle Premium Overlay */}
                     <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
-                    {/* Minimalist Quick View Indicator */}
+                    {/* Minimalist Details Indicator */}
                     <div className="absolute bottom-6 left-6 overflow-hidden">
                       <button
                         onClick={() => setSelectedProduct(p)}
-                        className="flex items-center gap-3 translate-y-full group-hover:translate-y-0 transition-transform duration-700 ease-expo"
+                        className="flex items-center gap-3 translate-y-full opacity-0 lg:opacity-100 lg:translate-y-full group-hover:translate-y-0 reveal-child transition-transform duration-700 ease-expo"
                       >
                         <span className="h-[1px] w-8 bg-black/40" />
-                        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-black/60 hover:text-black transition-colors">
-                          Vista Rápida
+                        <span className="text-[9px] font-medium uppercase tracking-[0.3em] text-black/60 hover:text-black transition-colors">
+                          Detalhes
                         </span>
                       </button>
                     </div>
@@ -139,10 +147,10 @@ export default function Catalogo() {
                       R$ {p.price.toFixed(2)}
                     </span>
 
-                    <button className="w-full border border-black bg-transparent text-black px-4 py-3 text-[9px] font-bold uppercase tracking-widest hover:bg-black hover:text-white transition-all duration-500 group/btn">
+                    <button className="w-full border border-black bg-transparent text-black px-4 py-3 text-[9px] font-medium uppercase tracking-widest hover:bg-black hover:text-white transition-colors duration-500 group/btn">
                       <div className="flex items-center justify-center gap-3">
                         Comprar Agora
-                        <span className="material-symbols-outlined text-xs -translate-x-2 opacity-0 group-hover/btn:translate-x-0 group-hover/btn:opacity-100 transition-all duration-500">
+                        <span className="material-symbols-outlined text-xs -translate-x-2 opacity-0 group-hover/btn:translate-x-0 group-hover/btn:opacity-100 transition-[transform,opacity] duration-500">
                           arrow_forward
                         </span>
                       </div>
@@ -158,7 +166,7 @@ export default function Catalogo() {
       {/* Product Modal */}
       {selectedProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setSelectedProduct(null)}></div>
+          <button aria-label="Fechar modal" className="absolute inset-0 w-full bg-black/60 backdrop-blur-sm cursor-pointer border-none" onClick={() => setSelectedProduct(null)}></button>
           <div className="relative bg-white w-full max-w-5xl overflow-hidden flex flex-col md:flex-row shadow-2xl animate-fade-in animate-scale-up">
             <button
               onClick={() => setSelectedProduct(null)}
@@ -171,7 +179,7 @@ export default function Catalogo() {
               <img
                 src={selectedProduct.image}
                 alt={selectedProduct.name}
-                className="w-full h-full object-cover grayscale contrast-110"
+                className="w-full h-full object-cover contrast-110"
               />
             </div>
 
@@ -202,7 +210,7 @@ export default function Catalogo() {
                 )}
               </div>
 
-              <button className="w-full bg-black text-white px-8 py-4 text-xs font-bold uppercase tracking-widest hover:bg-neutral-800 transition-all shadow-lg active:scale-95">
+              <button className="w-full bg-black text-white px-8 py-4 text-xs font-medium uppercase tracking-widest hover:bg-neutral-800 transition-colors shadow-lg active:scale-95">
                 Adicionar ao Carrinho
               </button>
             </div>

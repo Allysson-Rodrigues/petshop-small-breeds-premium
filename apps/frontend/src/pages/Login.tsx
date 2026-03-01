@@ -41,7 +41,6 @@ export default function Login() {
   return (
     <div
       className="bg-background-light font-display antialiased"
-      onKeyDown={() => undefined}
     >
       <Helmet>
         <title>Login | Small Breeds</title>
@@ -81,7 +80,7 @@ export default function Login() {
             <div className="mb-10 flex justify-center">
               <Link
                 to="/"
-                className="text-2xl font-bold tracking-tighter hover:opacity-80 transition-opacity text-black flex items-center gap-2"
+                className="text-2xl font-light tracking-tighter hover:opacity-80 transition-opacity text-black flex items-center gap-2"
               >
                 <span className="material-symbols-outlined text-2xl">pets</span>
                 PETSHOP{" "}
@@ -182,7 +181,7 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`mt-2 inline-flex h-12 w-full items-center justify-center bg-black px-8 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all disabled:pointer-events-none disabled:opacity-50 ${isLoading
+                className={`mt-2 inline-flex h-12 w-full items-center justify-center bg-black px-8 text-xs font-medium uppercase tracking-[0.2em] text-white transition-all disabled:pointer-events-none disabled:opacity-50 ${isLoading
                   ? "opacity-70 cursor-not-allowed"
                   : "hover:bg-neutral-800"
                   }`}

@@ -95,14 +95,7 @@ function AnimatedRoutes() {
                 </PageTransition>
               }
             />
-            <Route
-              path="/catalogo"
-              element={
-                <PageTransition>
-                  <Catalogo />
-                </PageTransition>
-              }
-            />
+
             <Route
               path="/galeria"
               element={
@@ -137,9 +130,7 @@ function AnimatedRoutes() {
 function App() {
   return (
     <BrowserRouter>
-      <a href="#main-content" className="sr-only focus:not-sr-only">
-        Pular para o conteúdo principal
-      </a>
+
       <ScrollToTop />
       <AnimatedRoutes />
     </BrowserRouter>

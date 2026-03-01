@@ -1,3 +1,4 @@
+import { InvalidCredentialsError } from "../errors/auth-errors.js";
 import type { UserRepository } from "../repositories/user.repository.js";
 import type { Encrypter } from "../services/encrypter.js";
 import type { Hasher } from "../services/hasher.js";
@@ -27,7 +28,7 @@ export class LoginUseCase {
 		const normalizedEmail = params.email.trim().toLowerCase();
 		const user = await this.userRepository.findByEmail(normalizedEmail);
 		if (!user) {
-			throw new Error("Invalid credentials");
+			throw new InvalidCredentialsError();
 		}
 
 		const isPasswordValid = await this.hasher.compare(
@@ -36,7 +37,7 @@ export class LoginUseCase {
 		);
 
 		if (!isPasswordValid) {
-			throw new Error("Invalid credentials");
+			throw new InvalidCredentialsError();
 		}
 
 		const token = await this.encrypter.encrypt({ id: user.id });

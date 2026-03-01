@@ -21,10 +21,10 @@ export default function Home() {
           <div className="relative overflow-hidden">
             <div className="grid lg:grid-cols-2 items-center gap-12 lg:gap-0">
               <div className="relative z-10 py-12 lg:pr-12 animate-fade-in">
-                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-medium-grey mb-6">
+                <p className="text-[10px] font-medium uppercase tracking-[0.4em] text-medium-grey mb-6">
                   Heritage of Care
                 </p>
-                <h1 className="font-display text-5xl font-black leading-[1.1] tracking-tight text-black sm:text-6xl lg:text-7xl mb-8">
+                <h1 className="font-display text-5xl font-light leading-[1.1] tracking-tight text-charcoal sm:text-6xl lg:text-7xl mb-8">
                   Cuidado Elevado <br />
                   <span className="text-medium-grey italic font-light lowercase">Para seu melhor amigo</span>
                 </h1>
@@ -35,23 +35,26 @@ export default function Home() {
                 <div className="flex flex-col sm:flex-row gap-6">
                   <Link
                     to="/agendamento"
-                    className="inline-flex items-center justify-center bg-black px-12 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-white transition-all hover:bg-neutral-800 shadow-premium"
+                    className="inline-flex items-center justify-center bg-black px-12 py-5 text-[10px] font-medium uppercase tracking-[0.2em] text-white transition-colors hover:bg-neutral-800 shadow-premium"
                   >
                     Agendar Horário
                   </Link>
                   <Link
                     to="/servicos"
-                    className="inline-flex items-center justify-center border border-charcoal/20 px-12 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-charcoal transition-all hover:bg-neutral-50"
+                    className="inline-flex items-center justify-center border border-charcoal/20 px-12 py-5 text-[10px] font-medium uppercase tracking-[0.2em] text-charcoal transition-colors hover:bg-neutral-50"
                   >
                     Ver Serviços
                   </Link>
                 </div>
               </div>
-              <div className="relative h-[500px] lg:h-[700px] overflow-hidden">
+              <div className="relative h-[500px] lg:h-[700px] premium-img-container">
                 <img
-                  alt="Golden retriever sentado calmamente em uma sala de estar moderna"
+                  alt="Lindo cão de raça pequena sentado calmamente"
                   className="h-full w-full object-cover grayscale brightness-90 contrast-110"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDg8Ot3selgR8zBD6NMO_ycoO-MmjeW7VGB6jKq5dVbxExUlPCUut_IPbQzlqUQZ2Bd4VuI6ibh6YCHs3tzaoDpmhAUyLaRM_FFxCDz7LroBiW_79fNaWaLbPR9hYjV1SzcqyOQXIx-lcSy6AoKT9BN4XHiKcvfwqjB30H4WlzQHGiIJtsSO1NlzZeOuxN6XGV5AMY8JBN3TNS0Md9rASirZ4UIg69EC_WqoP4NuvdIG_1sV5quwqI-8BRILacyyX1HAGrn1v7Q6KM"
+                  src="/hero-small-dog.png"
+                  width={800}
+                  height={1000}
+                  fetchPriority="high"
                 />
                 <div className="absolute inset-0 bg-black/5"></div>
               </div>
@@ -68,19 +71,19 @@ export default function Home() {
           <RevealSection>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 text-center">
               <div className="flex flex-col items-center">
-                <span className="text-4xl md:text-5xl font-black tracking-tight mb-2">2.400+</span>
+                <span className="text-4xl md:text-5xl font-light tracking-tight mb-2">2.400+</span>
                 <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.3em] text-neutral-400">Pets Atendidos</span>
               </div>
               <div className="flex flex-col items-center">
-                <span className="text-4xl md:text-5xl font-black tracking-tight mb-2">5</span>
+                <span className="text-4xl md:text-5xl font-light tracking-tight mb-2">5</span>
                 <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.3em] text-neutral-400">Anos de Experiência</span>
               </div>
               <div className="flex flex-col items-center">
-                <span className="text-4xl md:text-5xl font-black tracking-tight mb-2">4.9★</span>
+                <span className="text-4xl md:text-5xl font-light tracking-tight mb-2">4.9★</span>
                 <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.3em] text-neutral-400">Avaliação Google</span>
               </div>
               <div className="flex flex-col items-center">
-                <span className="text-4xl md:text-5xl font-black tracking-tight mb-2">98%</span>
+                <span className="text-4xl md:text-5xl font-light tracking-tight mb-2">98%</span>
                 <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.3em] text-neutral-400">Clientes Fiéis</span>
               </div>
             </div>
@@ -95,10 +98,10 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <RevealSection>
             <div className="mb-20">
-              <h2 className="text-xs font-black uppercase tracking-[0.3em] text-medium-grey">
+              <h2 className="text-xs font-medium uppercase tracking-[0.3em] text-medium-grey">
                 Cuidado Profissional
               </h2>
-              <h3 className="mt-4 text-4xl font-black tracking-tight text-black sm:text-5xl">
+              <h3 className="mt-4 text-4xl font-light tracking-tight text-black sm:text-5xl">
                 Nossos Serviços Premium
               </h3>
               <div className="mt-6 h-1 w-20 bg-black"></div>
@@ -131,21 +134,21 @@ export default function Home() {
               <RevealSection key={svc.title}>
                 <Link
                   to={svc.link}
-                  className="group border border-border-grey bg-white p-12 transition-all hover:bg-neutral-50 flex flex-col h-full"
+                  className="group border border-border-grey bg-white p-12 transition-colors hover:bg-neutral-50 flex flex-col h-full"
                 >
                   <div className="mb-10 text-charcoal">
                     <span className="material-symbols-outlined text-5xl font-light">
                       {svc.icon}
                     </span>
                   </div>
-                  <h4 className="mb-5 text-xl font-black uppercase tracking-tight text-charcoal">
+                  <h4 className="mb-5 text-xl font-medium uppercase tracking-tight text-charcoal">
                     {svc.title}
                   </h4>
                   <p className="text-medium-grey leading-relaxed font-light flex-1">
                     {svc.desc}
                   </p>
                   <div className="mt-8 pt-6 border-t border-border-grey flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-widest text-medium-grey">
+                    <span className="text-xs font-medium uppercase tracking-widest text-medium-grey">
                       A partir de
                     </span>
                     <span className="text-2xl font-black text-black tracking-tight">
@@ -166,10 +169,10 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <RevealSection>
             <div className="mb-20 text-center">
-              <h2 className="text-xs font-black uppercase tracking-[0.3em] text-medium-grey mb-4">
+              <h2 className="text-xs font-medium uppercase tracking-[0.3em] text-medium-grey mb-4">
                 O que dizem nossos clientes
               </h2>
-              <h3 className="text-4xl font-black tracking-tight text-black sm:text-5xl">
+              <h3 className="text-4xl font-light tracking-tight text-black sm:text-5xl">
                 Confiança Construída com Carinho
               </h3>
             </div>
@@ -222,7 +225,7 @@ export default function Home() {
       <section className="bg-black text-white py-24 lg:py-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <RevealSection>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-6">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-tight mb-6">
               Pronto para Conhecer?
             </h2>
             <p className="text-lg text-neutral-400 font-light max-w-2xl mx-auto mb-10 leading-relaxed">
@@ -232,13 +235,13 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link
                 to="/agendamento"
-                className="inline-flex items-center justify-center bg-white text-black px-10 py-5 text-xs font-bold uppercase tracking-[0.2em] transition-all hover:bg-neutral-200"
+                className="inline-flex items-center justify-center bg-white text-black px-10 py-5 text-xs font-medium uppercase tracking-[0.2em] transition-colors hover:bg-neutral-200"
               >
                 Agendar Horário
               </Link>
               <a
                 href="tel:+5511999999999"
-                className="inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-colors"
+                className="inline-flex items-center gap-3 text-xs font-medium uppercase tracking-[0.2em] text-neutral-400 hover:text-white transition-colors"
               >
                 <span className="material-symbols-outlined text-lg">call</span>
                 (11) 99999-9999

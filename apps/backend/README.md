@@ -1,62 +1,89 @@
 # Petshop Small Breeds Premium — Backend
 
-Backend API for the `petshop-small-breeds-premium` monorepo (Express + Prisma + TypeScript), organized in layers (`domain`, `presentation`, `main`).
+API REST construída com Express 5, Prisma 7 e TypeScript, organizada em Clean Architecture (`domain`, `presentation`, `main`).
 
-## Requirements
-- Node.js 24+ (see `engines` in the root `package.json`)
-- npm 10+
+## Stack
 
-## Run (from monorepo root)
+- **Framework:** Express 5 + TypeScript
+- **ORM:** Prisma 7 (SQLite via Better-SQLite3)
+- **Auth:** JWT (jsonwebtoken) + bcrypt
+- **Lint:** Biome
+- **Testes:** Vitest + Supertest
+
+## Desenvolvimento
+
 ```bash
-npm run setup
-npm run dev:backend
-```
+# A partir da raiz do monorepo
+npm run setup        # Instala deps + cria .env
+npm run dev:backend  # Inicia com tsx watch
 
-## Run (backend only)
-```bash
+# Ou diretamente
 cd apps/backend
+cp .env.example .env  # Ajuste os valores!
 npm install
-cp .env.example .env
 npm run dev
 ```
 
-## Environment Variables
-Based on `apps/backend/.env.example`:
-```env
-PORT=3000
-NODE_ENV=development
-DATABASE_URL="file:./dev.db"
-JWT_SECRET="development-secret"
-CORS_ORIGIN="http://localhost:5173"
-```
+## Variáveis de Ambiente
+
+Copie `.env.example` como `.env` e ajuste:
+
+| Variável | Descrição | Default |
+|----------|-----------|---------|
+| `PORT` | Porta do servidor | `3000` |
+| `NODE_ENV` | Ambiente (`development` / `production` / `test`) | `development` |
+| `DATABASE_URL` | Caminho do banco SQLite | `file:./dev.db` |
+| `JWT_SECRET` | Segredo para tokens JWT | — (**obrigatório**) |
+| `CORS_ORIGIN` | Origens CORS permitidas (vírgula) | `http://localhost:5173` |
+
+> ⚠️ **Segurança:** Nunca commite `.env` no repositório. O `.gitignore` já cobre `*.env` e `dev.db`.
 
 ## Prisma (SQLite)
-Apply migrations when needed:
+
 ```bash
 cd apps/backend
-npx prisma migrate deploy
+npx prisma migrate deploy   # Aplicar migrations
+npx prisma studio           # UI visual do banco
 ```
 
-## Tests & Quality
-```bash
-cd apps/backend
-npm run lint
-npm test
-```
+## Scripts
 
-## Structure
+| Comando | Descrição |
+|---------|-----------|
+| `npm run dev` | Dev server com hot-reload (tsx watch) |
+| `npm run build` | Compila TypeScript → `dist/` |
+| `npm start` | Inicia build compilado |
+| `npm run lint` | Biome check |
+| `npm run lint:fix` | Biome auto-fix |
+| `npm test` | Testes unitários (Vitest) |
+
+## Estrutura
+
 ```text
-.
-├── src/
-│   ├── domain/        # Entities and use cases (pure business logic)
-│   ├── presentation/  # Controllers (framework-independent)
-│   ├── main/          # Infrastructure, adapters, composition root
-│   ├── app.ts         # Express app bootstrap
-│   └── server.ts      # App entry point
-├── dist/              # Compiled output (not versioned)
-├── .env               # Local secrets (not versioned)
-└── package.json       # Scripts and dependencies
+src/
+├── domain/           # Entidades, use cases, repositórios (puro)
+├── presentation/     # Controllers (framework-independent)
+├── infrastructure/   # Prisma adapters
+├── main/             # Config, routes, composition root
+├── app.ts            # Express bootstrap
+└── server.ts         # Entry point
 ```
 
-## Notes
-- `apps/backend/prisma/dev.db` is a local development database and is not committed to Git.
+## Docker
+
+```bash
+cd apps/backend
+docker build -t petshop-backend .
+docker run -p 3000:3000 --env-file .env petshop-backend
+```
+
+> O `.dockerignore` previne que `.env` e `dev.db` sejam copiados para a imagem.
+
+## Endpoints principais
+
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| `GET` | `/api/health` | Health check |
+| `POST` | `/api/auth/login` | Login (retorna JWT) |
+| `POST` | `/api/auth/register` | Registro de novo usuário |
+| `GET` | `/api/dashboard/*` | Rotas protegidas do dashboard |

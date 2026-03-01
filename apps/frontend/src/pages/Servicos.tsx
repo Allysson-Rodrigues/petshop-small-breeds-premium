@@ -25,10 +25,10 @@ export default function Servicos() {
       {/* Hero Section */}
       <section className="relative bg-white pt-32 pb-20 border-b border-border-grey">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-xs font-black uppercase tracking-[0.3em] text-medium-grey mb-4">
+          <h2 className="text-xs font-medium uppercase tracking-[0.3em] text-medium-grey mb-4">
             Cuidado Profissional
           </h2>
-          <h1 className="text-4xl md:text-5xl font-black tracking-tight text-black mb-6">
+          <h1 className="text-4xl md:text-5xl font-light tracking-tight text-black mb-6">
             Nossos Serviços Premium
           </h1>
           <p className="text-lg text-medium-grey max-w-2xl mx-auto font-light leading-relaxed">
@@ -49,7 +49,7 @@ export default function Servicos() {
                   cut
                 </span>
               </div>
-              <h4 className="mb-5 text-xl font-black uppercase tracking-tight text-charcoal">
+              <h4 className="mb-5 text-xl font-medium uppercase tracking-tight text-charcoal">
                 Tosa Artesanal
               </h4>
               <p className="text-medium-grey leading-relaxed font-light">
@@ -63,7 +63,7 @@ export default function Servicos() {
                   bathtub
                 </span>
               </div>
-              <h4 className="mb-5 text-xl font-black uppercase tracking-tight text-charcoal">
+              <h4 className="mb-5 text-xl font-medium uppercase tracking-tight text-charcoal">
                 Banho de Luxo
               </h4>
               <p className="text-medium-grey leading-relaxed font-light">
@@ -77,7 +77,7 @@ export default function Servicos() {
                   medical_services
                 </span>
               </div>
-              <h4 className="mb-5 text-xl font-black uppercase tracking-tight text-charcoal">
+              <h4 className="mb-5 text-xl font-medium uppercase tracking-tight text-charcoal">
                 Cuidados Veterinários
               </h4>
               <p className="text-medium-grey leading-relaxed font-light">
@@ -90,7 +90,7 @@ export default function Servicos() {
           <div className="mt-20 text-center">
             <Link
               to="/agendamento"
-              className="inline-flex items-center justify-center bg-black px-10 py-5 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all btn-magnetic focus:outline-none"
+              className="inline-flex items-center justify-center bg-black px-10 py-5 text-xs font-medium uppercase tracking-[0.2em] text-white transition-all btn-magnetic focus:outline-none"
             >
               Agendar um Atendimento
             </Link>

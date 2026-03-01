@@ -6,6 +6,11 @@ const normalizeList = (value: string | undefined): string[] => {
 		.filter(Boolean);
 };
 
+export const getPort = (): number => {
+	const port = process.env.PORT;
+	return port ? Number(port) : 3000;
+};
+
 export const getJwtSecret = (): string => {
 	const secret = process.env.JWT_SECRET;
 	if (secret) return secret;

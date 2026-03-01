@@ -37,15 +37,13 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, onClose }: Si
         "bg-[#1f1f1f] flex-shrink-0 flex flex-col h-[100dvh] text-white overflow-hidden",
         // Mobile open/close via translateX (GPU only)
         isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
-        // Desktop: collapse to icon-only, expand on hover via width
-        "lg:w-20 lg:hover:w-64",
-        // Width for mobile (fixed at 256px when open)
+        // Desktop: wider icon-only view, expand on hover
+        "lg:w-[88px] lg:hover:w-64",
+        // Width for mobile
         "w-64",
         "shadow-2xl lg:shadow-none",
       ].join(" ")}
       style={{
-        // Only animate transform for mobile slide (GPU-accelerated)
-        // Width for desktop hover-expand (can't avoid it but will-change helps)
         transition: [
           `transform 500ms ${EASE_OUT_EXPO}`,
           `width 500ms ${EASE_OUT_EXPO}`,
@@ -54,12 +52,14 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, onClose }: Si
       }}
     >
       {/* Logo */}
-      <div className="h-16 flex items-center justify-between px-5 border-b border-white/10 overflow-hidden whitespace-nowrap shrink-0">
+      <div className="h-20 flex items-center px-6 border-b border-white/10 overflow-hidden whitespace-nowrap shrink-0">
         <Link
           to="/"
-          className="flex items-center gap-3 text-xl font-bold tracking-tighter hover:opacity-80 text-white transition-opacity duration-200"
+          className="flex items-center gap-3 text-lg font-light tracking-tighter hover:opacity-80 text-white transition-opacity duration-200"
         >
-          <span className="material-symbols-outlined text-white text-2xl shrink-0">pets</span>
+          <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 border border-white/10">
+            <span className="material-symbols-outlined text-white text-xl">pets</span>
+          </div>
           <span
             style={{
               transition: `opacity 300ms ${EASE_OUT_EXPO} ${isExpanded ? "100ms" : "0ms"}, transform 300ms ${EASE_OUT_EXPO} ${isExpanded ? "100ms" : "0ms"}`,
@@ -67,23 +67,15 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, onClose }: Si
               transform: isExpanded ? "translateX(0)" : "translateX(-10px)",
               pointerEvents: isExpanded ? "auto" : "none",
             }}
+            className="truncate"
           >
             PETSHOP <span className="font-light text-zinc-400">SMALL</span>
           </span>
         </Link>
-
-        {isOpen && (
-          <button
-            onClick={onClose}
-            className="lg:hidden text-gray-400 hover:text-white transition-colors shrink-0"
-          >
-            <span className="material-symbols-outlined">close</span>
-          </button>
-        )}
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-5 px-2.5 flex flex-col gap-0.5 overflow-x-hidden">
+      <nav className="flex-1 overflow-y-auto py-6 px-4 flex flex-col gap-2 overflow-x-hidden">
         {menuItems.map((item, index) => {
           const isActive = activeTab === item.id;
           const labelDelay = isExpanded ? `${80 + index * 30}ms` : "0ms";
@@ -94,21 +86,21 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, onClose }: Si
               tabIndex={0}
               title={!isExpanded ? item.label : ""}
               className={[
-                "flex items-center gap-4 px-3 py-3 rounded-lg cursor-pointer whitespace-nowrap",
-                "transition-colors duration-200",
-                isActive ? "bg-white/10 text-white" : "text-gray-400 hover:text-white hover:bg-white/5",
+                "flex items-center gap-4 px-3.5 py-3.5 rounded-xl cursor-pointer whitespace-nowrap",
+                "transition-all duration-300",
+                isActive ? "bg-white text-black shadow-lg shadow-white/5 scale-[1.02]" : "text-gray-400 hover:text-white hover:bg-white/5",
               ].join(" ")}
               onClick={(e) => { e.preventDefault(); setActiveTab(item.id); if (onClose) onClose(); }}
               onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setActiveTab(item.id); if (onClose) onClose(); } }}
             >
-              <span className="material-symbols-outlined text-[22px] shrink-0">{item.icon}</span>
+              <span className={`material-symbols-outlined text-[24px] shrink-0 ${isActive ? "text-black" : ""}`}>{item.icon}</span>
               <span
                 style={{
                   transition: `opacity 350ms ${EASE_OUT_EXPO} ${labelDelay}, transform 350ms ${EASE_OUT_EXPO} ${labelDelay}`,
                   opacity: isExpanded ? 1 : 0,
                   transform: isExpanded ? "translateX(0)" : "translateX(-8px)",
                 }}
-                className="text-sm font-medium"
+                className="text-sm font-semibold tracking-tight"
               >
                 {item.label}
               </span>
@@ -117,19 +109,19 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, onClose }: Si
         })}
 
         {/* Divider section */}
-        <div className="pt-3 mt-3 border-t border-white/10 flex flex-col gap-0.5">
+        <div className="pt-4 mt-4 border-t border-white/10 flex flex-col gap-2">
           <Link
             to="/"
-            className="flex items-center gap-4 px-3 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors duration-200 whitespace-nowrap"
+            className="flex items-center gap-4 px-3.5 py-3.5 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-300 whitespace-nowrap"
           >
-            <span className="material-symbols-outlined text-[22px] shrink-0">home</span>
+            <span className="material-symbols-outlined text-[24px] shrink-0">home</span>
             <span
               style={{
                 transition: `opacity 350ms ${EASE_OUT_EXPO} ${isExpanded ? "160ms" : "0ms"}, transform 350ms ${EASE_OUT_EXPO} ${isExpanded ? "160ms" : "0ms"}`,
                 opacity: isExpanded ? 1 : 0,
                 transform: isExpanded ? "translateX(0)" : "translateX(-8px)",
               }}
-              className="text-sm font-medium"
+              className="text-sm font-semibold tracking-tight"
             >
               Voltar ao Site
             </span>

@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import RevealSection from "../components/ui/RevealSection";
 
 export default function Agendamento() {
   const [submitting, setSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -12,6 +13,7 @@ export default function Agendamento() {
     setTimeout(() => {
       setSubmitting(false);
       setShowSuccess(true);
+      formRef.current?.reset();
       setTimeout(() => setShowSuccess(false), 5000);
     }, 1200);
   };
@@ -27,7 +29,7 @@ export default function Agendamento() {
       <section className="bg-light-grey pt-32 pb-20 border-b border-border-grey">
         <div className="max-w-3xl mx-auto px-6 text-center">
           <RevealSection>
-            <h2 className="text-xs font-black uppercase tracking-[0.3em] text-medium-grey mb-4">
+            <h2 className="text-xs font-medium uppercase tracking-[0.3em] text-medium-grey mb-4">
               Concierge
             </h2>
             <h1 className="text-4xl md:text-5xl font-display font-light tracking-tight text-black mb-6">
@@ -61,7 +63,7 @@ export default function Agendamento() {
           </div>
         )}
 
-        <form className="space-y-10" onSubmit={handleFormSubmit}>
+        <form ref={formRef} className="space-y-10" onSubmit={handleFormSubmit}>
           <RevealSection>
             <div className="border-b border-border-grey pb-10">
               <h3 className="text-lg font-medium tracking-tight text-black mb-8 border-l-2 border-black pl-3">
@@ -76,7 +78,7 @@ export default function Agendamento() {
                     id="petName"
                     type="text"
                     placeholder="Ex: Duque"
-                    className="w-full bg-transparent border-b border-medium-grey/40 py-3 text-black focus:border-black outline-none transition-colors placeholder:text-neutral-300"
+                    className="w-full bg-transparent border-b border-medium-grey/40 py-3 text-black focus:border-black focus:outline-none focus-visible:ring-1 focus-visible:ring-black transition-colors placeholder:text-neutral-300"
                     required
                   />
                 </div>
@@ -88,7 +90,7 @@ export default function Agendamento() {
                     id="petBreed"
                     type="text"
                     placeholder="Ex: Yorkshire Terrier"
-                    className="w-full bg-transparent border-b border-medium-grey/40 py-3 text-black focus:border-black outline-none transition-colors placeholder:text-neutral-300"
+                    className="w-full bg-transparent border-b border-medium-grey/40 py-3 text-black focus:border-black focus:outline-none focus-visible:ring-1 focus-visible:ring-black transition-colors placeholder:text-neutral-300"
                     required
                   />
                 </div>
@@ -126,7 +128,7 @@ export default function Agendamento() {
                   <input
                     id="preferredDate"
                     type="date"
-                    className="w-full bg-transparent border-b border-medium-grey/40 py-3 text-black focus:border-black outline-none transition-colors"
+                    className="w-full bg-transparent border-b border-medium-grey/40 py-3 text-black focus:border-black focus:outline-none focus-visible:ring-1 focus-visible:ring-black transition-colors"
                     required
                   />
                 </div>
@@ -137,7 +139,7 @@ export default function Agendamento() {
                   <div className="relative">
                     <select
                       id="preferredPeriod"
-                      className="w-full bg-transparent border-b border-medium-grey/40 py-3 text-black focus:border-black outline-none transition-colors appearance-none cursor-pointer"
+                      className="w-full bg-transparent border-b border-medium-grey/40 py-3 text-black focus:border-black focus:outline-none focus-visible:ring-1 focus-visible:ring-black transition-colors appearance-none cursor-pointer"
                       required
                     >
                       <option value="">Selecione o turno...</option>
@@ -158,7 +160,8 @@ export default function Agendamento() {
               <button
                 type="submit"
                 disabled={submitting}
-                className={`w-full text-white py-5 text-xs font-bold uppercase tracking-[0.2em] transition-all flex justify-center items-center gap-3 ${submitting ? "bg-black opacity-70 cursor-wait" : "bg-black border border-charcoal btn-magnetic"}`}
+                className={`w-full text-white py-5 text-xs font-medium uppercase tracking-[0.2em] transition-colors flex justify-center items-center gap-3 ${submitting ? "bg-black opacity-70 cursor-wait" : "bg-black border border-charcoal btn-magnetic"}`}
+                aria-busy={submitting}
               >
                 {submitting ? (
                   <>

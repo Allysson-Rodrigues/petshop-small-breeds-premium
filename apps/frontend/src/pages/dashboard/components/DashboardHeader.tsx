@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useAuth } from "../../../hooks/useAuth";
+import NotionAvatar from "./NotionAvatar";
 
 type DashboardHeaderProps = {
     activeTab: string;
@@ -94,7 +95,7 @@ export default function DashboardHeader({
     showSearch = true,
     onMenuClick,
 }: DashboardHeaderProps) {
-    const { user, getInitials, isAdmin } = useAuth();
+    const { user, isAdmin } = useAuth();
     const [isNotifOpen, setIsNotifOpen] = useState(false);
     const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -134,7 +135,6 @@ export default function DashboardHeader({
         <header
             className="h-16 border-b border-gray-100 flex items-center justify-between px-4 md:px-8 bg-white/80 backdrop-blur-md sticky top-0 z-10 w-full overflow-visible"
             lang="pt-BR"
-            onKeyDown={() => undefined}
         >
             <Helmet>
                 <title>Dashboard | Small Breeds</title>
@@ -204,7 +204,7 @@ export default function DashboardHeader({
                             pointerEvents: isNotifOpen ? "auto" : "none",
                             transformOrigin: "top right",
                         }}
-                        className="absolute right-0 top-[calc(100%+8px)] w-80 bg-white rounded-xl border border-gray-100 shadow-xl z-50 overflow-hidden"
+                        className="fixed inset-x-4 top-[72px] sm:inset-auto sm:absolute sm:right-0 sm:top-[calc(100%+8px)] sm:w-80 bg-white rounded-xl border border-gray-100 shadow-xl z-50 overflow-hidden"
                     >
                         {/* Header */}
                         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
@@ -263,9 +263,13 @@ export default function DashboardHeader({
                             {user?.role === "admin" ? "Acesso Total" : "Área do Cliente"}
                         </span>
                     </div>
-                    <div className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-gray-50 flex items-center justify-center text-xs md:text-sm font-bold text-gray-800 border border-gray-100 shadow-sm shrink-0">
-                        {user ? getInitials(user.name) : "??"}
-                    </div>
+                    <NotionAvatar
+                        name={user?.name || "Usuário"}
+                        type="human"
+                        gender={user?.gender}
+                        size="md"
+                        className="rounded-xl"
+                    />
                 </div>
             </div>
         </header>

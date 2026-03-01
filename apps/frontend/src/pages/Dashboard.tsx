@@ -37,7 +37,6 @@ export default function Dashboard() {
   return (
     <div
       className="bg-background-light text-primary font-display antialiased min-h-screen flex overflow-hidden"
-      onKeyDown={() => undefined}
     >
       <a href="#main-content" className="sr-only focus:not-sr-only">
         Pular para o conteúdo principal do painel
@@ -96,7 +95,7 @@ export default function Dashboard() {
               </p>
               <button
                 onClick={() => setActiveTab("pets")}
-                className="mt-6 px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-neutral-800 transition-colors"
+                className="mt-6 px-6 py-2.5 bg-neutral-900 text-white rounded-xl font-bold hover:bg-neutral-800 transition-all shadow-lg shadow-black/10 active:scale-95"
               >
                 Ir para Meus Pets
               </button>

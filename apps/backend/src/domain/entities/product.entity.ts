@@ -3,13 +3,11 @@ export enum ProductCategory {
 	ACCESSORY = "ACCESSORY",
 }
 
-export class Product {
-	constructor(
-		public readonly id: string,
-		public readonly name: string,
-		public readonly description: string,
-		public readonly price: number,
-		public readonly category: ProductCategory,
-		public readonly stock: number,
-	) {}
+export interface Product {
+	id: string;
+	name: string;
+	description: string;
+	price: number;
+	category: ProductCategory;
+	stock: number;
 }

@@ -5,6 +5,13 @@ export class DuplicateEmailError extends Error {
 	}
 }
 
+export class InvalidCredentialsError extends Error {
+	constructor() {
+		super("Invalid credentials");
+		this.name = "InvalidCredentialsError";
+	}
+}
+
 export class InputValidationError extends Error {
 	constructor(message: string) {
 		super(message);

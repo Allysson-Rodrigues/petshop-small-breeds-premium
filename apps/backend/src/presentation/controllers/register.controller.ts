@@ -1,7 +1,3 @@
-import {
-	DuplicateEmailError,
-	InputValidationError,
-} from "../../domain/errors/auth-errors.js";
 import type { RegisterUserUseCase } from "../../domain/use-cases/register-user.use-case.js";
 import type { Controller } from "../protocols/controller.js";
 import type { HttpRequest, HttpResponse } from "../protocols/http.js";
@@ -41,17 +37,35 @@ export class RegisterController implements Controller {
 				body: safeUser,
 			};
 		} catch (error: unknown) {
-			if (error instanceof DuplicateEmailError) {
-				return {
-					statusCode: 409,
-					body: { message: error.message },
-				};
+			if (error instanceof Error) {
+				if (
+					error.name === "DuplicateEmailError" ||
+					error.message.includes("already registered")
+				) {
+					return {
+						statusCode: 409,
+						body: { message: "Email already registered" },
+					};
+				}
+
+				if (error.name === "InputValidationError") {
+					return {
+						statusCode: 422,
+						body: { message: error.message },
+					};
+				}
 			}
 
-			if (error instanceof InputValidationError) {
+			// Prisma unique constraint violation
+			if (
+				typeof error === "object" &&
+				error !== null &&
+				"code" in error &&
+				(error as { code: string }).code === "P2002"
+			) {
 				return {
-					statusCode: 422,
-					body: { message: error.message },
+					statusCode: 409,
+					body: { message: "Email already registered" },
 				};
 			}
 

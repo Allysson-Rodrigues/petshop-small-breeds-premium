@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 import cors from "cors";
 import express, {
 	type Application,
+	type NextFunction,
 	type Request,
 	type Response,
 } from "express";
@@ -35,5 +36,11 @@ app.get("/", (_req: Request, res: Response) => {
 app.use("/api", healthRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+
+// Global error handler — prevents stack traces leaking to client
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+	console.error(`[ERROR] ${err.message}`);
+	res.status(500).json({ message: "Internal server error" });
+});
 
 export default app;

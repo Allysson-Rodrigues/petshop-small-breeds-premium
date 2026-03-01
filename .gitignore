@@ -50,6 +50,10 @@ docs/
 
 # Local-only database (SQLite)
 apps/backend/prisma/dev.db
+apps/backend/dev.db
+
+# Local-only seed with hardcoded credentials (dev-only)
+apps/backend/seed_admin.ts
 
 # Local-only helper scripts
 apps/frontend/download_img.py
@@ -77,3 +81,4 @@ apps/frontend/.npmrc
 
 # Monorepo: keep a single lockfile at repo root
 apps/*/package-lock.json
+.vercel
