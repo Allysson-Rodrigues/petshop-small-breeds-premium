@@ -24,17 +24,7 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      output: {
-        manualChunks(id) {
-          // Separando dependências de node_modules em chunks menores sem causar ciclos
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('lucide') || id.includes('@remix-run') || id.includes('recharts')) {
-              return 'vendor-ui';
-            }
-            return 'vendor-core';
-          }
-        }
-      }
+      // Remover manualChunks que está causando dependência circular
     }
   }
 })
