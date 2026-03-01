@@ -1,4 +1,13 @@
 import { Router } from "express";
+import type { Product } from "../../domain/entities/product.entity.js";
+import type { User } from "../../domain/entities/user.entity.js";
+import {
+	createProductSchema,
+	updateAppointmentStatusSchema,
+	updateClientSchema,
+	updatePetSchema,
+	updateProductSchema,
+} from "../../domain/schemas/validation.js";
 import { CreateAppointmentUseCase } from "../../domain/use-cases/create-appointment.use-case.js";
 import { CreatePetUseCase } from "../../domain/use-cases/create-pet.use-case.js";
 import { GetAdminDashboardUseCase } from "../../domain/use-cases/get-admin-dashboard.use-case.js";
@@ -11,8 +20,12 @@ import { CreateAppointmentController } from "../../presentation/controllers/crea
 import { CreatePetController } from "../../presentation/controllers/create-pet.controller.js";
 import { GetAdminDashboardController } from "../../presentation/controllers/get-admin-dashboard.controller.js";
 import { GetCustomerDashboardController } from "../../presentation/controllers/get-customer-dashboard.controller.js";
-import { adaptAsyncHandler, adaptRoute } from "../adapters/express-route-adapter.js";
+import {
+	adaptAsyncHandler,
+	adaptRoute,
+} from "../adapters/express-route-adapter.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
+import { requireRole } from "../middlewares/require-role.js";
 
 const router = Router();
 
@@ -22,7 +35,7 @@ const appointmentRepository = new PrismaAppointmentRepository();
 const userRepository = new PrismaUserRepository();
 const productRepository = new PrismaProductRepository();
 
-// ── Dashboard (existing) ─────────────────────────────────────
+// ── Dashboard ─────────────────────────────────────────────────
 const getDashboardUseCase = new GetCustomerDashboardUseCase(
 	petRepository,
 	appointmentRepository,
@@ -52,7 +65,12 @@ const createAppointmentController = new CreateAppointmentController(
 );
 
 router.get("/customer", authMiddleware, adaptRoute(getDashboardController));
-router.get("/admin", authMiddleware, adaptRoute(getAdminDashboardController));
+router.get(
+	"/admin",
+	authMiddleware,
+	requireRole("admin"),
+	adaptRoute(getAdminDashboardController),
+);
 router.post("/pets", authMiddleware, adaptRoute(createPetController));
 router.post(
 	"/appointments",
@@ -68,12 +86,10 @@ router.get(
 		const userId = req.headers["x-user-id"] as string;
 		const user = await userRepository.findById(userId);
 
-		let pets;
-		if (user?.role === "admin") {
-			pets = await petRepository.findAll();
-		} else {
-			pets = await petRepository.findByUserId(userId);
-		}
+		const pets =
+			user?.role === "admin"
+				? await petRepository.findAll()
+				: await petRepository.findByUserId(userId);
 		res.json(pets);
 	}),
 );
@@ -82,7 +98,32 @@ router.put(
 	"/pets/:id",
 	authMiddleware,
 	adaptAsyncHandler(async (req, res) => {
-		const pet = await petRepository.update(String(req.params.id), req.body);
+		const userId = req.headers["x-user-id"] as string;
+		const user = await userRepository.findById(userId);
+		const petId = String(req.params.id);
+
+		// IDOR protection: only owner or admin can update
+		const ownerPets = await petRepository.findByUserId(userId);
+		if (user?.role !== "admin" && !ownerPets.some((p) => p.id === petId)) {
+			res.status(403).json({ message: "Forbidden: not the pet owner" });
+			return;
+		}
+
+		const parsed = updatePetSchema.safeParse(req.body);
+		if (!parsed.success) {
+			res.status(422).json({
+				message: "Validation error",
+				errors: parsed.error.flatten().fieldErrors,
+			});
+			return;
+		}
+
+		const pet = await petRepository.update(
+			petId,
+			parsed.data as Partial<
+				Omit<import("../../domain/entities/pet.entity.js").Pet, "id">
+			>,
+		);
 		res.json(pet);
 	}),
 );
@@ -91,7 +132,18 @@ router.delete(
 	"/pets/:id",
 	authMiddleware,
 	adaptAsyncHandler(async (req, res) => {
-		await petRepository.delete(String(req.params.id));
+		const userId = req.headers["x-user-id"] as string;
+		const user = await userRepository.findById(userId);
+		const petId = String(req.params.id);
+
+		// IDOR protection
+		const ownerPets = await petRepository.findByUserId(userId);
+		if (user?.role !== "admin" && !ownerPets.some((p) => p.id === petId)) {
+			res.status(403).json({ message: "Forbidden: not the pet owner" });
+			return;
+		}
+
+		await petRepository.delete(petId);
 		res.json({ message: "Pet deleted" });
 	}),
 );
@@ -111,10 +163,18 @@ router.put(
 	"/appointments/:id",
 	authMiddleware,
 	adaptAsyncHandler(async (req, res) => {
-		const { status } = req.body;
+		const parsed = updateAppointmentStatusSchema.safeParse(req.body);
+		if (!parsed.success) {
+			res.status(422).json({
+				message: "Validation error",
+				errors: parsed.error.flatten().fieldErrors,
+			});
+			return;
+		}
+
 		const appointment = await appointmentRepository.updateStatus(
 			String(req.params.id),
-			status,
+			parsed.data.status,
 		);
 		res.json(appointment);
 	}),
@@ -129,10 +189,11 @@ router.delete(
 	}),
 );
 
-// ── Clients (Users) CRUD ──────────────────────────────────────
+// ── Clients (Users) — Admin only ─────────────────────────────
 router.get(
 	"/clients",
 	authMiddleware,
+	requireRole("admin"),
 	adaptAsyncHandler(async (_req, res) => {
 		const users = await userRepository.findAll();
 		const safeUsers = users.map(({ password: _, ...user }) => ({
@@ -146,10 +207,22 @@ router.get(
 router.put(
 	"/clients/:id",
 	authMiddleware,
+	requireRole("admin"),
 	adaptAsyncHandler(async (req, res) => {
-		const { password: _, ...data } = req.body;
-		const user = await userRepository.update(String(req.params.id), data);
-		const { password: __, ...safeUser } = user;
+		const parsed = updateClientSchema.safeParse(req.body);
+		if (!parsed.success) {
+			res.status(422).json({
+				message: "Validation error",
+				errors: parsed.error.flatten().fieldErrors,
+			});
+			return;
+		}
+
+		const user = await userRepository.update(
+			String(req.params.id),
+			parsed.data as Partial<Omit<User, "id" | "createdAt">>,
+		);
+		const { password: _, ...safeUser } = user;
 		res.json(safeUser);
 	}),
 );
@@ -157,13 +230,14 @@ router.put(
 router.delete(
 	"/clients/:id",
 	authMiddleware,
+	requireRole("admin"),
 	adaptAsyncHandler(async (req, res) => {
 		await userRepository.delete(String(req.params.id));
 		res.json({ message: "Client deleted" });
 	}),
 );
 
-// ── Products (Inventory) CRUD ─────────────────────────────────
+// ── Products (Inventory) — Admin for writes, auth for reads ──
 router.get(
 	"/products",
 	authMiddleware,
@@ -176,8 +250,20 @@ router.get(
 router.post(
 	"/products",
 	authMiddleware,
+	requireRole("admin"),
 	adaptAsyncHandler(async (req, res) => {
-		const product = await productRepository.create(req.body);
+		const parsed = createProductSchema.safeParse(req.body);
+		if (!parsed.success) {
+			res.status(422).json({
+				message: "Validation error",
+				errors: parsed.error.flatten().fieldErrors,
+			});
+			return;
+		}
+
+		const product = await productRepository.create(
+			parsed.data as Omit<Product, "id">,
+		);
 		res.status(201).json(product);
 	}),
 );
@@ -185,10 +271,20 @@ router.post(
 router.put(
 	"/products/:id",
 	authMiddleware,
+	requireRole("admin"),
 	adaptAsyncHandler(async (req, res) => {
+		const parsed = updateProductSchema.safeParse(req.body);
+		if (!parsed.success) {
+			res.status(422).json({
+				message: "Validation error",
+				errors: parsed.error.flatten().fieldErrors,
+			});
+			return;
+		}
+
 		const product = await productRepository.update(
 			String(req.params.id),
-			req.body,
+			parsed.data as Partial<Omit<Product, "id">>,
 		);
 		res.json(product);
 	}),
@@ -197,6 +293,7 @@ router.put(
 router.delete(
 	"/products/:id",
 	authMiddleware,
+	requireRole("admin"),
 	adaptAsyncHandler(async (req, res) => {
 		await productRepository.delete(String(req.params.id));
 		res.json({ message: "Product deleted" });

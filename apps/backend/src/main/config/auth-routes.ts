@@ -7,9 +7,11 @@ import { PrismaUserRepository } from "../../infrastructure/prisma/prisma-user.re
 import { LoginController } from "../../presentation/controllers/login.controller.js";
 import { RegisterController } from "../../presentation/controllers/register.controller.js";
 import { adaptRoute } from "../adapters/express-route-adapter.js";
+import { authRateLimiter } from "../middlewares/rate-limiter.js";
 import { getJwtSecret } from "./env.js";
 
 const router = Router();
+router.use(authRateLimiter);
 
 // Factory Simple (Composition Root)
 const userRepository = new PrismaUserRepository();

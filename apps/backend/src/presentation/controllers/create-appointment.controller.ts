@@ -1,4 +1,7 @@
-import { InputValidationError, UnauthorizedError } from "../../domain/errors/app-error.js";
+import {
+	InputValidationError,
+	UnauthorizedError,
+} from "../../domain/errors/app-error.js";
 import type { CreateAppointmentUseCase } from "../../domain/use-cases/create-appointment.use-case.js";
 import type { Controller } from "../protocols/controller.js";
 import type { HttpRequest, HttpResponse } from "../protocols/http.js";

@@ -1,4 +1,7 @@
-import { InputValidationError, UnauthorizedError } from "../../domain/errors/app-error.js";
+import {
+	InputValidationError,
+	UnauthorizedError,
+} from "../../domain/errors/app-error.js";
 import type { CreatePetUseCase } from "../../domain/use-cases/create-pet.use-case.js";
 import type { Controller } from "../protocols/controller.js";
 import type { HttpRequest, HttpResponse } from "../protocols/http.js";
@@ -23,7 +26,9 @@ export class CreatePetController implements Controller {
 		}
 
 		if (!name || !breed || Number.isNaN(parsedAge)) {
-			throw new InputValidationError("Name, Breed and a valid Age are required");
+			throw new InputValidationError(
+				"Name, Breed and a valid Age are required",
+			);
 		}
 
 		const pet = await this.createPetUseCase.execute({
