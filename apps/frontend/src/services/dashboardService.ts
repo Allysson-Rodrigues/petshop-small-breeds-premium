@@ -70,6 +70,17 @@ export interface ApiProduct {
 	stock: number;
 }
 
+export interface AdminDashboardData {
+	stats: {
+		totalPets: number;
+		totalAppointments: number;
+		totalClients: number;
+		totalProducts: number;
+		lowStockItems: number;
+	};
+	recentPets: ApiPet[];
+}
+
 export interface DashboardData {
 	pets: ApiPet[];
 	appointments: ApiAppointment[];
@@ -84,6 +95,7 @@ export interface DashboardData {
 export const dashboardService = {
 	// Dashboard overview
 	getDashboard: () => request<DashboardData>("/dashboard/customer"),
+	getAdminDashboard: () => request<AdminDashboardData>("/dashboard/admin"),
 
 	// Pets
 	getPets: () => request<ApiPet[]>("/dashboard/pets"),
