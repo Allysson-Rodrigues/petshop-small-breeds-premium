@@ -1,59 +1,59 @@
 # 🐾 Petshop Small Breeds Premium
 
-Monorepo para uma aplicação de petshop premium especializada em raças pequenas. Frontend SPA (React + Vite + Tailwind CSS) com backend API (Express + Prisma + SQLite).
+Monorepo for a premium petshop application specialized in small breeds. Single Page Application (SPA) frontend (React + Vite + Tailwind CSS) with a backend API (Express + Prisma + SQLite).
 
 ## Stack
 
-| Camada | Tecnologia |
+| Layer | Technology |
 |--------|-----------|
 | **Frontend** | React 19, Vite 7, Tailwind CSS 4, Framer Motion, React Router 7 |
 | **Backend** | Express 5, Prisma 7, SQLite (Better-SQLite3), TypeScript |
 | **Auth** | JWT (jsonwebtoken + bcrypt) |
-| **Testes** | Vitest (unit), Playwright (E2E) |
-| **Lint** | ESLint (frontend), Biome (backend) |
-| **Deploy** | Vercel (frontend SPA) |
+| **Testing** | Vitest (unit), Playwright (E2E) |
+| **Linting** | ESLint (frontend), Biome (backend) |
+| **Deployment**| Vercel (frontend SPA) |
 
-## Estrutura do Projeto
+## Project Structure
 
 ```text
 .
 ├── .github/workflows/   CI (lint, tests, E2E)
 ├── apps/
-│   ├── backend/          Express API + Prisma (Clean Architecture)
-│   └── frontend/         React SPA + Vite + Tailwind CSS
-├── package.json          Monorepo (npm Workspaces)
-└── vercel.json           Deploy config (frontend)
+│   ├── backend/         Express API + Prisma (Clean Architecture)
+│   └── frontend/        React SPA + Vite + Tailwind CSS
+├── package.json         Monorepo (npm Workspaces)
+└── vercel.json          Deployment config (frontend)
 ```
 
-## Pré-requisitos
+## Prerequisites
 
-- **Node.js 24+** e **npm 10+**
-- Alternativamente, use Docker (veja abaixo)
+- **Node.js 24+** and **npm 10+**
+- Alternatively, use Docker (see below)
 
 ## Setup
 
 ```bash
-# Instala dependências e cria apps/backend/.env a partir do template
+# Install dependencies and create apps/backend/.env from the template
 npm run setup
 ```
 
-## Desenvolvimento
+## Development
 
 ```bash
-# Backend + Frontend (paralelo)
+# Backend + Frontend (concurrent)
 npm run dev:all
 
-# Ou individualmente
+# Or individually
 npm run dev:backend
 npm run dev:frontend
 ```
 
-| Serviço | URL |
+| Service | URL |
 |---------|-----|
 | Frontend | http://localhost:5173 |
 | Backend API | http://localhost:3000/api/health |
 
-## Docker (alternativo)
+## Docker (alternative)
 
 ```bash
 docker run --rm -it -p 5173:5173 -p 3000:3000 \
@@ -62,46 +62,46 @@ docker run --rm -it -p 5173:5173 -p 3000:3000 \
   'npm install && npm run setup:env && (npm run dev -w backend & npm run dev -w frontend -- --host 0.0.0.0 --port 5173) && wait'
 ```
 
-## Variáveis de Ambiente
+## Environment Variables
 
 ### Backend (`apps/backend/.env`)
 
-| Variável | Descrição | Default |
-|----------|-----------|---------|
-| `PORT` | Porta do servidor | `3000` |
-| `NODE_ENV` | Ambiente | `development` |
-| `DATABASE_URL` | Caminho do SQLite | `file:./dev.db` |
-| `JWT_SECRET` | Segredo para tokens JWT | — (**obrigatório**) |
-| `CORS_ORIGIN` | Origens permitidas (separadas por vírgula) | `http://localhost:5173` |
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PORT` | Server port | `3000` |
+| `NODE_ENV` | Environment | `development` |
+| `DATABASE_URL` | SQLite path | `file:./dev.db` |
+| `JWT_SECRET` | Secret for JWT | — (**required**) |
+| `CORS_ORIGIN` | Allowed CORS origins (comma-separated) | `http://localhost:5173` |
 
-### Frontend (variáveis `VITE_*`)
+### Frontend (`VITE_*` variables)
 
-| Variável | Descrição | Default |
-|----------|-----------|---------|
-| `VITE_API_BASE_URL` | URL base da API | `/api` (proxy local) |
-| `VITE_ADMIN_EMAILS` | E-mails admin (separados por vírgula) | `admin@petshop.com` |
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `VITE_API_BASE_URL` | API base URL | `/api` (local proxy) |
+| `VITE_ADMIN_EMAILS` | Admin emails (comma-separated) | `admin@example.com` |
 
-## Qualidade
+## Quality
 
 ```bash
-npm run lint     # Lint (ambos workspaces)
-npm run test     # Testes unitários (Vitest)
-npm run build    # Build de produção
+npm run lint     # Lint (both workspaces)
+npm run test     # Unit tests (Vitest)
+npm run build    # Production build
 
-# Testes E2E (requer backend rodando)
+# E2E Tests (requires backend running)
 cd apps/frontend && npx playwright test
 ```
 
-## Deploy (Vercel)
+## Deployment (Vercel)
 
-O frontend é deployado na Vercel como SPA estático. O `vercel.json` configura build, output e rewrites.
+The frontend is deployed to Vercel as a static SPA. The `vercel.json` file configures the build, output, and rewrites.
 
 ```bash
 npx vercel --prod
 ```
 
-> **Nota:** O backend não é deployado na Vercel. Para produção completa, hospede o backend separadamente e configure `VITE_API_BASE_URL`.
+> **Note:** The backend is not deployed to Vercel. For a complete production environment, host the backend separately and configure `VITE_API_BASE_URL`.
 
-## Licença
+## License
 
 MIT
