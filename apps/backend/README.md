@@ -1,72 +1,72 @@
 # Petshop Small Breeds Premium — Backend
 
-API REST construída com Express 5, Prisma 7 e TypeScript, organizada em Clean Architecture (`domain`, `presentation`, `main`).
+RESTful API built with Express 5, Prisma 7, and TypeScript, organized using Clean Architecture principles (`domain`, `presentation`, `main`).
 
 ## Stack
 
 - **Framework:** Express 5 + TypeScript
 - **ORM:** Prisma 7 (SQLite via Better-SQLite3)
 - **Auth:** JWT (jsonwebtoken) + bcrypt
-- **Lint:** Biome
-- **Testes:** Vitest + Supertest
+- **Linting:** Biome
+- **Testing:** Vitest + Supertest
 
-## Desenvolvimento
+## Development
 
 ```bash
-# A partir da raiz do monorepo
-npm run setup        # Instala deps + cria .env
-npm run dev:backend  # Inicia com tsx watch
+# From the monorepo root
+npm run setup        # Install dependencies + create .env
+npm run dev:backend  # Start with tsx watch
 
-# Ou diretamente
+# Or directly from the backend directory
 cd apps/backend
-cp .env.example .env  # Ajuste os valores!
+cp .env.example .env  # Adjust the values!
 npm install
 npm run dev
 ```
 
-## Variáveis de Ambiente
+## Environment Variables
 
-Copie `.env.example` como `.env` e ajuste:
+Copy `.env.example` to `.env` and adjust as needed:
 
-| Variável | Descrição | Default |
-|----------|-----------|---------|
-| `PORT` | Porta do servidor | `3000` |
-| `NODE_ENV` | Ambiente (`development` / `production` / `test`) | `development` |
-| `DATABASE_URL` | Caminho do banco SQLite | `file:./dev.db` |
-| `JWT_SECRET` | Segredo para tokens JWT | — (**obrigatório**) |
-| `CORS_ORIGIN` | Origens CORS permitidas (vírgula) | `http://localhost:5173` |
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PORT` | Server port | `3000` |
+| `NODE_ENV` | Environment (`development` / `production` / `test`) | `development` |
+| `DATABASE_URL` | SQLite database path | `file:./dev.db` |
+| `JWT_SECRET` | Secret for JWT | — (**required**) |
+| `CORS_ORIGIN` | Allowed CORS origins (comma-separated) | `http://localhost:5173` |
 
-> ⚠️ **Segurança:** Nunca commite `.env` no repositório. O `.gitignore` já cobre `*.env` e `dev.db`.
+> ⚠️ **Security:** Never commit `.env` to the repository. The `.gitignore` file already covers `*.env` and `dev.db`.
 
 ## Prisma (SQLite)
 
 ```bash
 cd apps/backend
-npx prisma migrate deploy   # Aplicar migrations
-npx prisma studio           # UI visual do banco
+npx prisma migrate deploy   # Apply migrations
+npx prisma studio           # Visual database UI
 ```
 
 ## Scripts
 
-| Comando | Descrição |
-|---------|-----------|
-| `npm run dev` | Dev server com hot-reload (tsx watch) |
-| `npm run build` | Compila TypeScript → `dist/` |
-| `npm start` | Inicia build compilado |
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Dev server with hot-reload (tsx watch) |
+| `npm run build` | Compile TypeScript → `dist/` |
+| `npm start` | Start compiled build |
 | `npm run lint` | Biome check |
 | `npm run lint:fix` | Biome auto-fix |
-| `npm test` | Testes unitários (Vitest) |
+| `npm test` | Unit tests (Vitest) |
 
-## Estrutura
+## Architecture Structure
 
 ```text
 src/
-├── domain/           # Entidades, use cases, repositórios (puro)
+├── domain/           # Entities, use cases, repositories (pure layer)
 ├── presentation/     # Controllers (framework-independent)
-├── infrastructure/   # Prisma adapters
-├── main/             # Config, routes, composition root
-├── app.ts            # Express bootstrap
-└── server.ts         # Entry point
+├── infrastructure/   # Prisma adapters and external services
+├── main/             # Configuration, routes, composition root
+├── app.ts            # Express application bootstrap
+└── server.ts         # Server entry point
 ```
 
 ## Docker
@@ -77,13 +77,13 @@ docker build -t petshop-backend .
 docker run -p 3000:3000 --env-file .env petshop-backend
 ```
 
-> O `.dockerignore` previne que `.env` e `dev.db` sejam copiados para a imagem.
+> The `.dockerignore` file prevents `.env` and `dev.db` from being copied to the image.
 
-## Endpoints principais
+## Main Endpoints
 
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| `GET` | `/api/health` | Health check |
-| `POST` | `/api/auth/login` | Login (retorna JWT) |
-| `POST` | `/api/auth/register` | Registro de novo usuário |
-| `GET` | `/api/dashboard/*` | Rotas protegidas do dashboard |
+| Method | Route | Description |
+|--------|-------|-------------|
+| `GET` | `/api/health` | API health check |
+| `POST` | `/api/auth/login` | User login (returns JWT) |
+| `POST` | `/api/auth/register` | New user registration |
+| `GET` | `/api/dashboard/*` | Protected dashboard routes |
