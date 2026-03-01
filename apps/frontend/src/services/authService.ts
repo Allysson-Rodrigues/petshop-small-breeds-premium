@@ -1,6 +1,7 @@
 export type UserRole = "admin" | "client";
 
 export interface User {
+	id: string;
 	name: string;
 	email: string;
 	role: UserRole;
@@ -23,28 +24,12 @@ const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "/api").replace(
 	"",
 );
 
-const resolveAdminEmails = (): Set<string> => {
-	const raw = import.meta.env.VITE_ADMIN_EMAILS ?? "admin@petshop.com,admin@test.com";
-	return new Set(
-		raw
-			.split(",")
-			.map((email: string) => email.trim().toLowerCase())
-			.filter(Boolean),
-	);
-};
-
-const adminEmails = resolveAdminEmails();
-
-const resolveRole = (user: AuthApiUser): UserRole => {
-	if (user.role === "admin") return "admin";
-	return adminEmails.has(user.email.toLowerCase()) ? "admin" : "client";
-};
-
 const mapApiUserToSessionUser = (user: AuthApiUser): User => ({
+	id: user.id,
 	name: user.name,
 	email: user.email,
-	role: resolveRole(user),
-	gender: user.gender || (user.name.toLowerCase().endsWith("a") ? "female" : "male"), // Simple gender guess for demo
+	role: user.role === "admin" ? "admin" : "client",
+	gender: user.gender,
 });
 
 type AuthResult =

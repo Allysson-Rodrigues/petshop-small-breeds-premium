@@ -3,7 +3,9 @@ import type { Controller } from "../protocols/controller.js";
 import type { HttpRequest, HttpResponse } from "../protocols/http.js";
 
 export class GetAdminDashboardController implements Controller {
-	constructor(private readonly getAdminDashboardUseCase: GetAdminDashboardUseCase) {}
+	constructor(
+		private readonly getAdminDashboardUseCase: GetAdminDashboardUseCase,
+	) {}
 
 	async handle(_httpRequest: HttpRequest): Promise<HttpResponse> {
 		const data = await this.getAdminDashboardUseCase.execute();
