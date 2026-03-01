@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import { useAuth } from "../../../hooks/useAuth";
 import { type AdminDashboardData, type DashboardData, dashboardService } from "../../../services/dashboardService";

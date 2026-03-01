@@ -32,7 +32,7 @@ export default function PetsTab({ showToast, searchQuery = "" }: PetsTabProps) {
       .finally(() => setLoading(false));
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/set-state-in-effect
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchPets(); }, []);
 
   const handleDelete = (id: string, name: string) => {
@@ -81,7 +81,7 @@ export default function PetsTab({ showToast, searchQuery = "" }: PetsTabProps) {
           name: currentPet.name,
           breed: currentPet.breed,
           age: Number(currentPet.age) || 0,
-          userId: user?.email ?? "",
+          userId: user?.id ?? "",
         });
         setPets((prev) => [...prev, created]);
         showToast(`Pet ${currentPet.name} cadastrado!`);

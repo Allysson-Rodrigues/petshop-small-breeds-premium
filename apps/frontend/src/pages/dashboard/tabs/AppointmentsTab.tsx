@@ -20,7 +20,7 @@ export default function AppointmentsTab({ showToast }: AppointmentsTabProps) {
       .then(([apps, p]) => { setAppointments(apps); setPets(p); })
       .catch(() => showToast("Falha ao carregar agendamentos."))
       .finally(() => setLoading(false));
-  // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/set-state-in-effect
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const petName = (petId: string) => pets.find((p) => p.id === petId)?.name ?? "—";
