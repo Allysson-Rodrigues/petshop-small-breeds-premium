@@ -1,3 +1,4 @@
+import { InputValidationError } from "../../domain/errors/app-error.js";
 import type { LoginUseCase } from "../../domain/use-cases/login.use-case.js";
 import type { Controller } from "../protocols/controller.js";
 import type { HttpRequest, HttpResponse } from "../protocols/http.js";
@@ -11,30 +12,18 @@ export class LoginController implements Controller {
 	constructor(private readonly loginUseCase: LoginUseCase) {}
 
 	async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
-		try {
-			const body = (httpRequest.body ?? {}) as LoginRequestBody;
-			const email = body.email?.trim().toLowerCase() ?? "";
-			const password = body.password?.trim() ?? "";
+		const body = (httpRequest.body ?? {}) as LoginRequestBody;
+		const email = body.email?.trim().toLowerCase() ?? "";
+		const password = body.password?.trim() ?? "";
 
-			if (!email || !password) {
-				return {
-					statusCode: 400,
-					body: { message: "Missing parameters" },
-				};
-			}
-
-			const result = await this.loginUseCase.execute({ email, password });
-			return {
-				statusCode: 200,
-				body: result,
-			};
-		} catch (error: unknown) {
-			const message =
-				error instanceof Error ? error.message : "Authentication failed";
-			return {
-				statusCode: 401,
-				body: { message },
-			};
+		if (!email || !password) {
+			throw new InputValidationError("Email and Password are required");
 		}
+
+		const result = await this.loginUseCase.execute({ email, password });
+		return {
+			statusCode: 200,
+			body: result,
+		};
 	}
 }
