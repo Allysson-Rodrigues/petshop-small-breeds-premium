@@ -1,0 +1,10 @@
+Lista de Correções e Melhorias Pendentes - Petshop Small Breeds Premium
+
+1. Corrigir loja na versão mobile e web: quando clicado na foto, a foto ao invés de aparecer preto e branco deve ser colorida.
+2. Corrigir galeria de raças na versão mobile: não mostra a informação de clicar para ver mais detalhes.
+3. Remover informações do rodapé do site.
+4. Corrigir alguns detalhes do dashboard do cliente.
+5. Criar um carrinho dos produtos para a compra.
+6. Implementar Stripe para a venda.
+7. Implementar Login com Clerk.
+8. Trocar Imagem da página inicial no hero section: trocar por um cão de raça pequena. Manter o mesmo estilo de foto.

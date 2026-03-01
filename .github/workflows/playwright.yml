@@ -1,58 +1,111 @@
-name: Playwright Tests
+name: Playwright E2E
+
 on:
-  push:
-    branches: [ main, master ]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
+  push:
+    branches: [main, master]
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
-  test:
-    timeout-minutes: 60
+  e2e_chromium:
+    if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 24
-        cache: 'npm'
-    
-    - name: Install dependencies
-      run: npm ci
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Setup backend env
+        run: npm run setup:env
+      - name: Run Playwright (chromium)
+        working-directory: apps/frontend
+        run: |
+          set -euo pipefail
 
-    - name: Setup backend env
-      run: npm run setup:env
+          (cd ../backend && npx prisma generate && npx prisma migrate deploy && npm run dev) &
+          BACKEND_PID=$!
+          trap "kill $BACKEND_PID" EXIT
 
-    - name: Run Playwright tests (with backend)
-      working-directory: apps/frontend
-      run: |
-        set -euo pipefail
+          for i in {1..60}; do
+            if curl -fsS http://localhost:3000/api/health >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          curl -fsS http://localhost:3000/api/health >/dev/null
 
-        # Start backend in background (required for Vite proxy /api -> :3000)
-        (cd ../backend && npx prisma generate && npx prisma migrate deploy && npm run dev) &
-        BACKEND_PID=$!
-        trap "kill $BACKEND_PID" EXIT
+          curl -sS -o /dev/null -w "%{http_code}" \
+            -X POST http://localhost:3000/api/auth/register \
+            -H "Content-Type: application/json" \
+            -d '{"name":"Admin Geral","email":"admin@petshop.com","password":"admin123"}' \
+            | grep -E "^(201|409)$" >/dev/null
 
-        # Wait for backend health
-        for i in {1..60}; do
-          if curl -fsS http://localhost:3000/api/health >/dev/null; then
-            break
-          fi
-          sleep 1
-        done
-        curl -fsS http://localhost:3000/api/health >/dev/null
+          npx playwright install --with-deps chromium
+          npx playwright test --project=chromium
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report-chromium
+          path: apps/frontend/playwright-report/
+          retention-days: 30
 
-        # Ensure admin user exists for UI tests (accept 201 or 409)
-        curl -sS -o /dev/null -w "%{http_code}" \
-          -X POST http://localhost:3000/api/auth/register \
-          -H "Content-Type: application/json" \
-          -d '{"name":"Admin Geral","email":"admin@petshop.com","password":"admin123"}' \
-          | grep -E "^(201|409)$" >/dev/null
+  e2e_cross_browser:
+    if: ${{ github.event_name != 'pull_request' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Setup backend env
+        run: npm run setup:env
+      - name: Run Playwright (${{ matrix.browser }})
+        working-directory: apps/frontend
+        run: |
+          set -euo pipefail
 
-        npx playwright install --with-deps
-        npx playwright test
+          (cd ../backend && npx prisma generate && npx prisma migrate deploy && npm run dev) &
+          BACKEND_PID=$!
+          trap "kill $BACKEND_PID" EXIT
 
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
-      with:
-        name: playwright-report
-        path: apps/frontend/playwright-report/
-        retention-days: 30
+          for i in {1..60}; do
+            if curl -fsS http://localhost:3000/api/health >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          curl -fsS http://localhost:3000/api/health >/dev/null
+
+          curl -sS -o /dev/null -w "%{http_code}" \
+            -X POST http://localhost:3000/api/auth/register \
+            -H "Content-Type: application/json" \
+            -d '{"name":"Admin Geral","email":"admin@petshop.com","password":"admin123"}' \
+            | grep -E "^(201|409)$" >/dev/null
+
+          npx playwright install --with-deps ${{ matrix.browser }}
+          npx playwright test --project=${{ matrix.browser }}
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report-${{ matrix.browser }}
+          path: apps/frontend/playwright-report/
+          retention-days: 30
