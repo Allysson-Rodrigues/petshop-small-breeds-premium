@@ -16,20 +16,22 @@ test.describe('Dashboard Interactions', () => {
             page.getByText(/Painel Administrativo|Visão Geral do Painel/i),
         ).toBeVisible();
 
+        const sidebar = page.locator('aside');
+
         // 4. Click on Clientes tab
-        await page.getByText('Clientes', { exact: true }).click();
+        await sidebar.getByText('Clientes', { exact: true }).click();
         await expect(page.getByText(/Gerencie o cadastro de tutores/i)).toBeVisible();
 
         // 5. Click on Pets tab
-        await page.getByText('Pets', { exact: true }).click();
+        await sidebar.getByText('Pets', { exact: true }).click();
         await expect(page.getByText(/Gerencie os animais cadastrados/i)).toBeVisible();
 
         // 6. Click on Agendamentos tab
-        await page.getByText('Agendamentos', { exact: true }).click();
+        await sidebar.getByText('Agendamentos', { exact: true }).click();
         await expect(page.getByText(/Controle a agenda de serviços/i)).toBeVisible();
 
         // 7. Click on Estoque tab
-        await page.getByText('Estoque', { exact: true }).click();
+        await sidebar.getByText('Estoque', { exact: true }).click();
         await expect(page.getByText(/Controle de insumos e produtos/i)).toBeVisible();
 
         // 8. Check Modal Triggering (using a button in Estoque tab)
