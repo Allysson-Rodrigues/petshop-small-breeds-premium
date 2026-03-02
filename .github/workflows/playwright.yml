@@ -33,7 +33,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          (cd ../backend && npx prisma generate && npx prisma migrate deploy && npm run dev) &
+          (cd ../backend && npx prisma generate && npx prisma migrate deploy && npx prisma db seed && npm run dev) &
           BACKEND_PID=$!
           trap "kill $BACKEND_PID" EXIT
 
@@ -44,12 +44,6 @@ jobs:
             sleep 1
           done
           curl -fsS http://localhost:3000/api/health >/dev/null
-
-          curl -sS -o /dev/null -w "%{http_code}" \
-            -X POST http://localhost:3000/api/auth/register \
-            -H "Content-Type: application/json" \
-            -d "{\"name\":\"Admin Geral\",\"email\":\"admin@petshop.com\",\"password\":\"${{ secrets.TEST_ADMIN_PASSWORD || 'Admin@Test123!' }}\"}" \
-            | grep -E "^(201|409)$" >/dev/null
 
           npx playwright install --with-deps chromium
           npx playwright test --project=chromium
@@ -83,7 +77,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          (cd ../backend && npx prisma generate && npx prisma migrate deploy && npm run dev) &
+          (cd ../backend && npx prisma generate && npx prisma migrate deploy && npx prisma db seed && npm run dev) &
           BACKEND_PID=$!
           trap "kill $BACKEND_PID" EXIT
 
@@ -94,12 +88,6 @@ jobs:
             sleep 1
           done
           curl -fsS http://localhost:3000/api/health >/dev/null
-
-          curl -sS -o /dev/null -w "%{http_code}" \
-            -X POST http://localhost:3000/api/auth/register \
-            -H "Content-Type: application/json" \
-            -d "{\"name\":\"Admin Geral\",\"email\":\"admin@petshop.com\",\"password\":\"${{ secrets.TEST_ADMIN_PASSWORD || 'Admin@Test123!' }}\"}" \
-            | grep -E "^(201|409)$" >/dev/null
 
           npx playwright install --with-deps ${{ matrix.browser }}
           npx playwright test --project=${{ matrix.browser }}
