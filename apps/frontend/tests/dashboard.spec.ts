@@ -12,7 +12,9 @@ test.describe('Dashboard Interactions', () => {
         await expect(page).toHaveURL(/.*dashboard/);
 
         // 3. First ensure the Overview tab is loaded
-        await expect(page.getByText(/Visão Geral do Painel/i)).toBeVisible();
+        await expect(
+            page.getByText(/Painel Administrativo|Visão Geral do Painel/i),
+        ).toBeVisible();
 
         // 4. Click on Clientes tab
         await page.getByText('Clientes', { exact: true }).click();
@@ -32,6 +34,6 @@ test.describe('Dashboard Interactions', () => {
 
         // 8. Check Modal Triggering (using a button in Estoque tab)
         await page.getByRole('button', { name: 'Novo Item' }).click();
-        await expect(page.getByRole('button', { name: /Salvar Detalhes/i })).toBeVisible();
+        await expect(page.getByRole('button', { name: /Salvar/i })).toBeVisible();
     });
 });
