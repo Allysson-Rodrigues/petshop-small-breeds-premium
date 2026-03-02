@@ -37,7 +37,12 @@ describe("CreatePetUseCase", () => {
 	});
 
 	it("should delegate creation to the repository", async () => {
-		const params = { name: "Bella", breed: "Shih Tzu", age: 5, userId: "user-2" };
+		const params = {
+			name: "Bella",
+			breed: "Shih Tzu",
+			age: 5,
+			userId: "user-2",
+		};
 
 		await sut.execute(params);
 

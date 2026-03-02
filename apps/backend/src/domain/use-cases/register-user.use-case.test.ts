@@ -62,30 +62,52 @@ describe("RegisterUserUseCase", () => {
 	it("should normalize email (trim + lowercase)", async () => {
 		vi.mocked(stubs.userRepository.findByEmail).mockResolvedValue(null);
 
-		await sut.execute({ name: "Test", email: "  MARIA@TEST.COM  ", password: "senha123" });
+		await sut.execute({
+			name: "Test",
+			email: "  MARIA@TEST.COM  ",
+			password: "senha123",
+		});
 
-		expect(stubs.userRepository.findByEmail).toHaveBeenCalledWith("maria@test.com");
+		expect(stubs.userRepository.findByEmail).toHaveBeenCalledWith(
+			"maria@test.com",
+		);
 	});
 
 	it("should throw DuplicateEmailError when email already exists", async () => {
 		vi.mocked(stubs.userRepository.findByEmail).mockResolvedValue(existingUser);
 
-		await expect(sut.execute({ name: "New User", email: "existing@test.com", password: "senha123" }))
-			.rejects.toThrow(DuplicateEmailError);
+		await expect(
+			sut.execute({
+				name: "New User",
+				email: "existing@test.com",
+				password: "senha123",
+			}),
+		).rejects.toThrow(DuplicateEmailError);
 	});
 
 	it("should throw InputValidationError for invalid name (too short)", async () => {
-		await expect(sut.execute({ name: "A", email: "test@test.com", password: "senha123" }))
-			.rejects.toThrow(InputValidationError);
+		await expect(
+			sut.execute({ name: "A", email: "test@test.com", password: "senha123" }),
+		).rejects.toThrow(InputValidationError);
 	});
 
 	it("should throw InputValidationError for invalid email", async () => {
-		await expect(sut.execute({ name: "Valid Name", email: "not-an-email", password: "senha123" }))
-			.rejects.toThrow(InputValidationError);
+		await expect(
+			sut.execute({
+				name: "Valid Name",
+				email: "not-an-email",
+				password: "senha123",
+			}),
+		).rejects.toThrow(InputValidationError);
 	});
 
 	it("should throw InputValidationError for short password (< 6 chars)", async () => {
-		await expect(sut.execute({ name: "Valid Name", email: "test@test.com", password: "12345" }))
-			.rejects.toThrow(InputValidationError);
+		await expect(
+			sut.execute({
+				name: "Valid Name",
+				email: "test@test.com",
+				password: "12345",
+			}),
+		).rejects.toThrow(InputValidationError);
 	});
 });

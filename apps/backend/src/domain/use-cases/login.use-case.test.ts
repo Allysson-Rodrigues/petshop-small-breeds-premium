@@ -48,7 +48,10 @@ describe("LoginUseCase", () => {
 		vi.mocked(stubs.hasher.compare).mockResolvedValue(true);
 		vi.mocked(stubs.encrypter.encrypt).mockResolvedValue("jwt-token-123");
 
-		const result = await sut.execute({ email: "john@test.com", password: "123456" });
+		const result = await sut.execute({
+			email: "john@test.com",
+			password: "123456",
+		});
 
 		expect(result.token).toBe("jwt-token-123");
 		expect(result.user.id).toBe("user-1");
@@ -63,21 +66,25 @@ describe("LoginUseCase", () => {
 
 		await sut.execute({ email: "  JOHN@TEST.COM  ", password: "123456" });
 
-		expect(stubs.userRepository.findByEmail).toHaveBeenCalledWith("john@test.com");
+		expect(stubs.userRepository.findByEmail).toHaveBeenCalledWith(
+			"john@test.com",
+		);
 	});
 
 	it("should throw InvalidCredentialsError when user not found", async () => {
 		vi.mocked(stubs.userRepository.findByEmail).mockResolvedValue(null);
 
-		await expect(sut.execute({ email: "nobody@test.com", password: "123456" }))
-			.rejects.toThrow(InvalidCredentialsError);
+		await expect(
+			sut.execute({ email: "nobody@test.com", password: "123456" }),
+		).rejects.toThrow(InvalidCredentialsError);
 	});
 
 	it("should throw InvalidCredentialsError when password is wrong", async () => {
 		vi.mocked(stubs.userRepository.findByEmail).mockResolvedValue(mockUser);
 		vi.mocked(stubs.hasher.compare).mockResolvedValue(false);
 
-		await expect(sut.execute({ email: "john@test.com", password: "wrong" }))
-			.rejects.toThrow(InvalidCredentialsError);
+		await expect(
+			sut.execute({ email: "john@test.com", password: "wrong" }),
+		).rejects.toThrow(InvalidCredentialsError);
 	});
 });
