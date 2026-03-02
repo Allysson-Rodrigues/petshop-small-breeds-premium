@@ -2,9 +2,23 @@ name: CI
 
 on:
   pull_request:
-    branches: [main, master]
+    branches: [main]
+    paths:
+      - "apps/**"
+      - "package.json"
+      - "package-lock.json"
+      - "vercel.json"
+      - ".github/workflows/ci.yml"
+      - ".github/workflows/playwright.yml"
   push:
-    branches: [main, master]
+    branches: [main]
+    paths:
+      - "apps/**"
+      - "package.json"
+      - "package-lock.json"
+      - "vercel.json"
+      - ".github/workflows/ci.yml"
+      - ".github/workflows/playwright.yml"
   workflow_dispatch:
 
 concurrency:
