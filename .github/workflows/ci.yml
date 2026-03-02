@@ -23,6 +23,8 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
+      - name: Setup backend env
+        run: npm run setup:env
       - name: Security audit
         run: npm audit --audit-level=high || true
       - name: Lint
