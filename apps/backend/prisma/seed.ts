@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 const prisma = new PrismaClient();
 
 async function main() {
-  const email = "admin@test.com";
+  const email = "admin@petshop.com";
   const password = "admin123";
   const hashedPassword = await bcrypt.hash(password, 12);
 
@@ -15,7 +15,7 @@ async function main() {
       role: "admin",
     },
     create: {
-      name: "Admin",
+      name: "Admin Geral",
       email,
       password: hashedPassword,
       role: "admin",
