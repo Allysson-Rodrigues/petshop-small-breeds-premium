@@ -1,6 +1,6 @@
 {
   "buildCommand": "npm --prefix apps/frontend run build",
-  "ignoreCommand": "bash -lc 'if git rev-parse --verify HEAD^ >/dev/null 2>&1 && git diff --quiet HEAD^ HEAD -- apps/frontend package.json package-lock.json vercel.json; then echo \"No frontend changes: skipping deploy\"; exit 0; else echo \"Frontend changes detected: deploying\"; exit 1; fi'",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- apps/frontend package.json package-lock.json vercel.json",
   "outputDirectory": "apps/frontend/dist",
   "installCommand": "npm install --include=dev",
   "framework": "vite",
