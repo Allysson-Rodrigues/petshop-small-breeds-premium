@@ -18,6 +18,7 @@ describe("authService", () => {
 							id: "user-1",
 							name: "Admin Geral",
 							email: "admin@petshop.com",
+							role: "admin",
 						},
 					}),
 					{ status: 200, headers: { "Content-Type": "application/json" } },
@@ -92,6 +93,7 @@ describe("authService", () => {
 
 	it("should handle logout correctly", () => {
 		authService.saveSession("jwt-token", {
+			id: "client-1",
 			name: "Client",
 			email: "client@test.com",
 			role: "client",

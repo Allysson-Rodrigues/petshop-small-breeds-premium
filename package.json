@@ -12,8 +12,8 @@
     "dev:frontend": "npm --prefix apps/frontend run dev",
     "dev:all": "npx -y concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "test": "npm --prefix apps/backend run test && npm --prefix apps/frontend run test",
-    "lint": "npm run lint --workspaces --if-present",
-    "build": "npm run build --workspaces --if-present",
-    "type-check": "npm run type-check --workspaces --if-present"
+    "lint": "npm --prefix apps/backend run lint && npm --prefix apps/frontend run lint",
+    "build": "npm --prefix apps/backend run build && npm --prefix apps/frontend run build",
+    "type-check": "npm --prefix apps/backend run type-check && npm --prefix apps/frontend run type-check"
   }
 }

@@ -23,7 +23,14 @@ function makeStubs() {
 	};
 	const appointmentRepository: AppointmentRepository = {
 		findAll: vi.fn().mockResolvedValue([
-			{ id: "a1", date: new Date(), type: "Banho", status: "PENDING", userId: "u1", petId: "p1" },
+			{
+				id: "a1",
+				date: new Date(),
+				type: "Banho",
+				status: "PENDING",
+				userId: "u1",
+				petId: "p1",
+			},
 		]),
 		findByUserId: vi.fn(),
 		create: vi.fn(),
@@ -32,8 +39,22 @@ function makeStubs() {
 	};
 	const userRepository: UserRepository = {
 		findAll: vi.fn().mockResolvedValue([
-			{ id: "u1", name: "User 1", email: "u1@test.com", password: "h", role: "client", createdAt: new Date() },
-			{ id: "u2", name: "User 2", email: "u2@test.com", password: "h", role: "admin", createdAt: new Date() },
+			{
+				id: "u1",
+				name: "User 1",
+				email: "u1@test.com",
+				password: "h",
+				role: "client",
+				createdAt: new Date(),
+			},
+			{
+				id: "u2",
+				name: "User 2",
+				email: "u2@test.com",
+				password: "h",
+				role: "admin",
+				createdAt: new Date(),
+			},
 		]),
 		create: vi.fn(),
 		findByEmail: vi.fn(),
@@ -43,16 +64,42 @@ function makeStubs() {
 	};
 	const productRepository: ProductRepository = {
 		findAll: vi.fn().mockResolvedValue([
-			{ id: "pr1", name: "Shampoo", description: "Dog shampoo", price: 29.9, category: ProductCategory.ACCESSORY, stock: 50 },
-			{ id: "pr2", name: "Ração", description: "Dog food", price: 89.9, category: ProductCategory.FOOD, stock: 3 },
-			{ id: "pr3", name: "Coleira", description: "Small collar", price: 45.0, category: ProductCategory.ACCESSORY, stock: 0 },
+			{
+				id: "pr1",
+				name: "Shampoo",
+				description: "Dog shampoo",
+				price: 29.9,
+				category: ProductCategory.ACCESSORY,
+				stock: 50,
+			},
+			{
+				id: "pr2",
+				name: "Ração",
+				description: "Dog food",
+				price: 89.9,
+				category: ProductCategory.FOOD,
+				stock: 3,
+			},
+			{
+				id: "pr3",
+				name: "Coleira",
+				description: "Small collar",
+				price: 45.0,
+				category: ProductCategory.ACCESSORY,
+				stock: 0,
+			},
 		]),
 		findById: vi.fn(),
 		create: vi.fn(),
 		update: vi.fn(),
 		delete: vi.fn(),
 	};
-	return { petRepository, appointmentRepository, userRepository, productRepository };
+	return {
+		petRepository,
+		appointmentRepository,
+		userRepository,
+		productRepository,
+	};
 }
 
 describe("GetAdminDashboardUseCase", () => {

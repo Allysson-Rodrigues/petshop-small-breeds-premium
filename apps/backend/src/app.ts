@@ -1,13 +1,14 @@
-import cors from "cors";
-import express, {
-    type Application,
-    type NextFunction,
-    type Request,
-    type Response,
-} from "express";
-import helmet from "helmet";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import cors from "cors";
+import express, {
+	type Application,
+	type NextFunction,
+	type Request,
+	type Response,
+} from "express";
+import helmet from "helmet";
+import { AppError } from "./domain/errors/app-error.js";
 import authRoutes from "./main/config/auth-routes.js";
 import dashboardRoutes from "./main/config/dashboard-routes.js";
 import { getAllowedCorsOrigins } from "./main/config/env.js";
@@ -45,8 +46,6 @@ app.get("/", (_req: Request, res: Response) => {
 app.use("/api", healthRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/dashboard", dashboardRoutes);
-
-import { AppError } from "./domain/errors/app-error.js";
 
 // Global error handler — prevents stack traces leaking to client
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
