@@ -2,8 +2,7 @@
   "name": "petshop-small-breeds-premium",
   "private": true,
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "apps/*"
   ],
   "scripts": {
     "setup": "npm install && npm run setup:env",

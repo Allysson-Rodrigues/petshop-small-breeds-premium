@@ -1,6 +1,0 @@
-Lista de Correções e Melhorias Pendentes - Petshop Small Breeds Premium
-
-4. Corrigir alguns detalhes do dashboard do cliente.
-5. Criar um carrinho dos produtos para a compra.
-6. Implementar Stripe para a venda.
-7. Implementar Login com Clerk.
