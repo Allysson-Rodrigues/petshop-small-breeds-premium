@@ -1,24 +1,11 @@
-import { authService } from "../services/authService";
+import { useContext } from "react";
+import { AuthContext } from "../contexts/auth-context";
 
 export function useAuth() {
-    const user = authService.getUser();
-    const isAdmin = user?.role === "admin";
+	const context = useContext(AuthContext);
+	if (!context) {
+		throw new Error("useAuth must be used within AuthProvider");
+	}
 
-    const getInitials = (name: string): string => {
-        if (!name) return "??";
-        return name
-            .split(" ")
-            .map((n) => n[0])
-            .join("")
-            .toUpperCase()
-            .substring(0, 2);
-    };
-
-    return {
-        user,
-        isAdmin,
-        getInitials,
-        isAuthenticated: authService.isAuthenticated(),
-        logout: authService.logout,
-    };
+	return context;
 }

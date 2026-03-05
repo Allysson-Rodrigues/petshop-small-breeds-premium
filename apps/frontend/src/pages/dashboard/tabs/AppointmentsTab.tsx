@@ -28,7 +28,7 @@ export default function AppointmentsTab({ showToast }: AppointmentsTabProps) {
 
   const handleComplete = async (id: string) => {
     try {
-      const updated = await dashboardService.updateAppointmentStatus(id, "DONE");
+      const updated = await dashboardService.updateAppointmentStatus(id, "COMPLETED");
       setAppointments((prev) => prev.map((a) => (a.id === id ? updated : a)));
       showToast("Agendamento concluído!");
     } catch {
@@ -67,7 +67,6 @@ export default function AppointmentsTab({ showToast }: AppointmentsTabProps) {
         petId: currentApp.petId,
         type: currentApp.type,
         date: new Date(currentApp.date).toISOString(),
-        userId: "",
       });
       setAppointments((prev) => [...prev, created]);
       showToast("Agendamento criado!");
@@ -85,13 +84,13 @@ export default function AppointmentsTab({ showToast }: AppointmentsTabProps) {
   };
 
   const statusLabel = (s: string) => {
-    if (s === "DONE") return "Concluído";
+    if (s === "COMPLETED") return "Concluído";
     if (s === "CANCELLED") return "Cancelado";
     return "Pendente";
   };
 
   const statusClass = (s: string) => {
-    if (s === "DONE") return "bg-neutral-100 border border-neutral-200 text-neutral-800 font-bold";
+    if (s === "COMPLETED") return "bg-neutral-100 border border-neutral-200 text-neutral-800 font-bold";
     if (s === "CANCELLED") return "bg-neutral-600 text-white";
     return "bg-white border border-neutral-300 border-dashed text-neutral-600 italic";
   };

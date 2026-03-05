@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
 
 interface PageTransitionProps {
@@ -21,14 +21,23 @@ const fadeVariants = {
 const transition = { duration: 0.4, ease: [0.22, 1, 0.36, 1] } as const;
 
 export default function PageTransition({ children, withSlide = true }: PageTransitionProps) {
-    const variants = withSlide ? slideVariants : fadeVariants;
+    const prefersReducedMotion = useReducedMotion();
+    const variants = prefersReducedMotion
+        ? {
+            initial: { opacity: 1 },
+            animate: { opacity: 1 },
+            exit: { opacity: 1 },
+        }
+        : withSlide
+            ? slideVariants
+            : fadeVariants;
 
     return (
         <motion.div
             initial={variants.initial}
             animate={variants.animate}
             exit={variants.exit}
-            transition={transition}
+            transition={prefersReducedMotion ? { duration: 0 } : transition}
         >
             {children}
         </motion.div>

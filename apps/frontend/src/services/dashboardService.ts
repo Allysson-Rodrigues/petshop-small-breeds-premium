@@ -48,7 +48,7 @@ export interface ApiAppointment {
 	id: string;
 	date: string;
 	type: string;
-	status: string;
+	status: AppointmentStatus;
 	userId: string;
 	petId: string;
 }
@@ -68,6 +68,30 @@ export interface ApiProduct {
 	price: number;
 	category: string;
 	stock: number;
+}
+
+export type AppointmentStatus =
+	| "PENDING"
+	| "CONFIRMED"
+	| "CANCELLED"
+	| "COMPLETED";
+
+export interface CreatePetInput {
+	name: string;
+	breed: string;
+	age: number;
+}
+
+export interface UpdatePetInput {
+	name?: string;
+	breed?: string;
+	age?: number;
+}
+
+export interface CreateAppointmentInput {
+	date: string;
+	type: string;
+	petId: string;
 }
 
 export interface AdminDashboardData {
@@ -99,12 +123,12 @@ export const dashboardService = {
 
 	// Pets
 	getPets: () => request<ApiPet[]>("/dashboard/pets"),
-	createPet: (data: Omit<ApiPet, "id">) =>
+	createPet: (data: CreatePetInput) =>
 		request<ApiPet>("/dashboard/pets", {
 			method: "POST",
 			body: JSON.stringify(data),
 		}),
-	updatePet: (id: string, data: Partial<ApiPet>) =>
+	updatePet: (id: string, data: UpdatePetInput) =>
 		request<ApiPet>(`/dashboard/pets/${id}`, {
 			method: "PUT",
 			body: JSON.stringify(data),
@@ -115,12 +139,12 @@ export const dashboardService = {
 	// Appointments
 	getAppointments: () =>
 		request<ApiAppointment[]>("/dashboard/appointments"),
-	createAppointment: (data: Omit<ApiAppointment, "id" | "status">) =>
+	createAppointment: (data: CreateAppointmentInput) =>
 		request<ApiAppointment>("/dashboard/appointments", {
 			method: "POST",
 			body: JSON.stringify(data),
 		}),
-	updateAppointmentStatus: (id: string, status: string) =>
+	updateAppointmentStatus: (id: string, status: AppointmentStatus) =>
 		request<ApiAppointment>(`/dashboard/appointments/${id}`, {
 			method: "PUT",
 			body: JSON.stringify({ status }),

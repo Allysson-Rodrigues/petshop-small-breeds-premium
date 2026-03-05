@@ -134,6 +134,13 @@
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
 }
 
+@media (max-width: 767px) {
+  .glass {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+}
+
 .clay-card {
   background-color: #ffffff;
   border-radius: var(--radius-clay);
@@ -213,13 +220,43 @@
 
   /* Reveal child with delay for mobile/entry animations */
   @media (max-width: 1023px) {
+    .reveal-up {
+      transform: translateY(20px);
+      transition-duration: 0.55s;
+    }
+
     .reveal-up.revealed .reveal-child {
       opacity: 1 !important;
       translate: 0 0 !important;
       transform: translateY(0) !important;
-      transition: all 1.2s cubic-bezier(0.22, 1, 0.36, 1) !important;
-      transition-delay: 0.4s !important;
+      transition: all 0.55s cubic-bezier(0.22, 1, 0.36, 1) !important;
+      transition-delay: 0.15s !important;
     }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal-up,
+  .reveal-up.revealed {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .btn-magnetic:hover,
+  .btn-magnetic:active {
+    transform: none;
+    box-shadow: none;
   }
 }
 
@@ -253,5 +290,3 @@
     transform: scale(1);
   }
 }
-
-/* Accessibility settings removed temporarily to restore visual feedback */

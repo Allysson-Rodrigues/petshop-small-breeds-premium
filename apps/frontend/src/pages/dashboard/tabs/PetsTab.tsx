@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { authService } from "../../../services/authService";
 import { dashboardService, type ApiPet } from "../../../services/dashboardService";
 import ConfirmationModal from "../components/ConfirmationModal";
 import NotionAvatar from "../components/NotionAvatar";
@@ -67,7 +66,6 @@ export default function PetsTab({ showToast, searchQuery = "" }: PetsTabProps) {
       return;
     }
     try {
-      const user = authService.getUser();
       if (currentPet.id) {
         const updated = await dashboardService.updatePet(currentPet.id, {
           name: currentPet.name,
@@ -81,7 +79,6 @@ export default function PetsTab({ showToast, searchQuery = "" }: PetsTabProps) {
           name: currentPet.name,
           breed: currentPet.breed,
           age: Number(currentPet.age) || 0,
-          userId: user?.id ?? "",
         });
         setPets((prev) => [...prev, created]);
         showToast(`Pet ${currentPet.name} cadastrado!`);

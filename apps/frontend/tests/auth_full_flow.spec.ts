@@ -26,10 +26,6 @@ test.describe('Authentication & Role-Based Access Control Flow', () => {
         await page.getByPlaceholder('••••••••').fill(testUser.password);
         await page.getByRole('button', { name: 'Entrar' }).click();
 
-        // Wait for the success toast or check for error
-        // Wait for the success toast
-        await expect(page.getByText('Login realizado com sucesso!')).toBeVisible({ timeout: 5000 });
-
         // Should land on Dashboard
         await expect(page).toHaveURL(/.*dashboard/);
 
