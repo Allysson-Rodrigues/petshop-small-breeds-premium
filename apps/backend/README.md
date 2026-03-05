@@ -8,7 +8,6 @@ RESTful API built with Express 5, Prisma 7, and TypeScript, organized using Clea
 - **ORM:** Prisma 7 (SQLite via Better-SQLite3)
 - **Auth:** JWT (jsonwebtoken) + bcrypt
 - **Linting:** Biome
-- **Testing:** Vitest + Supertest
 
 ## Development
 
@@ -55,7 +54,6 @@ npx prisma studio           # Visual database UI
 | `npm start` | Start compiled build |
 | `npm run lint` | Biome check |
 | `npm run lint:fix` | Biome auto-fix |
-| `npm test` | Unit tests (Vitest) |
 
 ## Architecture Structure
 

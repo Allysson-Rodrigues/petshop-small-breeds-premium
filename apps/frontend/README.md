@@ -10,7 +10,6 @@ Single Page Application (SPA) built with React 19, Vite 7, Tailwind CSS 4, and F
 - **Animations:** Framer Motion
 - **Routing:** React Router 7
 - **Icons:** Lucide React
-- **Testing:** Vitest (unit) + Playwright (E2E)
 
 ## Development
 
@@ -31,7 +30,7 @@ The dev server starts at http://localhost:5173 with automatic API proxying (`/ap
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `VITE_API_BASE_URL` | API base URL | `/api` (local proxy) |
-| `VITE_ADMIN_EMAILS` | Admin emails for client-side RBAC | `admin@example.com` |
+| `VITE_ADMIN_EMAILS` | Admin emails for client-side RBAC | `admin@petshop.com` |
 
 ## Scripts
 
@@ -40,27 +39,7 @@ The dev server starts at http://localhost:5173 with automatic API proxying (`/ap
 | `npm run dev` | Dev server with HMR |
 | `npm run build` | Production build (`tsc + vite build`) |
 | `npm run lint` | ESLint check |
-| `npm run test` | Unit tests (Vitest) |
 | `npm run preview` | Local build preview |
-
-## E2E Testing (Playwright)
-
-```bash
-# Install browsers (first time only)
-npx playwright install
-
-# Run tests (requires backend to be running)
-npx playwright test
-```
-
-### Available Specs
-
-| File | Coverage |
-|------|----------|
-| `tests/home.spec.ts` | Home page layout, headings, and links |
-| `tests/login.spec.ts` | Validation, incorrect credentials, successful login |
-| `tests/dashboard.spec.ts` | Navigation between tabs and modals |
-| `tests/auth_full_flow.spec.ts`| End-to-end integration: Registration → Login → RBAC |
 
 ## Structure
 

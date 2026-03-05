@@ -61,6 +61,17 @@ apps/frontend/download_cushion.py
 
 # Local-only workspace tooling
 apps/frontend/.agent/
+.agent/
+.github/
+
+# Local-only tests (keep in workspace, not on GitHub)
+apps/**/tests/
+apps/**/__tests__/
+**/*.test.*
+**/*.spec.*
+apps/**/vitest.config.*
+apps/**/playwright.config.*
+apps/frontend/src/setupTests.ts
 
 # Local-only one-off scripts
 apps/frontend/get_image.mjs

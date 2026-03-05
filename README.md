@@ -9,7 +9,6 @@ Monorepo for a premium petshop application specialized in small breeds. Single P
 | **Frontend** | React 19, Vite 7, Tailwind CSS 4, Framer Motion, React Router 7 |
 | **Backend** | Express 5, Prisma 7, SQLite (Better-SQLite3), TypeScript |
 | **Auth** | JWT (jsonwebtoken + bcrypt) |
-| **Testing** | Vitest (unit), Playwright (E2E) |
 | **Linting** | ESLint (frontend), Biome (backend) |
 | **Deployment**| Vercel (frontend SPA) |
 
@@ -17,7 +16,6 @@ Monorepo for a premium petshop application specialized in small breeds. Single P
 
 ```text
 .
-├── .github/workflows/   CI (lint, tests, E2E)
 ├── apps/
 │   ├── backend/         Express API + Prisma (Clean Architecture)
 │   └── frontend/        React SPA + Vite + Tailwind CSS
@@ -100,11 +98,8 @@ docker run --rm -it -p 5173:5173 -p 3000:3000 \
 
 ```bash
 npm run lint     # Lint (both workspaces)
-npm run test     # Unit tests (Vitest)
 npm run build    # Production build
-
-# E2E Tests (requires backend running)
-cd apps/frontend && npx playwright test
+npm run type-check
 ```
 
 ## Deployment (Vercel)

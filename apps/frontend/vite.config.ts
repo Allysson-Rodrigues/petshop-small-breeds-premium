@@ -1,6 +1,6 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react-swc';
-import { configDefaults, defineConfig } from 'vitest/config';
+import { defineConfig } from 'vite';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -15,12 +15,6 @@ export default defineConfig({
         changeOrigin: true,
       }
     }
-  },
-  test: {
-    globals: true,
-    environment: 'happy-dom',
-    setupFiles: ['./src/setupTests.ts'],
-    exclude: [...configDefaults.exclude, 'tests/**'],
   },
   build: {
     rollupOptions: {

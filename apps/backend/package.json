@@ -10,16 +10,13 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "dev:seed": "prisma migrate deploy --schema=./prisma/schema.prisma && prisma db seed --schema=./prisma/schema.prisma && tsx watch src/server.ts",
-    "dev:e2e": "npm run dev:seed",
     "build": "tsc",
     "type-check": "tsc --noEmit",
     "start": "node dist/server.js",
     "lint": "biome check src",
     "lint:fix": "biome check --write src",
     "format": "biome format --write src",
-    "pretest": "prisma generate --schema=./prisma/schema.prisma && prisma migrate deploy --schema=./prisma/schema.prisma",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "prisma:generate": "prisma generate --schema=./prisma/schema.prisma"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -46,12 +43,9 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22.13.4",
     "@types/qs": "^6.9.18",
-    "@types/supertest": "^6.0.3",
     "prettier": "^3.5.1",
     "prisma": "^6.4.1",
-    "supertest": "^7.2.2",
     "tsx": "^4.19.3",
-    "typescript": "^5.7.3",
-    "vitest": "^3.0.5"
+    "typescript": "^5.7.3"
   }
 }
