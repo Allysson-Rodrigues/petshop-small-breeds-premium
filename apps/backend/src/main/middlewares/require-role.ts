@@ -5,11 +5,11 @@ const userRepository = new PrismaUserRepository();
 
 /**
  * Middleware factory: checks that the authenticated user has the required role.
- * Must be placed AFTER authMiddleware (needs x-user-id header).
+ * Must be placed AFTER authMiddleware.
  */
 export const requireRole = (...allowedRoles: string[]) => {
 	return async (req: Request, res: Response, next: NextFunction) => {
-		const userId = req.headers["x-user-id"] as string | undefined;
+		const userId = req.auth?.userId;
 		if (!userId) {
 			return res.status(401).json({ message: "Authentication required" });
 		}
