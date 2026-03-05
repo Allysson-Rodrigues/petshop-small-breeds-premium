@@ -2,6 +2,12 @@ import { Router } from "express";
 import type { Product } from "../../domain/entities/product.entity.js";
 import type { User } from "../../domain/entities/user.entity.js";
 import {
+	ForbiddenError,
+	NotFoundError,
+	UnauthorizedError,
+} from "../../domain/errors/app-error.js";
+import {
+	createAppointmentSchema,
 	createProductSchema,
 	updateAppointmentStatusSchema,
 	updateClientSchema,
@@ -63,6 +69,7 @@ const createAppointmentUseCase = new CreateAppointmentUseCase(
 const createAppointmentController = new CreateAppointmentController(
 	createAppointmentUseCase,
 );
+const createAppointmentRoute = adaptRoute(createAppointmentController);
 
 router.get("/customer", authMiddleware, adaptRoute(getDashboardController));
 router.get(
@@ -75,7 +82,37 @@ router.post("/pets", authMiddleware, adaptRoute(createPetController));
 router.post(
 	"/appointments",
 	authMiddleware,
-	adaptRoute(createAppointmentController),
+	adaptAsyncHandler(async (req, _res, next) => {
+		const userId = req.auth?.userId;
+		if (!userId) {
+			throw new UnauthorizedError();
+		}
+
+		const parsed = createAppointmentSchema.safeParse(req.body);
+		if (!parsed.success) {
+			return next();
+		}
+
+		const [user, pet] = await Promise.all([
+			userRepository.findById(userId),
+			petRepository.findById(parsed.data.petId),
+		]);
+
+		if (!user) {
+			throw new UnauthorizedError("User not found");
+		}
+
+		if (!pet) {
+			throw new NotFoundError("Pet");
+		}
+
+		if (user.role !== "admin" && pet.userId !== userId) {
+			throw new ForbiddenError("Forbidden: not the pet owner");
+		}
+
+		next();
+	}),
+	createAppointmentRoute,
 );
 
 // ── Pets CRUD ─────────────────────────────────────────────────
@@ -83,7 +120,10 @@ router.get(
 	"/pets",
 	authMiddleware,
 	adaptAsyncHandler(async (req, res) => {
-		const userId = req.headers["x-user-id"] as string;
+		const userId = req.auth?.userId;
+		if (!userId) {
+			throw new UnauthorizedError();
+		}
 		const user = await userRepository.findById(userId);
 
 		const pets =
@@ -98,15 +138,20 @@ router.put(
 	"/pets/:id",
 	authMiddleware,
 	adaptAsyncHandler(async (req, res) => {
-		const userId = req.headers["x-user-id"] as string;
+		const userId = req.auth?.userId;
+		if (!userId) {
+			throw new UnauthorizedError();
+		}
 		const user = await userRepository.findById(userId);
 		const petId = String(req.params.id);
+		const pet = await petRepository.findById(petId);
 
-		// IDOR protection: only owner or admin can update
-		const ownerPets = await petRepository.findByUserId(userId);
-		if (user?.role !== "admin" && !ownerPets.some((p) => p.id === petId)) {
-			res.status(403).json({ message: "Forbidden: not the pet owner" });
-			return;
+		if (!pet) {
+			throw new NotFoundError("Pet");
+		}
+
+		if (user?.role !== "admin" && pet.userId !== userId) {
+			throw new ForbiddenError("Forbidden: not the pet owner");
 		}
 
 		const parsed = updatePetSchema.safeParse(req.body);
@@ -118,13 +163,13 @@ router.put(
 			return;
 		}
 
-		const pet = await petRepository.update(
+		const updatedPet = await petRepository.update(
 			petId,
 			parsed.data as Partial<
 				Omit<import("../../domain/entities/pet.entity.js").Pet, "id">
 			>,
 		);
-		res.json(pet);
+		res.json(updatedPet);
 	}),
 );
 
@@ -132,15 +177,20 @@ router.delete(
 	"/pets/:id",
 	authMiddleware,
 	adaptAsyncHandler(async (req, res) => {
-		const userId = req.headers["x-user-id"] as string;
+		const userId = req.auth?.userId;
+		if (!userId) {
+			throw new UnauthorizedError();
+		}
 		const user = await userRepository.findById(userId);
 		const petId = String(req.params.id);
+		const pet = await petRepository.findById(petId);
 
-		// IDOR protection
-		const ownerPets = await petRepository.findByUserId(userId);
-		if (user?.role !== "admin" && !ownerPets.some((p) => p.id === petId)) {
-			res.status(403).json({ message: "Forbidden: not the pet owner" });
-			return;
+		if (!pet) {
+			throw new NotFoundError("Pet");
+		}
+
+		if (user?.role !== "admin" && pet.userId !== userId) {
+			throw new ForbiddenError("Forbidden: not the pet owner");
 		}
 
 		await petRepository.delete(petId);
@@ -153,8 +203,16 @@ router.get(
 	"/appointments",
 	authMiddleware,
 	adaptAsyncHandler(async (req, res) => {
-		const userId = req.headers["x-user-id"] as string;
-		const appointments = await appointmentRepository.findByUserId(userId);
+		const userId = req.auth?.userId;
+		if (!userId) {
+			throw new UnauthorizedError();
+		}
+
+		const user = await userRepository.findById(userId);
+		const appointments =
+			user?.role === "admin"
+				? await appointmentRepository.findAll()
+				: await appointmentRepository.findByUserId(userId);
 		res.json(appointments);
 	}),
 );
@@ -163,6 +221,24 @@ router.put(
 	"/appointments/:id",
 	authMiddleware,
 	adaptAsyncHandler(async (req, res) => {
+		const userId = req.auth?.userId;
+		if (!userId) {
+			throw new UnauthorizedError();
+		}
+
+		const [user, appointment] = await Promise.all([
+			userRepository.findById(userId),
+			appointmentRepository.findById(String(req.params.id)),
+		]);
+
+		if (!appointment) {
+			throw new NotFoundError("Appointment");
+		}
+
+		if (user?.role !== "admin" && appointment.userId !== userId) {
+			throw new ForbiddenError("Forbidden: not the appointment owner");
+		}
+
 		const parsed = updateAppointmentStatusSchema.safeParse(req.body);
 		if (!parsed.success) {
 			res.status(422).json({
@@ -172,11 +248,11 @@ router.put(
 			return;
 		}
 
-		const appointment = await appointmentRepository.updateStatus(
+		const updatedAppointment = await appointmentRepository.updateStatus(
 			String(req.params.id),
 			parsed.data.status,
 		);
-		res.json(appointment);
+		res.json(updatedAppointment);
 	}),
 );
 
@@ -184,6 +260,24 @@ router.delete(
 	"/appointments/:id",
 	authMiddleware,
 	adaptAsyncHandler(async (req, res) => {
+		const userId = req.auth?.userId;
+		if (!userId) {
+			throw new UnauthorizedError();
+		}
+
+		const [user, appointment] = await Promise.all([
+			userRepository.findById(userId),
+			appointmentRepository.findById(String(req.params.id)),
+		]);
+
+		if (!appointment) {
+			throw new NotFoundError("Appointment");
+		}
+
+		if (user?.role !== "admin" && appointment.userId !== userId) {
+			throw new ForbiddenError("Forbidden: not the appointment owner");
+		}
+
 		await appointmentRepository.delete(String(req.params.id));
 		res.json({ message: "Appointment deleted" });
 	}),
@@ -195,11 +289,16 @@ router.get(
 	authMiddleware,
 	requireRole("admin"),
 	adaptAsyncHandler(async (_req, res) => {
-		const users = await userRepository.findAll();
-		const safeUsers = users.map(({ password: _, ...user }) => ({
-			...user,
-			petsCount: 0,
-		}));
+		const [users, pets] = await Promise.all([
+			userRepository.findAll(),
+			petRepository.findAll(),
+		]);
+		const safeUsers = users
+			.filter((user) => user.role !== "admin")
+			.map(({ password: _, ...user }) => ({
+				...user,
+				petsCount: pets.filter((pet) => pet.userId === user.id).length,
+			}));
 		res.json(safeUsers);
 	}),
 );

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 
@@ -12,18 +12,37 @@ const navLinks = [
 
 export default function Header() {
   const { isAuthenticated, logout } = useAuth();
-  const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) {
+      document.body.style.overflow = "";
+      return;
+    }
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [isMobileMenuOpen]);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
     await new Promise(resolve => setTimeout(resolve, 300));
 
     logout();
-    setIsLoggedIn(false);
     navigate("/");
     setIsMobileMenuOpen(false);
     setIsLoggingOut(false);
@@ -78,7 +97,7 @@ export default function Header() {
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-6 shrink-0">
-          {isLoggedIn ? (
+          {isAuthenticated ? (
             <>
               <Link
                 to="/dashboard"
@@ -116,6 +135,8 @@ export default function Header() {
         <button
           className="md:hidden p-2 text-charcoal"
           aria-label={isMobileMenuOpen ? "Fechar menu" : "Abrir menu"}
+          aria-controls="mobile-navigation"
+          aria-expanded={isMobileMenuOpen}
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
           <span className="material-symbols-outlined text-2xl">
@@ -126,6 +147,7 @@ export default function Header() {
 
       {/* Mobile Menu */}
       <div
+        id="mobile-navigation"
         className={`
           md:hidden overflow-hidden transition-[max-height,opacity] duration-500 ease-in-out
           ${isMobileMenuOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}
@@ -164,7 +186,7 @@ export default function Header() {
           })}
 
           <div className="pt-4">
-            {isLoggedIn ? (
+            {isAuthenticated ? (
               <div className="flex flex-col gap-3">
                 <Link
                   to="/dashboard"

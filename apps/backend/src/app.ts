@@ -20,13 +20,7 @@ const __dirname = path.dirname(__filename);
 const app: Application = express();
 const allowedCorsOrigins = getAllowedCorsOrigins();
 
-// Security headers (X-Content-Type-Options, X-Frame-Options, HSTS, etc.)
-// CSP disabled to prevent blocking external resources like Google Fonts/Icons during dev.
-app.use(
-	helmet({
-		contentSecurityPolicy: false,
-	}),
-);
+app.use(helmet());
 
 app.use(
 	cors({

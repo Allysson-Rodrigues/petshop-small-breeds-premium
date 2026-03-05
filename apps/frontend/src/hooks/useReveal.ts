@@ -11,11 +11,23 @@ export function useReveal(delay = 0) {
         const el = ref.current;
         if (!el) return;
 
+        const prefersReducedMotion =
+            typeof window.matchMedia === "function"
+                ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+                : false;
+
+        if (prefersReducedMotion || typeof IntersectionObserver === "undefined") {
+            el.classList.add("revealed");
+            return;
+        }
+
+        let timeoutId: number | undefined;
+
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (entry.isIntersecting) {
                     if (delay > 0) {
-                        setTimeout(() => el.classList.add("revealed"), delay);
+                        timeoutId = window.setTimeout(() => el.classList.add("revealed"), delay);
                     } else {
                         el.classList.add("revealed");
                     }
@@ -26,7 +38,12 @@ export function useReveal(delay = 0) {
         );
 
         observer.observe(el);
-        return () => observer.disconnect();
+        return () => {
+            observer.disconnect();
+            if (timeoutId) {
+                window.clearTimeout(timeoutId);
+            }
+        };
     }, [delay]);
 
     return ref;

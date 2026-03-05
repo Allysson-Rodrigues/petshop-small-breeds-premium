@@ -6,16 +6,22 @@ export const createPetSchema = z.object({
 	name: z.string().min(1, "Pet name is required").max(100),
 	breed: z.string().min(1, "Breed is required").max(100),
 	age: z.number().int().min(0).max(30),
-	userId: z.string().uuid("Invalid userId"),
 });
 
-export const updatePetSchema = createPetSchema.partial();
+export const updatePetSchema = z
+	.object({
+		name: z.string().min(1, "Pet name is required").max(100).optional(),
+		breed: z.string().min(1, "Breed is required").max(100).optional(),
+		age: z.number().int().min(0).max(30).optional(),
+	})
+	.refine((data) => Object.keys(data).length > 0, {
+		message: "At least one field is required",
+	});
 
 // ── Appointment Schemas ───────────────────────────────────────
 export const createAppointmentSchema = z.object({
 	date: z.string().datetime({ message: "Invalid ISO date" }),
 	type: z.string().min(1, "Appointment type is required").max(50),
-	userId: z.string().uuid("Invalid userId"),
 	petId: z.string().uuid("Invalid petId"),
 });
 
@@ -30,7 +36,7 @@ export const updateClientSchema = z
 	.object({
 		name: z.string().min(1).max(100),
 		email: z.string().email(),
-		role: z.enum(["user", "admin"]),
+		role: z.enum(["client", "admin"]),
 	})
 	.partial()
 	.refine((data) => Object.keys(data).length > 0, {

@@ -18,6 +18,7 @@ interface AuthApiUser {
 
 const AUTH_TOKEN_KEY = "auth_token";
 const AUTH_USER_KEY = "auth_user";
+const AUTH_CHANGED_EVENT = "auth:changed";
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "/api").replace(
 	/\/$/,
@@ -102,6 +103,12 @@ const getErrorMessageFromResponse = async (response: Response): Promise<string> 
 		: "Não foi possível concluir a solicitação.";
 };
 
+const notifyAuthChanged = () => {
+	if (typeof window !== "undefined") {
+		window.dispatchEvent(new Event(AUTH_CHANGED_EVENT));
+	}
+};
+
 export const authService = {
 	login: async (email: string, pass: string): Promise<AuthResult> => {
 		if (!email || !pass) {
@@ -173,11 +180,13 @@ export const authService = {
 	saveSession: (token: string, user: User) => {
 		localStorage.setItem(AUTH_TOKEN_KEY, token);
 		localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+		notifyAuthChanged();
 	},
 
 	logout: () => {
 		localStorage.removeItem(AUTH_TOKEN_KEY);
 		localStorage.removeItem(AUTH_USER_KEY);
+		notifyAuthChanged();
 	},
 
 	isAuthenticated: () => {

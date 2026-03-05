@@ -42,7 +42,7 @@ export const authMiddleware = (
 			return res.status(401).json({ message: "Token invalid" });
 		}
 
-		req.headers["x-user-id"] = userId;
+		req.auth = { userId };
 		return next();
 	} catch {
 		return res.status(401).json({ message: "Token invalid" });

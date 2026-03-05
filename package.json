@@ -8,7 +8,7 @@
   "scripts": {
     "setup": "npm install && npm run setup:env",
     "setup:env": "bash -lc 'if [ ! -f apps/backend/.env ]; then cp apps/backend/.env.example apps/backend/.env; echo \"Created backend/.env from template.\"; else echo \"backend/.env already exists.\"; fi'",
-    "dev:backend": "npm --prefix apps/backend run dev",
+    "dev:backend": "npm --prefix apps/backend run dev:seed",
     "dev:frontend": "npm --prefix apps/frontend run dev",
     "dev:all": "npx -y concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "test": "npm --prefix apps/backend run test && npm --prefix apps/frontend run test",
