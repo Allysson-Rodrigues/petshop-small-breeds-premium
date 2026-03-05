@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
 import Toast from "../components/ui/Toast";
@@ -6,8 +6,8 @@ import { authService } from "../services/authService";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const passwordInputRef = useRef<HTMLInputElement>(null);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [error, setError] = useState("");
   const [toastMessage, setToastMessage] = useState("");
@@ -18,9 +18,35 @@ export default function Login() {
     setTimeout(() => setToastMessage(""), 3000);
   };
 
+  const copyToClipboard = async (value: string, label: string) => {
+    try {
+      await navigator.clipboard.writeText(value);
+      showToast(`${label} copiado.`);
+    } catch {
+      showToast("Nao foi possivel copiar. Selecione e copie manualmente.");
+    }
+  };
+
+  useEffect(() => {
+    // Avoid browser/password-manager autofilling credentials in the login form.
+    // We never persist email/password, so start from a clean slate.
+    if (emailInputRef.current) emailInputRef.current.value = "";
+    if (passwordInputRef.current) passwordInputRef.current.value = "";
+
+    const timeoutId = window.setTimeout(() => {
+      if (emailInputRef.current) emailInputRef.current.value = "";
+      if (passwordInputRef.current) passwordInputRef.current.value = "";
+    }, 250);
+
+    return () => window.clearTimeout(timeoutId);
+  }, []);
+
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(""); // Clear previous errors
+
+    const email = emailInputRef.current?.value ?? "";
+    const password = passwordInputRef.current?.value ?? "";
 
     if (!email || !password) {
       setError("Por favor, preencha o e-mail e a senha.");
@@ -105,24 +131,108 @@ export default function Login() {
                 {error}
               </div>
             )}
+
+            {/* Test credentials (GitHub/demo) */}
+            <section
+              className="mb-6 border border-neutral-200 bg-neutral-50/50 p-4"
+              aria-label="Credenciais de teste"
+            >
+              <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-neutral-500">
+                Credenciais de teste
+              </p>
+              <p className="mt-1 text-xs text-neutral-600">
+                Use para avaliar a area do cliente e a administracao. Nao use em producao.
+              </p>
+
+              <div className="mt-3 space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold text-neutral-800">Cliente</p>
+                    <p className="text-xs text-neutral-700 font-mono break-all">
+                      cliente@petshop.com
+                    </p>
+                    <p className="text-xs text-neutral-700 font-mono break-all">
+                      cliente123
+                    </p>
+                  </div>
+                  <div className="flex shrink-0 flex-col gap-2">
+                    <button
+                      type="button"
+                      className="h-9 px-3 border border-neutral-200 bg-white text-xs font-semibold hover:bg-neutral-50 transition-colors"
+                      onClick={() => copyToClipboard("cliente@petshop.com", "E-mail")}
+                    >
+                      Copiar e-mail
+                    </button>
+                    <button
+                      type="button"
+                      className="h-9 px-3 border border-neutral-200 bg-white text-xs font-semibold hover:bg-neutral-50 transition-colors"
+                      onClick={() => copyToClipboard("cliente123", "Senha")}
+                    >
+                      Copiar senha
+                    </button>
+                  </div>
+                </div>
+
+                <div className="h-px bg-neutral-200" />
+
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold text-neutral-800">Admin</p>
+                    <p className="text-xs text-neutral-700 font-mono break-all">
+                      admin@petshop.com
+                    </p>
+                    <p className="text-xs text-neutral-700 font-mono break-all">
+                      admin123
+                    </p>
+                  </div>
+                  <div className="flex shrink-0 flex-col gap-2">
+                    <button
+                      type="button"
+                      className="h-9 px-3 border border-neutral-200 bg-white text-xs font-semibold hover:bg-neutral-50 transition-colors"
+                      onClick={() => copyToClipboard("admin@petshop.com", "E-mail")}
+                    >
+                      Copiar e-mail
+                    </button>
+                    <button
+                      type="button"
+                      className="h-9 px-3 border border-neutral-200 bg-white text-xs font-semibold hover:bg-neutral-50 transition-colors"
+                      onClick={() => copyToClipboard("admin123", "Senha")}
+                    >
+                      Copiar senha
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
             {/* Form */}
-            <form className="flex flex-col gap-5" onSubmit={handleSignIn}>
+            <form
+              className="flex flex-col gap-5"
+              onSubmit={handleSignIn}
+              autoComplete="off"
+            >
               {/* Email Field */}
               <div className="space-y-2">
                 <label
                   className="text-sm font-medium leading-none text-primary"
-                  htmlFor="email"
+                  htmlFor="login-email"
                 >
                   Endereço de E-mail
                 </label>
                 <div className="relative">
                   <input
                     className="flex h-12 w-full border-b border-neutral-300 bg-transparent px-0 py-3 text-sm text-black placeholder:text-neutral-400 focus:border-black focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-200"
-                    id="email"
+                    id="login-email"
+                    name="petshop_login_email"
                     placeholder="nome@exemplo.com"
                     type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    inputMode="email"
+                    autoComplete="off"
+                    autoCapitalize="none"
+                    spellCheck={false}
+                    data-1p-ignore
+                    data-lpignore="true"
+                    ref={emailInputRef}
                   />
                   <span className="absolute right-3 top-3 text-neutral-400">
                     <span className="material-symbols-outlined text-[20px]">
@@ -136,18 +246,21 @@ export default function Login() {
               <div className="space-y-2">
                 <label
                   className="text-sm font-medium leading-none text-primary"
-                  htmlFor="password"
+                  htmlFor="login-password"
                 >
                   Senha
                 </label>
                 <div className="relative">
                   <input
                     className="flex h-12 w-full border-b border-neutral-300 bg-transparent px-0 py-3 text-sm text-black placeholder:text-neutral-400 focus:border-black focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 transition-colors duration-200"
-                    id="password"
+                    id="login-password"
+                    name="petshop_login_password"
                     placeholder="••••••••"
                     type={isPasswordVisible ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    autoComplete="new-password"
+                    data-1p-ignore
+                    data-lpignore="true"
+                    ref={passwordInputRef}
                   />
                   <button
                     type="button"

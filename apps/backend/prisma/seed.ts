@@ -4,27 +4,53 @@ import bcrypt from "bcrypt";
 const prisma = new PrismaClient();
 
 async function main() {
-  const email = "admin@petshop.com";
-  const password = "admin123";
-  const hashedPassword = await bcrypt.hash(password, 12);
+  const adminEmail = "admin@petshop.com";
+  const adminPassword = "admin123";
+  const clientEmail = "cliente@petshop.com";
+  const clientPassword = "cliente123";
+  const adminPetId = "8dcf359c-3c88-4af7-b6df-8b4e3c4ac001";
+  const adminAppointmentId = "7ef6db95-a48d-4a75-a6bd-fb4d07fa1001";
+  const clientPetId = "f0ce2da1-3f49-4f01-a3bb-2af7e2c2b002";
+  const clientAppointmentId = "2f9fdcc1-2a6a-4a54-9a6b-0f54f289c003";
+
+  const [adminHashedPassword, clientHashedPassword] = await Promise.all([
+    bcrypt.hash(adminPassword, 12),
+    bcrypt.hash(clientPassword, 12),
+  ]);
 
   await prisma.user.upsert({
-    where: { email },
+    where: { email: adminEmail },
     update: {
-      password: hashedPassword,
+      password: adminHashedPassword,
       role: "admin",
     },
     create: {
       name: "Admin Geral",
-      email,
-      password: hashedPassword,
+      email: adminEmail,
+      password: adminHashedPassword,
       role: "admin",
     },
   });
 
-  console.log("Admin user created/updated successfully:");
-  console.log(`Email: ${email}`);
-  console.log(`Password: ${password}`);
+  await prisma.user.upsert({
+    where: { email: clientEmail },
+    update: {
+      password: clientHashedPassword,
+      role: "client",
+    },
+    create: {
+      name: "Cliente Demo",
+      email: clientEmail,
+      password: clientHashedPassword,
+      role: "client",
+    },
+  });
+
+  console.log("Test users created/updated successfully:");
+  console.log(`Admin Email: ${adminEmail}`);
+  console.log(`Admin Password: ${adminPassword}`);
+  console.log(`Client Email: ${clientEmail}`);
+  console.log(`Client Password: ${clientPassword}`);
 
   // Initial Products
   const products = [
@@ -45,13 +71,39 @@ async function main() {
   }
 
   // Initial Pet for Admin
-  const adminUser = await prisma.user.findUnique({ where: { email } });
+  const [adminUser, clientUser] = await Promise.all([
+    prisma.user.findUnique({ where: { email: adminEmail } }),
+    prisma.user.findUnique({ where: { email: clientEmail } }),
+  ]);
+
+  if (adminUser || clientUser) {
+    await prisma.appointment.deleteMany({
+      where: {
+        OR: [
+          { id: "app-1" },
+          { id: adminAppointmentId },
+          { id: clientAppointmentId },
+        ],
+      },
+    });
+
+    await prisma.pet.deleteMany({
+      where: {
+        OR: [
+          { id: "pet-rex" },
+          { id: adminPetId },
+          { id: clientPetId },
+        ],
+      },
+    });
+  }
+
   if (adminUser) {
     const pet = await prisma.pet.upsert({
-      where: { id: "pet-rex" },
+      where: { id: adminPetId },
       update: {},
       create: {
-        id: "pet-rex",
+        id: adminPetId,
         name: "Rex",
         breed: "Golden Retriever",
         age: 3,
@@ -61,14 +113,41 @@ async function main() {
 
     // Initial Appointment
     await prisma.appointment.upsert({
-      where: { id: "app-1" },
+      where: { id: adminAppointmentId },
       update: {},
       create: {
-        id: "app-1",
+        id: adminAppointmentId,
         date: new Date(),
         type: "BATH",
         status: "PENDING",
         userId: adminUser.id,
+        petId: pet.id,
+      },
+    });
+  }
+
+  if (clientUser) {
+    const pet = await prisma.pet.upsert({
+      where: { id: clientPetId },
+      update: {},
+      create: {
+        id: clientPetId,
+        name: "Nina",
+        breed: "Maltês",
+        age: 3,
+        userId: clientUser.id,
+      },
+    });
+
+    await prisma.appointment.upsert({
+      where: { id: clientAppointmentId },
+      update: {},
+      create: {
+        id: clientAppointmentId,
+        date: new Date(),
+        type: "GROOM",
+        status: "PENDING",
+        userId: clientUser.id,
         petId: pet.id,
       },
     });

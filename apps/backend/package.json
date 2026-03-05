@@ -9,6 +9,8 @@
   },
   "scripts": {
     "dev": "tsx watch src/server.ts",
+    "dev:seed": "prisma migrate deploy --schema=./prisma/schema.prisma && prisma db seed --schema=./prisma/schema.prisma && tsx watch src/server.ts",
+    "dev:e2e": "npm run dev:seed",
     "build": "tsc",
     "type-check": "tsc --noEmit",
     "start": "node dist/server.js",
