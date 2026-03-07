@@ -2,6 +2,14 @@
 
 Monorepo for a premium petshop application specialized in small breeds. Single Page Application (SPA) frontend (React + Vite + Tailwind CSS) with a backend API (Express + Prisma + SQLite).
 
+## Objective
+
+Provide a premium petshop experience for small breeds with a React SPA frontend and an Express API backend.
+
+## Status
+
+Active.
+
 ## Stack
 
 | Layer | Technology |
@@ -101,6 +109,10 @@ npm run lint     # Lint (both workspaces)
 npm run build    # Production build
 npm run type-check
 ```
+
+## Tests
+
+`n/a`
 
 ## Deployment (Vercel)
 
