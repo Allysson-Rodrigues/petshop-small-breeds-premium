@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("Catalog mobile experience", () => {
+	test.use({ viewport: { width: 390, height: 844 } });
+
 	test("shows product CTA and opens/closes details modal on mobile", async ({
 		page,
 	}) => {
@@ -17,8 +19,9 @@ test.describe("Catalog mobile experience", () => {
 		await expect(dialog).toBeVisible();
 		await expect(dialog.getByRole("heading")).toBeVisible();
 
-		await expect(dialog.locator("button[aria-label='Fechar modal']")).toBeVisible();
-		await page.locator("button[aria-label='Fechar modal']").click();
+		const closeButton = dialog.getByRole("button", { name: /fechar modal/i });
+		await expect(closeButton).toBeVisible();
+		await closeButton.click();
 		await expect(dialog).toHaveCount(0);
 	});
 });

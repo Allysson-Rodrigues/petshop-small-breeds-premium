@@ -56,5 +56,5 @@ npm run test:e2e
 
 Playwright starts:
 
-- backend at `http://127.0.0.1:3000`
-- frontend preview at `http://127.0.0.1:4173`
+- backend at `http://127.0.0.1:3300`
+- frontend preview at `http://127.0.0.1:4273`

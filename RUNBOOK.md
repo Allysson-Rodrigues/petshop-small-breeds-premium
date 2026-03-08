@@ -55,5 +55,5 @@ Backend:
 
 - confirm `DATABASE_URL` or `E2E_DATABASE_URL`
 - confirm Playwright browsers are installed
-- check whether `http://127.0.0.1:3000/api/health` responds
-- check whether `http://127.0.0.1:4173` opens through preview
+- check whether `http://127.0.0.1:3300/api/health` responds
+- check whether `http://127.0.0.1:4273` opens through preview
