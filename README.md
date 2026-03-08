@@ -15,7 +15,7 @@ Active.
 | Layer | Technology |
 |--------|-----------|
 | **Frontend** | React 19, Vite 7, Tailwind CSS 4, Framer Motion, React Router 7 |
-| **Backend** | Express 5, Prisma 7, PostgreSQL, TypeScript |
+| **Backend** | Express 5, Prisma 6, PostgreSQL, TypeScript |
 | **Auth** | JWT (jsonwebtoken + bcrypt) |
 | **Linting** | ESLint (frontend), Biome (backend) |
 | **Deployment**| Vercel (frontend SPA + backend API in separate projects) |
@@ -116,7 +116,18 @@ npm run type-check
 
 ## Tests
 
-Current automated coverage includes backend API tests and frontend unit tests.
+```bash
+# Frontend
+npm --prefix apps/frontend run test
+npm --prefix apps/frontend run test:e2e
+npm --prefix apps/frontend run test:e2e:mobile
+
+# Backend
+npm --prefix apps/backend run test
+npm --prefix apps/backend run test:integration
+```
+
+Backend integration tests require a dedicated PostgreSQL test database via `.env.test(.local)` or an explicit `DATABASE_URL` / `TEST_DATABASE_URL`.
 
 ## Deployment (Vercel)
 
