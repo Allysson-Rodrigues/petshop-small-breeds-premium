@@ -1,17 +1,26 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Helmet } from "../components/seo/HelmetCompat";
-import { Link, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Toast from "../components/ui/Toast";
 import { authService } from "../services/authService";
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState(() => authService.consumeNotice());
   const [toastMessage, setToastMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const redirectTarget =
+    typeof location.state === "object" &&
+    location.state !== null &&
+    "from" in location.state &&
+    typeof location.state.from === "string"
+      ? location.state.from
+      : "/dashboard";
 
   const showToast = (message: string) => {
     setToastMessage(message);
@@ -32,13 +41,6 @@ export default function Login() {
     // We never persist email/password, so start from a clean slate.
     if (emailInputRef.current) emailInputRef.current.value = "";
     if (passwordInputRef.current) passwordInputRef.current.value = "";
-
-    const timeoutId = window.setTimeout(() => {
-      if (emailInputRef.current) emailInputRef.current.value = "";
-      if (passwordInputRef.current) passwordInputRef.current.value = "";
-    }, 250);
-
-    return () => window.clearTimeout(timeoutId);
   }, []);
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -59,7 +61,7 @@ export default function Login() {
 
     if (result.ok) {
       showToast("Login realizado com sucesso!");
-      navigate("/dashboard");
+      navigate(redirectTarget, { replace: true });
     } else {
       setError(result.message);
     }
@@ -132,6 +134,29 @@ export default function Login() {
               </div>
             )}
 
+            {notice && (
+              <div className="mb-4 border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+                <div className="flex items-start gap-3">
+                  <span className="material-symbols-outlined text-[20px] text-amber-700">
+                    schedule
+                  </span>
+                  <div className="flex-1">
+                    <p>{notice}</p>
+                  </div>
+                  <button
+                    type="button"
+                    className="text-amber-700 hover:text-amber-900 transition-colors"
+                    onClick={() => setNotice("")}
+                    aria-label="Fechar aviso"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">
+                      close
+                    </span>
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Test credentials (GitHub/demo) */}
             <section
               className="mb-6 border border-neutral-200 bg-neutral-50/50 p-4"
@@ -155,17 +180,17 @@ export default function Login() {
                       cliente123
                     </p>
                   </div>
-                  <div className="flex shrink-0 flex-col gap-2">
+                  <div className="flex shrink-0 flex-col gap-2 w-full sm:w-auto">
                     <button
                       type="button"
-                      className="h-9 px-3 border border-neutral-200 bg-white text-xs font-semibold hover:bg-neutral-50 transition-colors"
+                      className="h-9 px-3 border border-neutral-200 bg-white text-xs font-semibold hover:bg-neutral-50 transition-colors w-full"
                       onClick={() => copyToClipboard("cliente@petshop.com", "E-mail")}
                     >
                       Copiar e-mail
                     </button>
                     <button
                       type="button"
-                      className="h-9 px-3 border border-neutral-200 bg-white text-xs font-semibold hover:bg-neutral-50 transition-colors"
+                      className="h-9 px-3 border border-neutral-200 bg-white text-xs font-semibold hover:bg-neutral-50 transition-colors w-full"
                       onClick={() => copyToClipboard("cliente123", "Senha")}
                     >
                       Copiar senha
@@ -185,17 +210,17 @@ export default function Login() {
                       admin123
                     </p>
                   </div>
-                  <div className="flex shrink-0 flex-col gap-2">
+                  <div className="flex shrink-0 flex-col gap-2 w-full sm:w-auto">
                     <button
                       type="button"
-                      className="h-9 px-3 border border-neutral-200 bg-white text-xs font-semibold hover:bg-neutral-50 transition-colors"
+                      className="h-9 px-3 border border-neutral-200 bg-white text-xs font-semibold hover:bg-neutral-50 transition-colors w-full"
                       onClick={() => copyToClipboard("admin@petshop.com", "E-mail")}
                     >
                       Copiar e-mail
                     </button>
                     <button
                       type="button"
-                      className="h-9 px-3 border border-neutral-200 bg-white text-xs font-semibold hover:bg-neutral-50 transition-colors"
+                      className="h-9 px-3 border border-neutral-200 bg-white text-xs font-semibold hover:bg-neutral-50 transition-colors w-full"
                       onClick={() => copyToClipboard("admin123", "Senha")}
                     >
                       Copiar senha

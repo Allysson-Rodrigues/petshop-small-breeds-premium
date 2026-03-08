@@ -7,11 +7,20 @@
   "scripts": {
     "setup": "npm install && npm run setup:env",
     "setup:env": "bash -lc 'if [ ! -f apps/backend/.env ]; then cp apps/backend/.env.example apps/backend/.env; echo \"Created backend/.env from template.\"; else echo \"backend/.env already exists.\"; fi'",
+    "db:up": "docker compose -f apps/backend/docker-compose.yml up -d postgres",
+    "db:down": "docker compose -f apps/backend/docker-compose.yml down",
+    "db:logs": "docker compose -f apps/backend/docker-compose.yml logs -f postgres",
+    "backend:db:push": "npm --prefix apps/backend run prisma:push",
+    "backend:db:seed": "npm --prefix apps/backend run prisma:seed",
     "dev:backend": "npm --prefix apps/backend run dev:seed",
     "dev:frontend": "npm --prefix apps/frontend run dev",
     "dev:all": "npx -y concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "lint": "npm --prefix apps/backend run lint && npm --prefix apps/frontend run lint",
     "build": "npm --prefix apps/backend run build && npm --prefix apps/frontend run build",
-    "type-check": "npm --prefix apps/backend run type-check && npm --prefix apps/frontend run type-check"
+    "type-check": "npm --prefix apps/backend run type-check && npm --prefix apps/frontend run type-check",
+    "test": "npm run test:backend && npm run test:frontend && npm run test:e2e",
+    "test:backend": "npm --prefix apps/backend run test",
+    "test:frontend": "npm --prefix apps/frontend run test",
+    "test:e2e": "npm --prefix apps/frontend run test:e2e"
   }
 }

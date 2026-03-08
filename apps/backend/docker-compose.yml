@@ -1,4 +1,21 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: petshop-backend-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: petshop
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d petshop"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   api:
     build:
       context: .
@@ -11,8 +28,10 @@ services:
     environment:
       NODE_ENV: production
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
-    volumes:
-      - sqlite-data:/app/prisma
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/petshop?schema=public}
+    depends_on:
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
@@ -21,4 +40,4 @@ services:
       retries: 3
 
 volumes:
-  sqlite-data:
+  postgres-data:

@@ -1,8 +1,10 @@
+export type ErrorDetails = Record<string, string[]>;
+
 export class AppError extends Error {
 	constructor(
 		public readonly message: string,
 		public readonly statusCode = 400,
-		public readonly errors?: Record<string, string[]>,
+		public readonly details?: ErrorDetails,
 	) {
 		super(message);
 		this.name = "AppError";
@@ -38,8 +40,8 @@ export class ServerError extends AppError {
 }
 
 export class InputValidationError extends AppError {
-	constructor(message: string, errors?: Record<string, string[]>) {
-		super(message, 422, errors);
+	constructor(message: string, details?: ErrorDetails) {
+		super(message, 422, details);
 		this.name = "InputValidationError";
 	}
 }

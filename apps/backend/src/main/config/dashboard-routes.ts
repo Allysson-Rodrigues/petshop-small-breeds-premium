@@ -1,16 +1,15 @@
 import { Router } from "express";
-import appointmentsRoutes from "./appointments-routes.js";
-import clientsRoutes from "./clients-routes.js";
-import dashboardSummaryRoutes from "./dashboard-summary-routes.js";
-import petsRoutes from "./pets-routes.js";
-import productsRoutes from "./products-routes.js";
+import appointmentsRoutes from "./dashboard/appointments-routes.js";
+import clientsRoutes from "./dashboard/clients-routes.js";
+import overviewRoutes from "./dashboard/overview-routes.js";
+import petsRoutes from "./dashboard/pets-routes.js";
+import productsRoutes from "./dashboard/products-routes.js";
 
 const router = Router();
-
-router.use(dashboardSummaryRoutes);
-router.use(petsRoutes);
-router.use(appointmentsRoutes);
-router.use(clientsRoutes);
-router.use(productsRoutes);
+router.use("/", overviewRoutes);
+router.use("/pets", petsRoutes);
+router.use("/appointments", appointmentsRoutes);
+router.use("/clients", clientsRoutes);
+router.use("/products", productsRoutes);
 
 export default router;
