@@ -1,59 +1,59 @@
-# Runbook Operacional
+# Operational runbook
 
-## Ambientes
+## Environments
 
-- `local`: Docker + PostgreSQL local
-- `preview`: frontend em Vercel + backend em Railway + banco em Neon
-- `production`: mesmo split, com variáveis e smoke de deploy separados
+- `local`: Docker + local PostgreSQL
+- `preview`: frontend on Vercel + backend on Railway + database on Neon
+- `production`: same split, with dedicated environment variables and deploy smoke checks
 
-## Checklist de release
+## Release checklist
 
-1. Garantir `npm run lint`
-2. Garantir `npm run type-check`
-3. Garantir `npm run build`
-4. Garantir `npm run test:backend`
-5. Garantir `npm run test:frontend`
-6. Garantir `npm run test:e2e`
-7. Publicar frontend
-8. Publicar backend
-9. Executar `Deploy Smoke`
+1. Ensure `npm run lint`
+2. Ensure `npm run type-check`
+3. Ensure `npm run build`
+4. Ensure `npm run test:backend`
+5. Ensure `npm run test:frontend`
+6. Ensure `npm run test:e2e`
+7. Deploy frontend
+8. Deploy backend
+9. Run `Deploy Smoke`
 
 ## Rollback
 
 Frontend:
 
-1. Reverter para o deployment anterior na Vercel
-2. Reexecutar o smoke em `FRONTEND_URL`
+1. Roll back to the previous Vercel deployment
+2. Re-run the smoke check against `FRONTEND_URL`
 
 Backend:
 
-1. Reverter release/rollback na Railway
-2. Validar `API_HEALTH_URL`
-3. Rodar smoke de login
+1. Roll back the Railway release
+2. Validate `API_HEALTH_URL`
+3. Run the login smoke check
 
-## Troubleshooting rápido
+## Quick troubleshooting
 
-### API devolvendo 401 em massa
+### API returning widespread 401 responses
 
-- confirmar `JWT_SECRET`
-- verificar expiração de token
-- validar `/api/auth/me`
+- confirm `JWT_SECRET`
+- verify token expiration
+- validate `/api/auth/me`
 
-### Frontend sem conectar no backend
+### Frontend cannot reach backend
 
-- conferir `VITE_API_BASE_URL`
-- conferir `CORS_ORIGIN`
-- validar `API_HEALTH_URL`
+- check `VITE_API_BASE_URL`
+- check `CORS_ORIGIN`
+- validate `API_HEALTH_URL`
 
-### Testes backend falhando por banco
+### Backend tests failing because of the database
 
-- subir PostgreSQL local com `npm run db:up`
-- copiar `apps/backend/.env.test.example` para `apps/backend/.env.test`
-- confirmar `DATABASE_URL` apontando para `petshop?schema=test`
+- start local PostgreSQL with `npm run db:up`
+- copy `apps/backend/.env.test.example` to `apps/backend/.env.test`
+- confirm `DATABASE_URL` points to `petshop?schema=test`
 
-### E2E falhando por ambiente
+### E2E failing because of environment setup
 
-- confirmar `DATABASE_URL` ou `E2E_DATABASE_URL`
-- confirmar Playwright browsers instalados
-- checar se `http://127.0.0.1:3000/api/health` responde
-- checar se `http://127.0.0.1:4173` abre via preview
+- confirm `DATABASE_URL` or `E2E_DATABASE_URL`
+- confirm Playwright browsers are installed
+- check whether `http://127.0.0.1:3000/api/health` responds
+- check whether `http://127.0.0.1:4173` opens through preview

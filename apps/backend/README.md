@@ -1,6 +1,6 @@
 # Backend
 
-API REST em Express 5 com Prisma, PostgreSQL e autenticação JWT.
+REST API built with Express 5, Prisma, PostgreSQL, and JWT authentication.
 
 ## Stack
 
@@ -11,22 +11,22 @@ API REST em Express 5 com Prisma, PostgreSQL e autenticação JWT.
 - Biome
 - Vitest + Supertest
 
-## Rotas principais
+## Main routes
 
-| Método | Rota | Descrição |
+| Method | Route | Description |
 | --- | --- | --- |
 | `GET` | `/api/health` | Health check |
-| `POST` | `/api/auth/register` | Cadastro |
+| `POST` | `/api/auth/register` | Registration |
 | `POST` | `/api/auth/login` | Login |
-| `GET` | `/api/auth/me` | Hidratação da sessão autenticada |
-| `GET` | `/api/dashboard/customer` | Dashboard do cliente |
-| `GET` | `/api/dashboard/admin` | Dashboard admin |
-| `GET/POST/PUT/DELETE` | `/api/dashboard/pets` | CRUD de pets |
-| `GET/POST/PUT/DELETE` | `/api/dashboard/appointments` | CRUD de agendamentos |
-| `GET/PUT/DELETE` | `/api/dashboard/clients` | Gestão admin de clientes |
-| `GET/POST/PUT/DELETE` | `/api/dashboard/products` | Estoque |
+| `GET` | `/api/auth/me` | Authenticated session hydration |
+| `GET` | `/api/dashboard/customer` | Customer dashboard |
+| `GET` | `/api/dashboard/admin` | Admin dashboard |
+| `GET/POST/PUT/DELETE` | `/api/dashboard/pets` | Pet CRUD |
+| `GET/POST/PUT/DELETE` | `/api/dashboard/appointments` | Appointment CRUD |
+| `GET/PUT/DELETE` | `/api/dashboard/clients` | Admin client management |
+| `GET/POST/PUT/DELETE` | `/api/dashboard/products` | Inventory |
 
-## Estrutura
+## Structure
 
 ```text
 src/
@@ -40,15 +40,15 @@ src/
 └── test/
 ```
 
-## Banco e ambiente
+## Database and environment
 
-Arquivo padrão:
+Default setup:
 
 ```bash
 cp .env.example .env
 ```
 
-Valores locais:
+Local values:
 
 ```env
 DATABASE_URL="postgresql://postgres:postgres@127.0.0.1:5432/petshop?schema=public"
@@ -56,13 +56,13 @@ JWT_SECRET="change-me-to-a-strong-random-secret"
 CORS_ORIGIN="http://localhost:5173,http://127.0.0.1:5173"
 ```
 
-Arquivo de teste:
+Test file:
 
 ```bash
 cp .env.test.example .env.test
 ```
 
-Default de teste:
+Test default:
 
 ```env
 DATABASE_URL="postgresql://postgres:postgres@127.0.0.1:5432/petshop?schema=test"
@@ -83,25 +83,25 @@ npm run lint
 npm run type-check
 ```
 
-## Docker local
+## Local Docker
 
-Subir PostgreSQL:
+Start PostgreSQL:
 
 ```bash
 docker compose up -d postgres
 ```
 
-Subir API + PostgreSQL:
+Start API + PostgreSQL:
 
 ```bash
 docker compose up --build
 ```
 
-## Testes
+## Tests
 
-Os testes usam PostgreSQL real e reset de dados por seed. A suíte cobre:
+Tests use a real PostgreSQL database with seed-based resets. The suite covers:
 
 - auth
 - `/auth/me`
-- restrições por papel
-- criação e atualização de recursos críticos
+- role-based restrictions
+- creation and update of critical resources
