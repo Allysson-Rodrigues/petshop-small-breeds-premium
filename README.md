@@ -1,152 +1,135 @@
-# 🐾 Petshop Small Breeds Premium
+# Petshop Small Breeds Premium
 
-Monorepo for a premium petshop application specialized in small breeds. Single Page Application (SPA) frontend (React + Vite + Tailwind CSS) with a backend API (Express + Prisma + PostgreSQL).
-
-## Objective
-
-Provide a premium petshop experience for small breeds with a React SPA frontend and an Express API backend.
-
-## Status
-
-Active.
+Monorepo full stack de um petshop premium para raças pequenas. O projeto combina frontend SPA em React/Vite com backend REST em Express/Prisma, autenticação JWT, dashboard com RBAC e automação de qualidade com testes unitários, integração e E2E.
 
 ## Stack
 
-| Layer | Technology |
-|--------|-----------|
-| **Frontend** | React 19, Vite 7, Tailwind CSS 4, Framer Motion, React Router 7 |
-| **Backend** | Express 5, Prisma 6, PostgreSQL, TypeScript |
-| **Auth** | JWT (jsonwebtoken + bcrypt) |
-| **Linting** | ESLint (frontend), Biome (backend) |
-| **Deployment**| Vercel (frontend SPA + backend API in separate projects) |
+| Camada | Tecnologia |
+| --- | --- |
+| Frontend | React 19, Vite 7, Tailwind CSS 4, React Router 7, Framer Motion |
+| Backend | Express 5, Prisma, TypeScript |
+| Banco | PostgreSQL |
+| Auth | JWT Bearer + bcrypt |
+| Qualidade | ESLint, Biome, Vitest, Playwright |
+| Deploy | Frontend em Vercel, backend planejado para Railway, banco planejado para Neon |
 
-## Project Structure
+## Estrutura
 
 ```text
 .
 ├── apps/
-│   ├── backend/         Express API + Prisma (Clean Architecture)
-│   └── frontend/        React SPA + Vite + Tailwind CSS
-├── package.json         Monorepo (npm Workspaces)
-├── vercel.json          Frontend Vercel config
-└── apps/backend/vercel.json  Backend Vercel config
+│   ├── backend/
+│   └── frontend/
+├── .github/workflows/
+├── package.json
+└── RUNBOOK.md
 ```
 
-## Prerequisites
+## Setup local
 
-- **Node.js 24+** and **npm 10+**
-- Alternatively, use Docker (see below)
+Pré-requisitos:
 
-## Setup
+- Node.js 24+
+- npm 10+
+- Docker com `docker compose`
+
+Passos:
 
 ```bash
-# Install dependencies and create apps/backend/.env from the template
-npm run setup
+npm install --legacy-peer-deps
+npm run setup:env
+npm run db:up
+npm run backend:db:push
+npm run backend:db:seed
 ```
 
-## Development
+Depois disso:
 
 ```bash
-# Backend + Frontend (concurrent)
-npm run dev:all
-
-# Or individually
 npm run dev:backend
 npm run dev:frontend
 ```
 
-`npm run dev:backend` runs migrations + seed automatically so the demo credentials work out of the box.
-
-| Service | URL |
-|---------|-----|
-| Frontend | http://localhost:5173 |
-| Backend API | http://localhost:3000/api/health |
-
-## Test Credentials (Demo)
-
-The backend seed creates demo users so anyone can test both areas:
-
-- **Client**
-  - Email: `cliente@petshop.com`
-  - Password: `cliente123`
-- **Client**
-  - Email: `cliente2@petshop.com`
-  - Password: `cliente456`
-- **Admin**
-  - Email: `admin@petshop.com`
-  - Password: `admin123`
-
-These credentials are also shown in the login screen for convenience (copy buttons). Do not use them in production.
-
-## Docker (alternative)
+Ou, em paralelo:
 
 ```bash
-docker run --rm -it -p 5173:5173 -p 3000:3000 \
-  -v "$PWD":/app -v petshop_node_modules:/app/node_modules \
-  -w /app node:24 bash -lc \
-  'npm install && npm run setup:env && (npm run dev -w backend & npm run dev -w frontend -- --host 0.0.0.0 --port 5173) && wait'
+npm run dev:all
 ```
 
-## Environment Variables
+## Variáveis principais
 
-### Backend (`apps/backend/.env`)
+Backend em `apps/backend/.env`:
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `PORT` | Server port | `3000` |
-| `NODE_ENV` | Environment | `development` |
-| `DATABASE_URL` | PostgreSQL connection string | `postgresql://USER:PASSWORD@HOST:5432/DB?sslmode=require` |
-| `JWT_SECRET` | Secret for JWT | — (**required**) |
-| `CORS_ORIGIN` | Allowed CORS origins (comma-separated) | `http://localhost:5173` |
+| Variável | Exemplo |
+| --- | --- |
+| `PORT` | `3000` |
+| `NODE_ENV` | `development` |
+| `DATABASE_URL` | `postgresql://postgres:postgres@127.0.0.1:5432/petshop?schema=public` |
+| `JWT_SECRET` | `change-me-to-a-strong-random-secret` |
+| `CORS_ORIGIN` | `http://localhost:5173,http://127.0.0.1:5173` |
 
-### Frontend (`VITE_*` variables)
+Testes backend usam `apps/backend/.env.test` baseado em `apps/backend/.env.test.example`.
+O padrão atual usa o banco local `petshop` com schema dedicado `test`, evitando colisão com os dados de desenvolvimento.
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `VITE_API_BASE_URL` | API base URL | `/api` (local proxy) |
-| `VITE_ADMIN_EMAILS` | Admin emails (comma-separated) | `admin@petshop.com` |
+Frontend:
 
-## Quality
+| Variável | Default |
+| --- | --- |
+| `VITE_API_BASE_URL` | `/api` |
+
+## Credenciais demo
+
+- Admin: `admin@petshop.com` / `admin123`
+- Cliente: `cliente@petshop.com` / `cliente123`
+- Cliente 2: `cliente2@petshop.com` / `cliente456`
+
+## Scripts úteis
 
 ```bash
-npm run lint     # Lint (both workspaces)
-npm run build    # Production build
+npm run lint
 npm run type-check
+npm run build
+npm run test:backend
+npm run test:frontend
+npm run test:e2e
+npm run db:up
+npm run db:down
 ```
 
-## Tests
+## Testes
 
-```bash
-# Frontend
-npm --prefix apps/frontend run test
-npm --prefix apps/frontend run test:e2e
-npm --prefix apps/frontend run test:e2e:mobile
+Backend:
 
-# Backend
-npm --prefix apps/backend run test
-npm --prefix apps/backend run test:integration
-```
+- integração de auth
+- permissões de dashboard
+- CRUD administrativo básico
 
-Backend integration tests require a dedicated PostgreSQL test database via `.env.test(.local)` or an explicit `DATABASE_URL` / `TEST_DATABASE_URL`.
+Frontend:
 
-## Deployment (Vercel)
+- unitários de `AuthProvider` e route guards com Vitest
+- E2E com Playwright cobrindo login, dashboard, fluxos críticos e smoke mobile
 
-The application is deployed as two separate Vercel projects:
+## CI e Smoke
 
-- **Frontend:** static SPA built from the monorepo root `vercel.json`
-- **Backend:** Express API deployed separately from `apps/backend/vercel.json`
+Workflows versionados:
 
-```bash
-# Frontend
-npx vercel --prod
+- `CI`: lint, type-check, build, backend tests, frontend unit tests e frontend E2E
+- `Deploy Smoke`: smoke manual para frontend, health da API e login admin
 
-# Backend
-cd apps/backend
-npx vercel --prod
-```
+Secrets esperados para o smoke manual:
 
-In production, configure the frontend `VITE_API_BASE_URL` to point to the deployed backend API.
+- `FRONTEND_URL`
+- `API_HEALTH_URL`
+- `API_LOGIN_URL`
+- `SMOKE_ADMIN_EMAIL`
+- `SMOKE_ADMIN_PASSWORD`
 
-## License
+## Deploy
 
-MIT
+Fluxo recomendado:
+
+- Frontend: Vercel
+- Backend: Railway
+- Banco: Neon
+
+O repositório já está preparado documentalmente para esse split, mas o provisionamento real da infra e dos secrets ainda é manual.
