@@ -22,7 +22,7 @@ type Notification = {
     adminOnly?: boolean;
 };
 
-const MOCK_NOTIFICATIONS: Notification[] = [
+const ADMIN_MOCK_NOTIFICATIONS: Notification[] = [
     // Admin-only: stock alerts
     {
         id: 1,
@@ -55,37 +55,6 @@ const MOCK_NOTIFICATIONS: Notification[] = [
         unread: true,
         adminOnly: true,
     },
-    // Client-only: their own appointments
-    {
-        id: 2,
-        icon: "calendar_month",
-        iconColor: "text-blue-500",
-        title: "Agendamento em 1h",
-        description: "Banho — Rex (Golden) às 17h00.",
-        time: "há 5 min",
-        unread: true,
-        adminOnly: false,
-    },
-    {
-        id: 4,
-        icon: "check_circle",
-        iconColor: "text-green-500",
-        title: "Agendamento Confirmado",
-        description: "Tosa — Mel (Poodle) confirmada para amanhã.",
-        time: "há 1h",
-        unread: false,
-        adminOnly: false,
-    },
-    {
-        id: 6,
-        icon: "pets",
-        iconColor: "text-gray-500",
-        title: "Lembrete de Vacina",
-        description: "Rex precisa da vacina anual em 3 dias.",
-        time: "há 3h",
-        unread: false,
-        adminOnly: false,
-    },
 ];
 
 export default function DashboardHeader({
@@ -97,11 +66,12 @@ export default function DashboardHeader({
 }: DashboardHeaderProps) {
     const { user, isAdmin } = useAuth();
     const [isNotifOpen, setIsNotifOpen] = useState(false);
-    const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
+    const [notifications, setNotifications] = useState(ADMIN_MOCK_NOTIFICATIONS);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
-    // Filter by role so clients don't see admin-only notifications
-    const visibleNotifications = notifications.filter(n => isAdmin ? true : !n.adminOnly);
+    const visibleNotifications = isAdmin
+        ? notifications
+        : [];
     const unreadCount = visibleNotifications.filter(n => n.unread).length;
 
     // Close dropdown when clicking outside
@@ -221,29 +191,35 @@ export default function DashboardHeader({
 
                         {/* List */}
                         <div className="max-h-72 overflow-y-auto divide-y divide-gray-50">
-                            {visibleNotifications.map((notif) => (
-                                <div
-                                    key={notif.id}
-                                    className={`flex gap-3 px-4 py-3 cursor-pointer transition-colors ${notif.unread ? "bg-gray-50/80 hover:bg-gray-100/60" : "hover:bg-gray-50"}`}
-                                    onClick={() => setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, unread: false } : n))}
-                                >
-                                    <div className="shrink-0 w-8 h-8 rounded-full bg-white border border-gray-100 flex items-center justify-center shadow-sm">
-                                        <span className={`material-symbols-outlined text-[16px] ${notif.iconColor}`}>
-                                            {notif.icon}
-                                        </span>
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-start justify-between gap-2">
-                                            <p className="text-xs font-semibold text-gray-900 leading-snug">{notif.title}</p>
-                                            <span className="text-[10px] text-gray-400 shrink-0 mt-0.5">{notif.time}</span>
-                                        </div>
-                                        <p className="text-xs text-gray-500 mt-0.5 leading-snug">{notif.description}</p>
-                                    </div>
-                                    {notif.unread && (
-                                        <div className="shrink-0 w-1.5 h-1.5 rounded-full bg-black mt-1.5" />
-                                    )}
+                            {visibleNotifications.length === 0 ? (
+                                <div className="px-4 py-6 text-center text-sm text-gray-500">
+                                    Nenhuma notificação no momento.
                                 </div>
-                            ))}
+                            ) : (
+                                visibleNotifications.map((notif) => (
+                                    <div
+                                        key={notif.id}
+                                        className={`flex gap-3 px-4 py-3 cursor-pointer transition-colors ${notif.unread ? "bg-gray-50/80 hover:bg-gray-100/60" : "hover:bg-gray-50"}`}
+                                        onClick={() => setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, unread: false } : n))}
+                                    >
+                                        <div className="shrink-0 w-8 h-8 rounded-full bg-white border border-gray-100 flex items-center justify-center shadow-sm">
+                                            <span className={`material-symbols-outlined text-[16px] ${notif.iconColor}`}>
+                                                {notif.icon}
+                                            </span>
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-start justify-between gap-2">
+                                                <p className="text-xs font-semibold text-gray-900 leading-snug">{notif.title}</p>
+                                                <span className="text-[10px] text-gray-400 shrink-0 mt-0.5">{notif.time}</span>
+                                            </div>
+                                            <p className="text-xs text-gray-500 mt-0.5 leading-snug">{notif.description}</p>
+                                        </div>
+                                        {notif.unread && (
+                                            <div className="shrink-0 w-1.5 h-1.5 rounded-full bg-black mt-1.5" />
+                                        )}
+                                    </div>
+                                ))
+                            )}
                         </div>
 
                         {/* Footer */}
