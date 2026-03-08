@@ -38,8 +38,13 @@ The dev server starts at http://localhost:5173 with automatic API proxying (`/ap
 |---------|-------------|
 | `npm run dev` | Dev server with HMR |
 | `npm run build` | Production build (`tsc + vite build`) |
+| `npm run type-check` | TypeScript check without emit |
 | `npm run lint` | ESLint check |
 | `npm run preview` | Local build preview |
+| `npm run test` | Run frontend unit tests with Vitest |
+| `npm run test:watch` | Run frontend unit tests in watch mode |
+| `npm run test:e2e` | Run Playwright end-to-end tests |
+| `npm run test:e2e:mobile` | Run Playwright mobile coverage |
 
 ## Tests
 
@@ -47,6 +52,8 @@ Frontend tests are available in the codebase, for example:
 
 - `src/App.test.tsx`
 - `src/services/authService.test.ts`
+- `tests/catalog_mobile.spec.ts`
+- `tests/gallery_mobile.spec.ts`
 
 ## Structure
 
@@ -74,4 +81,4 @@ docker run --rm -it -p 5173:5173 -p 3000:3000 \
 
 The build process generates static files in the `dist/` directory. The frontend is deployed to Vercel using the root [`vercel.json`](/home/allysson/projetos/01-projetos/petshop-small-breeds-premium/vercel.json) configuration.
 
-For a fully working environment, the frontend must point to a deployed backend API through `VITE_API_BASE_URL`.
+For a fully working environment, the frontend must point to a separately deployed backend API through `VITE_API_BASE_URL`.

@@ -1,11 +1,11 @@
 # Petshop Small Breeds Premium — Backend
 
-RESTful API built with Express 5, Prisma 7, and TypeScript, organized using Clean Architecture principles (`domain`, `presentation`, `main`).
+RESTful API built with Express 5, Prisma 6, and TypeScript, organized using Clean Architecture principles (`domain`, `presentation`, `main`).
 
 ## Stack
 
 - **Framework:** Express 5 + TypeScript
-- **ORM:** Prisma 7 with PostgreSQL
+- **ORM:** Prisma 6 with PostgreSQL
 - **Auth:** JWT (jsonwebtoken) + bcrypt
 - **Linting:** Biome
 
@@ -46,16 +46,21 @@ npx prisma db seed          # Seed demo data
 npx prisma studio           # Visual database UI
 ```
 
+For automated backend integration tests, configure a dedicated PostgreSQL database in `.env.test` / `.env.test.local` or pass `DATABASE_URL` / `TEST_DATABASE_URL` explicitly.
+
 ## Scripts
 
 | Command | Description |
 |---------|-------------|
 | `npm run dev` | Dev server with hot-reload (tsx watch) |
 | `npm run build` | Compile TypeScript → `dist/` |
+| `npm run type-check` | TypeScript check without emit |
 | `npm start` | Start compiled build |
 | `npm run lint` | Biome check |
 | `npm run lint:fix` | Biome auto-fix |
-| `npm run test` | Run backend tests with Vitest |
+| `npm run test` | Run backend unit tests |
+| `npm run test:unit` | Run backend unit tests with Vitest |
+| `npm run test:integration` | Run integration tests against PostgreSQL |
 | `npm run prisma:generate` | Generate Prisma client |
 | `npm run prisma:push` | Sync schema to PostgreSQL |
 
@@ -79,11 +84,11 @@ docker build -t petshop-backend .
 docker run -p 3000:3000 --env-file .env petshop-backend
 ```
 
-> The `.dockerignore` file prevents `.env` and `dev.db` from being copied to the image.
+> The `.dockerignore` file prevents environment files and local artifacts from being copied to the image.
 
 ## Deployment
 
-The backend can be deployed to Vercel as a separate project using [`vercel.json`](/home/allysson/projetos/01-projetos/petshop-small-breeds-premium/apps/backend/vercel.json). It expects a network-accessible PostgreSQL database and the standard environment variables from `.env.example`.
+The backend is deployed to Vercel as a separate project using [`vercel.json`](/home/allysson/projetos/01-projetos/petshop-small-breeds-premium/apps/backend/vercel.json). It expects a network-accessible PostgreSQL database and the standard environment variables from `.env.example`.
 
 ## Main Endpoints
 
