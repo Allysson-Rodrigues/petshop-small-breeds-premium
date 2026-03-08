@@ -33,6 +33,15 @@ const mapApiUserToSessionUser = (user: AuthApiUser): User => ({
 	gender: user.gender,
 });
 
+type StoredSession = {
+	token: string;
+	user: User;
+};
+
+type JwtPayload = {
+	exp?: number;
+};
+
 type AuthResult =
 	| { ok: true }
 	| {
@@ -107,6 +116,52 @@ const notifyAuthChanged = () => {
 	if (typeof window !== "undefined") {
 		window.dispatchEvent(new Event(AUTH_CHANGED_EVENT));
 	}
+};
+
+const clearStoredSession = (shouldNotify: boolean) => {
+	localStorage.removeItem(AUTH_TOKEN_KEY);
+	localStorage.removeItem(AUTH_USER_KEY);
+
+	if (shouldNotify) {
+		notifyAuthChanged();
+	}
+};
+
+const decodeJwtPayload = (token: string): JwtPayload | null => {
+	const [, payload] = token.split(".");
+	if (!payload) {
+		return null;
+	}
+
+	try {
+		const normalizedPayload = payload.replace(/-/g, "+").replace(/_/g, "/");
+		const decodedPayload = atob(normalizedPayload);
+		return JSON.parse(decodedPayload) as JwtPayload;
+	} catch {
+		return null;
+	}
+};
+
+const readStoredUser = (): User | null => {
+	const userJson = localStorage.getItem(AUTH_USER_KEY);
+	if (!userJson) {
+		return null;
+	}
+
+	try {
+		return JSON.parse(userJson) as User;
+	} catch {
+		return null;
+	}
+};
+
+const isTokenExpired = (token: string): boolean => {
+	const payload = decodeJwtPayload(token);
+	if (!payload || typeof payload.exp !== "number") {
+		return true;
+	}
+
+	return payload.exp * 1000 <= Date.now();
 };
 
 export const authService = {
@@ -184,26 +239,45 @@ export const authService = {
 	},
 
 	logout: () => {
-		localStorage.removeItem(AUTH_TOKEN_KEY);
-		localStorage.removeItem(AUTH_USER_KEY);
-		notifyAuthChanged();
+		clearStoredSession(true);
 	},
 
 	isAuthenticated: () => {
-		return !!localStorage.getItem(AUTH_TOKEN_KEY);
+		return authService.getSession() !== null;
 	},
 
 	getToken: (): string | null => {
-		return localStorage.getItem(AUTH_TOKEN_KEY);
+		return authService.getSession()?.token ?? null;
 	},
 
 	getUser: (): User | null => {
-		const userJson = localStorage.getItem(AUTH_USER_KEY);
-		if (!userJson) return null;
-		try {
-			return JSON.parse(userJson) as User;
-		} catch {
+		return authService.getSession()?.user ?? null;
+	},
+
+	getSession: (): StoredSession | null => {
+		const token = localStorage.getItem(AUTH_TOKEN_KEY);
+		const user = readStoredUser();
+
+		if (!token || !user) {
+			if (token || localStorage.getItem(AUTH_USER_KEY)) {
+				clearStoredSession(false);
+			}
 			return null;
+		}
+
+		if (isTokenExpired(token)) {
+			clearStoredSession(true);
+			return null;
+		}
+
+		return { token, user };
+	},
+
+	handleUnauthorized: () => {
+		clearStoredSession(true);
+
+		if (typeof window !== "undefined" && window.location.pathname !== "/login") {
+			window.location.assign("/login");
 		}
 	},
 };

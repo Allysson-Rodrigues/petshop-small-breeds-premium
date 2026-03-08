@@ -16,7 +16,9 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const { user, isAdmin, isAuthenticated } = useAuth();
 
-  const [activeTab, setActiveTab] = useState(isAdmin ? "overview" : "pets");
+  const [activeTab, setActiveTab] = useState(() =>
+    isAdmin ? "overview" : "pets",
+  );
   const [toastMessage, setToastMessage] = useState("");
   const [globalSearch, setGlobalSearch] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
