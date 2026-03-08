@@ -41,6 +41,13 @@ The dev server starts at http://localhost:5173 with automatic API proxying (`/ap
 | `npm run lint` | ESLint check |
 | `npm run preview` | Local build preview |
 
+## Tests
+
+Frontend tests are available in the codebase, for example:
+
+- `src/App.test.tsx`
+- `src/services/authService.test.ts`
+
 ## Structure
 
 ```text
@@ -65,4 +72,6 @@ docker run --rm -it -p 5173:5173 -p 3000:3000 \
 
 ## Build & Deployment
 
-The build process generates static files in the `dist/` directory. It is automatically deployed to Vercel using the `vercel.json` configuration in the monorepo root.
+The build process generates static files in the `dist/` directory. The frontend is deployed to Vercel using the root [`vercel.json`](/home/allysson/projetos/01-projetos/petshop-small-breeds-premium/vercel.json) configuration.
+
+For a fully working environment, the frontend must point to a deployed backend API through `VITE_API_BASE_URL`.

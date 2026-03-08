@@ -1,6 +1,6 @@
 # 🐾 Petshop Small Breeds Premium
 
-Monorepo for a premium petshop application specialized in small breeds. Single Page Application (SPA) frontend (React + Vite + Tailwind CSS) with a backend API (Express + Prisma + SQLite).
+Monorepo for a premium petshop application specialized in small breeds. Single Page Application (SPA) frontend (React + Vite + Tailwind CSS) with a backend API (Express + Prisma + PostgreSQL).
 
 ## Objective
 
@@ -15,10 +15,10 @@ Active.
 | Layer | Technology |
 |--------|-----------|
 | **Frontend** | React 19, Vite 7, Tailwind CSS 4, Framer Motion, React Router 7 |
-| **Backend** | Express 5, Prisma 7, SQLite (Better-SQLite3), TypeScript |
+| **Backend** | Express 5, Prisma 7, PostgreSQL, TypeScript |
 | **Auth** | JWT (jsonwebtoken + bcrypt) |
 | **Linting** | ESLint (frontend), Biome (backend) |
-| **Deployment**| Vercel (frontend SPA) |
+| **Deployment**| Vercel (frontend SPA + backend API in separate projects) |
 
 ## Project Structure
 
@@ -28,7 +28,8 @@ Active.
 │   ├── backend/         Express API + Prisma (Clean Architecture)
 │   └── frontend/        React SPA + Vite + Tailwind CSS
 ├── package.json         Monorepo (npm Workspaces)
-└── vercel.json          Deployment config (frontend)
+├── vercel.json          Frontend Vercel config
+└── apps/backend/vercel.json  Backend Vercel config
 ```
 
 ## Prerequisites
@@ -63,11 +64,14 @@ npm run dev:frontend
 
 ## Test Credentials (Demo)
 
-The backend seed creates two demo users so anyone can test both areas:
+The backend seed creates demo users so anyone can test both areas:
 
 - **Client**
   - Email: `cliente@petshop.com`
   - Password: `cliente123`
+- **Client**
+  - Email: `cliente2@petshop.com`
+  - Password: `cliente456`
 - **Admin**
   - Email: `admin@petshop.com`
   - Password: `admin123`
@@ -91,7 +95,7 @@ docker run --rm -it -p 5173:5173 -p 3000:3000 \
 |----------|-------------|---------|
 | `PORT` | Server port | `3000` |
 | `NODE_ENV` | Environment | `development` |
-| `DATABASE_URL` | SQLite path | `file:./dev.db` |
+| `DATABASE_URL` | PostgreSQL connection string | `postgresql://USER:PASSWORD@HOST:5432/DB?sslmode=require` |
 | `JWT_SECRET` | Secret for JWT | — (**required**) |
 | `CORS_ORIGIN` | Allowed CORS origins (comma-separated) | `http://localhost:5173` |
 
@@ -112,17 +116,25 @@ npm run type-check
 
 ## Tests
 
-`n/a`
+Current automated coverage includes backend API tests and frontend unit tests.
 
 ## Deployment (Vercel)
 
-The frontend is deployed to Vercel as a static SPA. The `vercel.json` file configures the build, output, and rewrites.
+The application is deployed as two separate Vercel projects:
+
+- **Frontend:** static SPA built from the monorepo root `vercel.json`
+- **Backend:** Express API deployed separately from `apps/backend/vercel.json`
 
 ```bash
+# Frontend
+npx vercel --prod
+
+# Backend
+cd apps/backend
 npx vercel --prod
 ```
 
-> **Note:** The backend is not deployed to Vercel. For a complete production environment, host the backend separately and configure `VITE_API_BASE_URL`.
+In production, configure the frontend `VITE_API_BASE_URL` to point to the deployed backend API.
 
 ## License
 
