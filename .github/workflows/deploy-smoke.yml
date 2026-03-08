@@ -1,0 +1,34 @@
+name: Deploy Smoke
+
+on:
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    env:
+      FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+      API_HEALTH_URL: ${{ secrets.API_HEALTH_URL }}
+      API_LOGIN_URL: ${{ secrets.API_LOGIN_URL }}
+      SMOKE_ADMIN_EMAIL: ${{ secrets.SMOKE_ADMIN_EMAIL }}
+      SMOKE_ADMIN_PASSWORD: ${{ secrets.SMOKE_ADMIN_PASSWORD }}
+
+    steps:
+      - name: Check required URLs
+        run: |
+          test -n "$FRONTEND_URL"
+          test -n "$API_HEALTH_URL"
+
+      - name: Smoke frontend
+        run: curl --fail --silent --show-error "$FRONTEND_URL" > /dev/null
+
+      - name: Smoke API health
+        run: curl --fail --silent --show-error "$API_HEALTH_URL" > /dev/null
+
+      - name: Smoke login
+        if: ${{ env.API_LOGIN_URL != '' && env.SMOKE_ADMIN_EMAIL != '' && env.SMOKE_ADMIN_PASSWORD != '' }}
+        run: |
+          curl --fail --silent --show-error \
+            -H "Content-Type: application/json" \
+            -d "{\"email\":\"$SMOKE_ADMIN_EMAIL\",\"password\":\"$SMOKE_ADMIN_PASSWORD\"}" \
+            "$API_LOGIN_URL" > /dev/null
