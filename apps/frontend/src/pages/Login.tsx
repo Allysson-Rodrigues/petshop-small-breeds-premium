@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Helmet } from "react-helmet-async";
+import { Helmet } from "../components/seo/HelmetCompat";
 import { Link, useNavigate } from "react-router-dom";
 import Toast from "../components/ui/Toast";
 import { authService } from "../services/authService";

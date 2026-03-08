@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Helmet } from "react-helmet-async";
+import { Helmet } from "../components/seo/HelmetCompat";
 import RevealSection from "../components/ui/RevealSection";
 
 export default function Agendamento() {

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import { Helmet } from "../components/seo/HelmetCompat";
 
 export default function Servicos() {
   const { hash } = useLocation();

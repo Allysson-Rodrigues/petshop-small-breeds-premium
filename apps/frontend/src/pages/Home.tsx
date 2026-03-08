@@ -1,4 +1,4 @@
-import { Helmet } from "react-helmet-async";
+import { Helmet } from "../components/seo/HelmetCompat";
 import { Link } from "react-router-dom";
 import RevealSection from "../components/ui/RevealSection";
 

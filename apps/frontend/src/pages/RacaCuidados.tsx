@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Helmet } from "react-helmet-async";
+import { Helmet } from "../components/seo/HelmetCompat";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { breedsData } from "../data/breeds";
 import { useReveal } from "../hooks/useReveal";

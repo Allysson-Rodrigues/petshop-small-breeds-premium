@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Helmet } from "react-helmet-async";
+import { Helmet } from "../components/seo/HelmetCompat";
 import RevealSection from "../components/ui/RevealSection";
 import { categories, products, type Product } from "../data/products";
 
