@@ -8,6 +8,7 @@
     "node": ">=24"
   },
   "scripts": {
+    "postinstall": "npm run prisma:generate",
     "dev": "tsx watch src/server.ts",
     "dev:seed": "npm run prisma:generate && npm run prisma:push && npm run prisma:seed && tsx watch src/server.ts",
     "build": "tsc",
