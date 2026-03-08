@@ -1,6 +1,6 @@
 # Frontend
 
-SPA em React 19 para navegação pública, autenticação e dashboard do petshop.
+React 19 SPA for the public website, authentication flows, and the pet shop dashboard.
 
 ## Stack
 
@@ -24,37 +24,37 @@ npm run test
 npm run test:e2e
 ```
 
-## Contratos principais
+## Main contracts
 
-- `VITE_API_BASE_URL`: endpoint base da API
-- autenticação baseada em JWT Bearer validado no boot via `GET /api/auth/me`
-- guards formais:
+- `VITE_API_BASE_URL`: base API endpoint
+- JWT Bearer authentication validated during boot through `GET /api/auth/me`
+- formal guards:
   - `ProtectedRoute`
   - `GuestOnlyRoute`
   - `RoleGuard`
 
-## Testes
+## Tests
 
-- Unitários em `src/**/*.test.ts`
-- E2E em `tests/**/*.spec.ts`
-- Configs versionadas:
+- Unit tests in `src/**/*.test.ts`
+- E2E tests in `tests/**/*.spec.ts`
+- Versioned configs:
   - `vitest.config.ts`
   - `playwright.config.ts`
 
-## Execução local de E2E
+## Local E2E execution
 
-Pré-requisitos:
+Prerequisites:
 
-- backend com PostgreSQL acessível em `127.0.0.1:5432`
-- `apps/backend/.env.test` configurado ou `DATABASE_URL`/`E2E_DATABASE_URL` exportados
+- backend with PostgreSQL reachable at `127.0.0.1:5432`
+- `apps/backend/.env.test` configured, or `DATABASE_URL`/`E2E_DATABASE_URL` exported
 
-Comando:
+Command:
 
 ```bash
 npm run test:e2e
 ```
 
-O Playwright sobe:
+Playwright starts:
 
-- backend em `http://127.0.0.1:3000`
-- preview do frontend em `http://127.0.0.1:4173`
+- backend at `http://127.0.0.1:3000`
+- frontend preview at `http://127.0.0.1:4173`

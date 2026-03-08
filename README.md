@@ -1,6 +1,6 @@
 # Petshop Small Breeds Premium
 
-Monorepo full stack de um petshop premium para raças pequenas. O projeto combina frontend SPA em React/Vite com backend REST em Express/Prisma, autenticação JWT, dashboard com RBAC e automação de qualidade com testes unitários, integração e E2E.
+Full stack monorepo for a premium pet shop focused on small breeds. The project combines a React/Vite SPA frontend with an Express/Prisma REST backend, JWT authentication, an RBAC-enabled dashboard, and automated quality checks with unit, integration, and E2E tests.
 
 ## Stack
 
@@ -8,12 +8,12 @@ Monorepo full stack de um petshop premium para raças pequenas. O projeto combin
 | --- | --- |
 | Frontend | React 19, Vite 7, Tailwind CSS 4, React Router 7, Framer Motion |
 | Backend | Express 5, Prisma, TypeScript |
-| Banco | PostgreSQL |
+| Database | PostgreSQL |
 | Auth | JWT Bearer + bcrypt |
-| Qualidade | ESLint, Biome, Vitest, Playwright |
-| Deploy | Frontend em Vercel, backend planejado para Railway, banco planejado para Neon |
+| Quality | ESLint, Biome, Vitest, Playwright |
+| Deploy | Frontend on Vercel, backend planned for Railway, database planned for Neon |
 
-## Estrutura
+## Structure
 
 ```text
 .
@@ -25,9 +25,9 @@ Monorepo full stack de um petshop premium para raças pequenas. O projeto combin
 └── RUNBOOK.md
 ```
 
-## Setup local
+## Local setup
 
-Pré-requisitos:
+Prerequisites:
 
 - Node.js 24+
 - npm 10+
@@ -43,7 +43,7 @@ npm run backend:db:push
 npm run backend:db:seed
 ```
 
-Depois disso:
+After that:
 
 ```bash
 npm run dev:backend
@@ -56,11 +56,11 @@ Ou, em paralelo:
 npm run dev:all
 ```
 
-## Variáveis principais
+## Main variables
 
-Backend em `apps/backend/.env`:
+Backend variables in `apps/backend/.env`:
 
-| Variável | Exemplo |
+| Variable | Example |
 | --- | --- |
 | `PORT` | `3000` |
 | `NODE_ENV` | `development` |
@@ -68,22 +68,22 @@ Backend em `apps/backend/.env`:
 | `JWT_SECRET` | `change-me-to-a-strong-random-secret` |
 | `CORS_ORIGIN` | `http://localhost:5173,http://127.0.0.1:5173` |
 
-Testes backend usam `apps/backend/.env.test` baseado em `apps/backend/.env.test.example`.
-O padrão atual usa o banco local `petshop` com schema dedicado `test`, evitando colisão com os dados de desenvolvimento.
+Backend tests use `apps/backend/.env.test` based on `apps/backend/.env.test.example`.
+The current default uses the local `petshop` database with a dedicated `test` schema to avoid collisions with development data.
 
 Frontend:
 
-| Variável | Default |
+| Variable | Default |
 | --- | --- |
 | `VITE_API_BASE_URL` | `/api` |
 
-## Credenciais demo
+## Demo credentials
 
 - Admin: `admin@petshop.com` / `admin123`
-- Cliente: `cliente@petshop.com` / `cliente123`
-- Cliente 2: `cliente2@petshop.com` / `cliente456`
+- Customer: `cliente@petshop.com` / `cliente123`
+- Customer 2: `cliente2@petshop.com` / `cliente456`
 
-## Scripts úteis
+## Useful scripts
 
 ```bash
 npm run lint
@@ -96,27 +96,27 @@ npm run db:up
 npm run db:down
 ```
 
-## Testes
+## Tests
 
 Backend:
 
-- integração de auth
-- permissões de dashboard
-- CRUD administrativo básico
+- auth integration
+- dashboard permissions
+- core admin CRUD
 
 Frontend:
 
-- unitários de `AuthProvider` e route guards com Vitest
-- E2E com Playwright cobrindo login, dashboard, fluxos críticos e smoke mobile
+- `AuthProvider` and route guard unit tests with Vitest
+- Playwright E2E covering login, dashboard, critical flows, and mobile smoke
 
-## CI e Smoke
+## CI and smoke
 
-Workflows versionados:
+Versioned workflows:
 
-- `CI`: lint, type-check, build, backend tests, frontend unit tests e frontend E2E
-- `Deploy Smoke`: smoke manual para frontend, health da API e login admin
+- `CI`: lint, type-check, build, backend tests, frontend unit tests, and frontend E2E
+- `Deploy Smoke`: manual smoke check for frontend, API health, and admin login
 
-Secrets esperados para o smoke manual:
+Required secrets for the manual smoke workflow:
 
 - `FRONTEND_URL`
 - `API_HEALTH_URL`
@@ -124,12 +124,12 @@ Secrets esperados para o smoke manual:
 - `SMOKE_ADMIN_EMAIL`
 - `SMOKE_ADMIN_PASSWORD`
 
-## Deploy
+## Deployment
 
-Fluxo recomendado:
+Recommended setup:
 
 - Frontend: Vercel
 - Backend: Railway
-- Banco: Neon
+- Database: Neon
 
-O repositório já está preparado documentalmente para esse split, mas o provisionamento real da infra e dos secrets ainda é manual.
+The repository is already documented for this split setup, but the actual infrastructure provisioning and secret management are still manual.
