@@ -27,3 +27,5 @@ prisma/*.db
 .idea/
 *.swp
 *.swo
+.vercel
+.env*.local

@@ -6,6 +6,12 @@ const normalizeList = (value: string | undefined): string[] => {
 		.filter(Boolean);
 };
 
+const escapeRegex = (value: string): string =>
+	value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const wildcardToRegex = (pattern: string): RegExp =>
+	new RegExp(`^${pattern.split("*").map(escapeRegex).join(".*")}$`);
+
 export const getPort = (): number => {
 	const port = process.env.PORT;
 	return port ? Number(port) : 3000;
@@ -42,4 +48,21 @@ export const getAllowedCorsOrigins = (): string[] => {
 		"http://localhost:3000",
 		"http://127.0.0.1:3000",
 	];
+};
+
+export const isCorsOriginAllowed = (
+	origin: string | undefined,
+	allowedOrigins: string[],
+): boolean => {
+	if (!origin) {
+		return true;
+	}
+
+	return allowedOrigins.some((allowedOrigin) => {
+		if (allowedOrigin.includes("*")) {
+			return wildcardToRegex(allowedOrigin).test(origin);
+		}
+
+		return allowedOrigin === origin;
+	});
 };

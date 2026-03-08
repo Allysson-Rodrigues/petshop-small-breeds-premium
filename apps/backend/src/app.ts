@@ -11,7 +11,10 @@ import helmet from "helmet";
 import { AppError } from "./domain/errors/app-error.js";
 import authRoutes from "./main/config/auth-routes.js";
 import dashboardRoutes from "./main/config/dashboard-routes.js";
-import { getAllowedCorsOrigins } from "./main/config/env.js";
+import {
+	getAllowedCorsOrigins,
+	isCorsOriginAllowed,
+} from "./main/config/env.js";
 import healthRoutes from "./main/config/health-routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -24,7 +27,13 @@ app.use(helmet());
 
 app.use(
 	cors({
-		origin: allowedCorsOrigins,
+		origin: (origin, callback) => {
+			if (isCorsOriginAllowed(origin, allowedCorsOrigins)) {
+				return callback(null, true);
+			}
+
+			return callback(new AppError("CORS origin not allowed", 403));
+		},
 		credentials: true,
 	}),
 );
