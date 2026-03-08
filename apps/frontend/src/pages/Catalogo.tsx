@@ -39,7 +39,7 @@ export default function Catalogo() {
         <meta property="og:description" content="Luxo curado para o seu companheiro mais precioso." />
       </Helmet>
       {/* Hero Section */}
-      <section className="relative h-[60vh] min-h-[500px] w-full bg-light-grey flex items-center justify-center overflow-hidden pt-16">
+      <section className="relative h-[48vh] min-h-[380px] md:h-[60vh] md:min-h-[500px] w-full bg-light-grey flex items-center justify-center overflow-hidden pt-16">
         <img
           src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=2000"
           alt="Pomeranian em almofada de veludo"
@@ -48,10 +48,10 @@ export default function Catalogo() {
         <div className="absolute inset-0 bg-black/30"></div>
 
         <div className="relative z-10 text-center px-6 max-w-4xl mx-auto flex flex-col items-center">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-light tracking-tight text-white mb-6 font-display">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-light tracking-tight text-white mb-4 md:mb-6 font-display">
             A Coleção Small Breeds
           </h1>
-          <p className="text-lg md:text-xl text-white/90 font-light tracking-wide max-w-2xl">
+          <p className="text-base md:text-xl text-white/90 font-light tracking-wide max-w-2xl">
             Luxo curado para o seu companheiro mais precioso. Experiência
             unificada, conforto elevado.
           </p>
@@ -59,22 +59,23 @@ export default function Catalogo() {
       </section>
 
       {/* Catalog Layout */}
-      <section className="py-20 px-6 md:px-12 max-w-[1600px] mx-auto w-full flex flex-col md:flex-row gap-12 lg:gap-24">
+      <section className="py-14 md:py-20 px-4 sm:px-6 md:px-12 max-w-[1600px] mx-auto w-full flex flex-col md:flex-row gap-10 md:gap-12 lg:gap-24">
         {/* Sidebar / Filters */}
         <aside className="w-full md:w-48 flex-shrink-0">
-          <div className="sticky top-32">
-            <h3 className="text-xs font-medium uppercase tracking-[0.2em] mb-8 text-black border-b border-border-grey pb-4">
+          <div className="md:sticky md:top-32">
+            <h3 className="text-xs font-medium uppercase tracking-[0.2em] mb-4 md:mb-8 text-black border-b border-border-grey pb-4">
               Categorias
             </h3>
-            <ul className="space-y-5">
+            <ul className="flex gap-3 overflow-x-auto pb-2 md:block md:space-y-5 md:overflow-visible md:pb-0">
               {categories.map((cat) => (
                 <li key={cat}>
                   <button
                     onClick={() => setActiveCategory(cat)}
-                    className={`text-sm tracking-wide transition-colors ${activeCategory === cat
-                      ? "text-black font-semibold"
-                      : "text-medium-grey hover:text-black"
-                      }`}
+                    className={`min-h-11 whitespace-nowrap rounded-full border px-4 py-2.5 text-sm tracking-wide transition-colors md:min-h-0 md:rounded-none md:border-none md:px-0 md:py-0 ${
+                      activeCategory === cat
+                        ? "border-black bg-black text-white md:bg-transparent md:text-black md:font-semibold"
+                        : "border-border-grey text-medium-grey hover:border-black hover:text-black"
+                    }`}
                   >
                     {cat}
                   </button>
@@ -86,7 +87,7 @@ export default function Catalogo() {
 
         {/* Product Grid */}
         <div className="flex-1">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-12 pb-4 border-b border-border-grey gap-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 md:mb-12 pb-4 border-b border-border-grey gap-4">
             <span className="text-sm text-medium-grey font-light">
               Exibindo {sortedProducts.length} produtos
             </span>
@@ -106,11 +107,11 @@ export default function Catalogo() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 md:gap-x-8 gap-y-10 md:gap-y-16">
             {sortedProducts.map((p, i) => (
               <RevealSection key={p.id} delay={i * 80}>
-                <article className="group flex flex-col border-l border-medium-grey/10 pl-6 transition-colors duration-500 hover:border-black">
-                  <div className="aspect-square bg-light-grey mb-8 relative premium-img-container group/img overflow-hidden">
+                <article className="group touch-card flex flex-col border-l border-medium-grey/10 pl-4 sm:pl-6 transition-colors duration-500 hover:border-black">
+                  <div className="aspect-square bg-light-grey mb-5 md:mb-8 relative premium-img-container group/img overflow-hidden">
                     <img
                       src={p.image}
                       alt={p.name}
@@ -123,7 +124,7 @@ export default function Catalogo() {
                     <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
                     {/* Minimalist Details Indicator */}
-                    <div className="absolute bottom-6 left-6 overflow-hidden">
+                    <div className="absolute bottom-5 left-5 md:bottom-6 md:left-6 overflow-hidden hidden lg:block">
                       <button
                         onClick={() => setSelectedProduct(p)}
                         className="flex items-center gap-3 translate-y-full opacity-0 lg:opacity-100 lg:translate-y-full group-hover:translate-y-0 reveal-child transition-transform duration-700 ease-expo"
@@ -147,6 +148,19 @@ export default function Catalogo() {
                       R$ {p.price.toFixed(2)}
                     </span>
 
+                    <button
+                      type="button"
+                      onClick={() => setSelectedProduct(p)}
+                      className="mobile-affordance mb-4 inline-flex min-h-11 items-center gap-3 lg:hidden"
+                      aria-label={`Ver detalhes de ${p.name}`}
+                    >
+                      <span className="h-px w-8 bg-black/40" />
+                      <span className="text-[10px] font-medium uppercase tracking-[0.3em] text-black">
+                        Ver detalhes
+                      </span>
+                      <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                    </button>
+
                     <button className="w-full border border-black bg-transparent text-black px-4 py-3 text-[9px] font-medium uppercase tracking-widest hover:bg-black hover:text-white transition-colors duration-500 group/btn">
                       <div className="flex items-center justify-center gap-3">
                         Comprar Agora
@@ -165,17 +179,22 @@ export default function Catalogo() {
 
       {/* Product Modal */}
       {selectedProduct && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
           <button aria-label="Fechar modal" className="absolute inset-0 w-full bg-black/60 backdrop-blur-sm cursor-pointer border-none" onClick={() => setSelectedProduct(null)}></button>
-          <div className="relative bg-white w-full max-w-5xl overflow-hidden flex flex-col md:flex-row shadow-2xl animate-fade-in animate-scale-up">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="product-modal-title"
+            className="relative bg-white w-full max-w-5xl max-h-[90dvh] overflow-hidden flex flex-col md:flex-row shadow-2xl animate-fade-in animate-scale-up"
+          >
             <button
               onClick={() => setSelectedProduct(null)}
-              className="absolute top-4 right-4 z-10 p-2 text-black hover:opacity-50 transition-opacity"
+              className="absolute top-3 right-3 md:top-4 md:right-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-black shadow-sm hover:opacity-70 transition-opacity"
             >
               <span className="material-symbols-outlined text-3xl">close</span>
             </button>
 
-            <div className="w-full md:w-1/2 aspect-square md:aspect-auto bg-light-grey">
+            <div className="w-full md:w-1/2 aspect-square md:aspect-auto bg-light-grey shrink-0">
               <img
                 src={selectedProduct.image}
                 alt={selectedProduct.name}
@@ -183,18 +202,18 @@ export default function Catalogo() {
               />
             </div>
 
-            <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col">
+            <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col overflow-y-auto">
               <span className="text-xs font-bold tracking-widest text-medium-grey uppercase mb-4">
                 {selectedProduct.category}
               </span>
-              <h2 className="text-3xl font-light tracking-tight text-charcoal mb-4 font-display">
+              <h2 id="product-modal-title" className="text-2xl md:text-3xl font-light tracking-tight text-charcoal mb-4 font-display">
                 {selectedProduct.name}
               </h2>
-              <div className="text-2xl font-bold tracking-widest text-black mb-8">
+              <div className="text-xl md:text-2xl font-bold tracking-widest text-black mb-6 md:mb-8">
                 R$ {selectedProduct.price.toFixed(2)}
               </div>
 
-              <div className="border-t border-border-grey pt-8 mb-8 flex-1">
+              <div className="border-t border-border-grey pt-6 md:pt-8 mb-6 md:mb-8 flex-1">
                 <p className="text-charcoal/80 leading-relaxed mb-6 font-light">
                   {selectedProduct.description}
                 </p>

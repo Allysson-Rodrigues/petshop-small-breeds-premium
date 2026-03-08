@@ -218,6 +218,21 @@
     transform: translateY(0);
   }
 
+  .touch-card {
+    transition:
+      border-color 300ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 200ms ease,
+      background-color 200ms ease;
+  }
+
+  .touch-card:active {
+    transform: scale(0.99);
+  }
+
+  .mobile-affordance {
+    color: var(--color-charcoal);
+  }
+
   /* Reveal child with delay for mobile/entry animations */
   @media (max-width: 1023px) {
     .reveal-up {
@@ -231,6 +246,12 @@
       transform: translateY(0) !important;
       transition: all 0.55s cubic-bezier(0.22, 1, 0.36, 1) !important;
       transition-delay: 0.15s !important;
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .touch-card:hover {
+      transform: translateY(-2px);
     }
   }
 }
@@ -257,6 +278,11 @@
   .btn-magnetic:active {
     transform: none;
     box-shadow: none;
+  }
+
+  .touch-card,
+  .touch-card:active {
+    transform: none !important;
   }
 }
 
