@@ -18,7 +18,25 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      // Remover manualChunks que está causando dependência circular
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) {
+            return undefined;
+          }
+
+          const packagePath = id.split('node_modules/')[1];
+          if (!packagePath) {
+            return 'vendor-misc';
+          }
+
+          const segments = packagePath.split('/');
+          const packageName = segments[0]?.startsWith('@')
+            ? `${segments[0]}-${segments[1]}`
+            : segments[0];
+
+          return `vendor-${packageName?.replace('@', '') ?? 'misc'}`;
+        },
+      },
     }
   }
 })

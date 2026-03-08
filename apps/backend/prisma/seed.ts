@@ -8,15 +8,30 @@ async function main() {
   const adminPassword = "admin123";
   const clientEmail = "cliente@petshop.com";
   const clientPassword = "cliente123";
+  const secondClientEmail = "cliente2@petshop.com";
+  const secondClientPassword = "cliente456";
   const adminPetId = "8dcf359c-3c88-4af7-b6df-8b4e3c4ac001";
-  const adminAppointmentId = "7ef6db95-a48d-4a75-a6bd-fb4d07fa1001";
   const clientPetId = "f0ce2da1-3f49-4f01-a3bb-2af7e2c2b002";
+  const secondClientPetId = "5e9fcb46-7b92-4fd4-a7c8-0bb6dbe2d004";
+  const adminAppointmentId = "7ef6db95-a48d-4a75-a6bd-fb4d07fa1001";
   const clientAppointmentId = "2f9fdcc1-2a6a-4a54-9a6b-0f54f289c003";
+  const secondClientAppointmentId = "f0f4fdcc-0b3d-46db-94a2-8e943e5bd005";
 
-  const [adminHashedPassword, clientHashedPassword] = await Promise.all([
+  const [adminHashedPassword, clientHashedPassword, secondClientHashedPassword] = await Promise.all([
     bcrypt.hash(adminPassword, 12),
     bcrypt.hash(clientPassword, 12),
+    bcrypt.hash(secondClientPassword, 12),
   ]);
+
+  await prisma.appointment.deleteMany();
+  await prisma.pet.deleteMany();
+  await prisma.user.deleteMany({
+    where: {
+      email: {
+        notIn: [adminEmail, clientEmail, secondClientEmail],
+      },
+    },
+  });
 
   await prisma.user.upsert({
     where: { email: adminEmail },
@@ -46,11 +61,27 @@ async function main() {
     },
   });
 
+  await prisma.user.upsert({
+    where: { email: secondClientEmail },
+    update: {
+      password: secondClientHashedPassword,
+      role: "client",
+    },
+    create: {
+      name: "Cliente Premium",
+      email: secondClientEmail,
+      password: secondClientHashedPassword,
+      role: "client",
+    },
+  });
+
   console.log("Test users created/updated successfully:");
   console.log(`Admin Email: ${adminEmail}`);
   console.log(`Admin Password: ${adminPassword}`);
   console.log(`Client Email: ${clientEmail}`);
   console.log(`Client Password: ${clientPassword}`);
+  console.log(`Client 2 Email: ${secondClientEmail}`);
+  console.log(`Client 2 Password: ${secondClientPassword}`);
 
   // Initial Products
   const products = [
@@ -70,33 +101,11 @@ async function main() {
     });
   }
 
-  // Initial Pet for Admin
-  const [adminUser, clientUser] = await Promise.all([
+  const [adminUser, clientUser, secondClientUser] = await Promise.all([
     prisma.user.findUnique({ where: { email: adminEmail } }),
     prisma.user.findUnique({ where: { email: clientEmail } }),
+    prisma.user.findUnique({ where: { email: secondClientEmail } }),
   ]);
-
-  if (adminUser || clientUser) {
-    await prisma.appointment.deleteMany({
-      where: {
-        OR: [
-          { id: "app-1" },
-          { id: adminAppointmentId },
-          { id: clientAppointmentId },
-        ],
-      },
-    });
-
-    await prisma.pet.deleteMany({
-      where: {
-        OR: [
-          { id: "pet-rex" },
-          { id: adminPetId },
-          { id: clientPetId },
-        ],
-      },
-    });
-  }
 
   if (adminUser) {
     const pet = await prisma.pet.upsert({
@@ -105,7 +114,7 @@ async function main() {
       create: {
         id: adminPetId,
         name: "Rex",
-        breed: "Golden Retriever",
+        breed: "Shih Tzu",
         age: 3,
         userId: adminUser.id,
       },
@@ -132,7 +141,7 @@ async function main() {
       update: {},
       create: {
         id: clientPetId,
-        name: "Nina",
+        name: "Julie",
         breed: "Maltês",
         age: 3,
         userId: clientUser.id,
@@ -148,6 +157,33 @@ async function main() {
         type: "GROOM",
         status: "PENDING",
         userId: clientUser.id,
+        petId: pet.id,
+      },
+    });
+  }
+
+  if (secondClientUser) {
+    const pet = await prisma.pet.upsert({
+      where: { id: secondClientPetId },
+      update: {},
+      create: {
+        id: secondClientPetId,
+        name: "Theo",
+        breed: "Pug",
+        age: 2,
+        userId: secondClientUser.id,
+      },
+    });
+
+    await prisma.appointment.upsert({
+      where: { id: secondClientAppointmentId },
+      update: {},
+      create: {
+        id: secondClientAppointmentId,
+        date: new Date(),
+        type: "CHECKUP",
+        status: "PENDING",
+        userId: secondClientUser.id,
         petId: pet.id,
       },
     });

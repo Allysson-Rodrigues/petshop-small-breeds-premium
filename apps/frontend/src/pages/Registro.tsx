@@ -196,7 +196,7 @@ export default function Registro() {
                   <button
                     type="button"
                     className="absolute right-3 top-1/2 -translate-y-1/2 inline-flex h-8 w-8 items-center justify-center text-neutral-400 hover:text-primary transition-colors"
-                    aria-label={isPasswordVisible ? "Ocultar senha" : "Mostrar senha"}
+                    aria-label={isPasswordVisible ? "Ocultar caracteres" : "Mostrar caracteres"}
                     aria-pressed={isPasswordVisible}
                     onClick={() => setIsPasswordVisible((prev) => !prev)}
                   >

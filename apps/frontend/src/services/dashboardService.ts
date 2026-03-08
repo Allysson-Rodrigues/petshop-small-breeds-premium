@@ -27,6 +27,11 @@ const request = async <T>(
 
 	if (!response.ok) {
 		const body = await response.json().catch(() => ({}));
+
+		if (response.status === 401) {
+			authService.handleUnauthorized();
+		}
+
 		throw new Error(
 			(body as { message?: string }).message ?? `Request failed: ${response.status}`,
 		);

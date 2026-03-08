@@ -16,6 +16,7 @@ const readSessionUser = () => authService.getUser();
 
 export function AuthProvider({ children }: { children: ReactNode }) {
 	const [user, setUser] = useState<User | null>(() => readSessionUser());
+	const isAuthenticated = user !== null;
 
 	useEffect(() => {
 		const syncAuthState = () => {
@@ -33,14 +34,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 	return (
 		<AuthContext.Provider
-			value={{
-				user,
-				isAdmin: user?.role === "admin",
-				isAuthenticated: authService.isAuthenticated(),
-				getInitials,
-				logout: authService.logout,
-			}}
-		>
+				value={{
+					user,
+					isAdmin: user?.role === "admin",
+					isAuthenticated,
+					getInitials,
+					logout: authService.logout,
+				}}
+			>
 			{children}
 		</AuthContext.Provider>
 	);
