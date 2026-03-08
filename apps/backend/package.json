@@ -9,18 +9,19 @@
   },
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "dev:seed": "prisma generate --schema=./prisma/schema.prisma && prisma db push --schema=./prisma/schema.prisma && prisma db seed --schema=./prisma/schema.prisma && tsx watch src/server.ts",
+    "dev:seed": "npm run prisma:generate && npm run prisma:push && npm run prisma:seed && tsx watch src/server.ts",
     "build": "tsc",
     "type-check": "tsc --noEmit",
-    "test": "npm run test:unit",
-    "test:unit": "vitest run --config vitest.config.ts",
-    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "start": "node dist/server.js",
+    "start:test": "npm run prisma:push && npm run prisma:seed && tsx src/server.ts",
     "lint": "biome check src",
     "lint:fix": "biome check --write src",
     "format": "biome format --write src",
     "prisma:generate": "prisma generate --schema=./prisma/schema.prisma",
-    "prisma:push": "prisma db push --schema=./prisma/schema.prisma"
+    "prisma:push": "prisma db push --schema=./prisma/schema.prisma",
+    "prisma:seed": "prisma db seed --schema=./prisma/schema.prisma"
   },
   "prisma": {
     "seed": "./node_modules/.bin/tsx prisma/seed.ts"
@@ -32,7 +33,7 @@
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.0.1",
-    "express-rate-limit": "^8.3.0",
+    "express-rate-limit": "^8.2.1",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
     "qs": "^6.14.0",

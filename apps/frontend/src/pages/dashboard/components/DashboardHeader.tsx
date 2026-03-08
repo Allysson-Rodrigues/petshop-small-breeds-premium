@@ -123,6 +123,7 @@ export default function DashboardHeader({
                 <button
                     onClick={onMenuClick}
                     className="lg:hidden p-2 -ml-2 text-gray-400 hover:text-black transition-colors shrink-0"
+                    aria-label="Abrir menu lateral"
                 >
                     <span className="material-symbols-outlined">menu</span>
                 </button>

@@ -1,5 +1,6 @@
 import { type ReactNode, useEffect, useState } from "react";
-import { authService, type User } from "../services/authService";
+import type { AuthStatus, SessionUser } from "../services/authService";
+import { authService } from "../services/authService";
 import { AuthContext } from "./auth-context";
 
 const getInitials = (name: string): string => {
@@ -12,36 +13,94 @@ const getInitials = (name: string): string => {
 		.substring(0, 2);
 };
 
-const readSessionUser = () => authService.getUser();
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-	const [user, setUser] = useState<User | null>(() => readSessionUser());
-	const isAuthenticated = user !== null;
+	const [authState, setAuthState] = useState<{
+		status: AuthStatus;
+		user: SessionUser | null;
+	}>(() => ({
+		status: "bootstrapping",
+		user: authService.getUser(),
+	}));
+
+	const refreshSession = async () => {
+		setAuthState((currentState) =>
+			currentState.status === "bootstrapping"
+				? currentState
+				: {
+						...currentState,
+						status: "bootstrapping",
+					},
+		);
+
+		const session = await authService.bootstrapSession();
+
+		setAuthState({
+			status: session ? "authenticated" : "unauthenticated",
+			user: session?.user ?? null,
+		});
+	};
 
 	useEffect(() => {
-		const syncAuthState = () => {
-			setUser(readSessionUser());
-		};
+		let cancelled = false;
 
-		window.addEventListener("storage", syncAuthState);
-		window.addEventListener("auth:changed", syncAuthState);
+		void authService.bootstrapSession().then((session) => {
+			if (cancelled) {
+				return;
+			}
+
+			setAuthState({
+				status: session ? "authenticated" : "unauthenticated",
+				user: session?.user ?? null,
+			});
+		});
 
 		return () => {
-			window.removeEventListener("storage", syncAuthState);
-			window.removeEventListener("auth:changed", syncAuthState);
+			cancelled = true;
 		};
 	}, []);
 
+	useEffect(() => {
+		const syncAuthState = () => {
+			const session = authService.getSession();
+
+			if (!session) {
+				setAuthState({
+					status: "unauthenticated",
+					user: null,
+				});
+				return;
+			}
+
+			void refreshSession();
+		};
+
+		const authEventName = authService.getAuthChangedEventName();
+
+		window.addEventListener("storage", syncAuthState);
+		window.addEventListener(authEventName, syncAuthState);
+
+		return () => {
+			window.removeEventListener("storage", syncAuthState);
+			window.removeEventListener(authEventName, syncAuthState);
+		};
+	}, []);
+
+	const isAuthenticated =
+		authState.status === "authenticated" && authState.user !== null;
+
 	return (
 		<AuthContext.Provider
-				value={{
-					user,
-					isAdmin: user?.role === "admin",
-					isAuthenticated,
-					getInitials,
-					logout: authService.logout,
-				}}
-			>
+			value={{
+				user: authState.user,
+				status: authState.status,
+				isAdmin: authState.user?.role === "admin",
+				isAuthenticated,
+				isBootstrapping: authState.status === "bootstrapping",
+				getInitials,
+				logout: authService.logout,
+				refreshSession,
+			}}
+		>
 			{children}
 		</AuthContext.Provider>
 	);

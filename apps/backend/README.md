@@ -1,100 +1,107 @@
-# Petshop Small Breeds Premium — Backend
+# Backend
 
-RESTful API built with Express 5, Prisma 6, and TypeScript, organized using Clean Architecture principles (`domain`, `presentation`, `main`).
+API REST em Express 5 com Prisma, PostgreSQL e autenticação JWT.
 
 ## Stack
 
-- **Framework:** Express 5 + TypeScript
-- **ORM:** Prisma 6 with PostgreSQL
-- **Auth:** JWT (jsonwebtoken) + bcrypt
-- **Linting:** Biome
+- Express 5
+- Prisma
+- PostgreSQL
+- TypeScript
+- Biome
+- Vitest + Supertest
 
-## Development
+## Rotas principais
 
-```bash
-# From the monorepo root
-npm run setup        # Install dependencies + create .env
-npm run dev:backend  # Start with tsx watch
+| Método | Rota | Descrição |
+| --- | --- | --- |
+| `GET` | `/api/health` | Health check |
+| `POST` | `/api/auth/register` | Cadastro |
+| `POST` | `/api/auth/login` | Login |
+| `GET` | `/api/auth/me` | Hidratação da sessão autenticada |
+| `GET` | `/api/dashboard/customer` | Dashboard do cliente |
+| `GET` | `/api/dashboard/admin` | Dashboard admin |
+| `GET/POST/PUT/DELETE` | `/api/dashboard/pets` | CRUD de pets |
+| `GET/POST/PUT/DELETE` | `/api/dashboard/appointments` | CRUD de agendamentos |
+| `GET/PUT/DELETE` | `/api/dashboard/clients` | Gestão admin de clientes |
+| `GET/POST/PUT/DELETE` | `/api/dashboard/products` | Estoque |
 
-# Or directly from the backend directory
-cd apps/backend
-cp .env.example .env  # Adjust the values!
-npm install
-npm run dev
-```
-
-## Environment Variables
-
-Copy `.env.example` to `.env` and adjust as needed:
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `PORT` | Server port | `3000` |
-| `NODE_ENV` | Environment (`development` / `production` / `test`) | `development` |
-| `DATABASE_URL` | PostgreSQL connection string | `postgresql://USER:PASSWORD@HOST:5432/DB?sslmode=require` |
-| `JWT_SECRET` | Secret for JWT | — (**required**) |
-| `CORS_ORIGIN` | Allowed CORS origins (comma-separated) | `http://localhost:5173` |
-
-> ⚠️ **Security:** Never commit `.env` to the repository. The `.gitignore` file already covers environment files and local artifacts.
-
-## Prisma (PostgreSQL)
-
-```bash
-cd apps/backend
-npx prisma db push          # Sync schema to the database
-npx prisma db seed          # Seed demo data
-npx prisma studio           # Visual database UI
-```
-
-For automated backend integration tests, configure a dedicated PostgreSQL database in `.env.test` / `.env.test.local` or pass `DATABASE_URL` / `TEST_DATABASE_URL` explicitly.
-
-## Scripts
-
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Dev server with hot-reload (tsx watch) |
-| `npm run build` | Compile TypeScript → `dist/` |
-| `npm run type-check` | TypeScript check without emit |
-| `npm start` | Start compiled build |
-| `npm run lint` | Biome check |
-| `npm run lint:fix` | Biome auto-fix |
-| `npm run test` | Run backend unit tests |
-| `npm run test:unit` | Run backend unit tests with Vitest |
-| `npm run test:integration` | Run integration tests against PostgreSQL |
-| `npm run prisma:generate` | Generate Prisma client |
-| `npm run prisma:push` | Sync schema to PostgreSQL |
-
-## Architecture Structure
+## Estrutura
 
 ```text
 src/
-├── domain/           # Entities, use cases, repositories (pure layer)
-├── presentation/     # Controllers (framework-independent)
-├── infrastructure/   # Prisma adapters and external services
-├── main/             # Configuration, routes, composition root
-├── app.ts            # Express application bootstrap
-└── server.ts         # Server entry point
+├── domain/
+├── infrastructure/
+├── main/
+│   ├── config/
+│   ├── middlewares/
+│   └── utils/
+├── presentation/
+└── test/
 ```
 
-## Docker
+## Banco e ambiente
+
+Arquivo padrão:
 
 ```bash
-cd apps/backend
-docker build -t petshop-backend .
-docker run -p 3000:3000 --env-file .env petshop-backend
+cp .env.example .env
 ```
 
-> The `.dockerignore` file prevents environment files and local artifacts from being copied to the image.
+Valores locais:
 
-## Deployment
+```env
+DATABASE_URL="postgresql://postgres:postgres@127.0.0.1:5432/petshop?schema=public"
+JWT_SECRET="change-me-to-a-strong-random-secret"
+CORS_ORIGIN="http://localhost:5173,http://127.0.0.1:5173"
+```
 
-The backend is deployed to Vercel as a separate project using [`vercel.json`](/home/allysson/projetos/01-projetos/petshop-small-breeds-premium/apps/backend/vercel.json). It expects a network-accessible PostgreSQL database and the standard environment variables from `.env.example`.
+Arquivo de teste:
 
-## Main Endpoints
+```bash
+cp .env.test.example .env.test
+```
 
-| Method | Route | Description |
-|--------|-------|-------------|
-| `GET` | `/api/health` | API health check |
-| `POST` | `/api/auth/login` | User login (returns JWT) |
-| `POST` | `/api/auth/register` | New user registration |
-| `GET` | `/api/dashboard/*` | Protected dashboard routes |
+Default de teste:
+
+```env
+DATABASE_URL="postgresql://postgres:postgres@127.0.0.1:5432/petshop?schema=test"
+```
+
+## Scripts
+
+```bash
+npm run dev
+npm run dev:seed
+npm run build
+npm run start
+npm run start:test
+npm run prisma:push
+npm run prisma:seed
+npm run test
+npm run lint
+npm run type-check
+```
+
+## Docker local
+
+Subir PostgreSQL:
+
+```bash
+docker compose up -d postgres
+```
+
+Subir API + PostgreSQL:
+
+```bash
+docker compose up --build
+```
+
+## Testes
+
+Os testes usam PostgreSQL real e reset de dados por seed. A suíte cobre:
+
+- auth
+- `/auth/me`
+- restrições por papel
+- criação e atualização de recursos críticos

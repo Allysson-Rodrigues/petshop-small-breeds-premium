@@ -1,51 +1,69 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { UnauthorizedError } from "../../domain/errors/app-error.js";
+import { PrismaUserRepository } from "../../infrastructure/prisma/prisma-user.repository.js";
 import { getJwtSecret } from "../config/env.js";
 
 const secret = getJwtSecret();
+const userRepository = new PrismaUserRepository();
 
 export const authMiddleware = (
 	req: Request,
-	_res: Response,
+	res: Response,
 	next: NextFunction,
 ) => {
-	const authHeader = req.headers.authorization;
+	void (async () => {
+		const authHeader = req.headers.authorization;
 
-	if (!authHeader) {
-		return next(new UnauthorizedError("No token provided"));
-	}
-
-	const parts = authHeader.split(" ");
-
-	if (parts.length !== 2) {
-		return next(new UnauthorizedError("Token error"));
-	}
-
-	const [scheme, token] = parts;
-
-	if (!scheme || !/^Bearer$/i.test(scheme)) {
-		return next(new UnauthorizedError("Token malformatted"));
-	}
-
-	if (!token) {
-		return next(new UnauthorizedError("Token error"));
-	}
-
-	try {
-		const decoded = jwt.verify(token, secret);
-		if (typeof decoded !== "object" || decoded === null || !("id" in decoded)) {
-			return next(new UnauthorizedError("Token invalid"));
+		if (!authHeader) {
+			return res.status(401).json({ message: "No token provided" });
 		}
 
-		const userId = decoded.id;
-		if (typeof userId !== "string") {
-			return next(new UnauthorizedError("Token invalid"));
+		const parts = authHeader.split(" ");
+
+		if (parts.length !== 2) {
+			return res.status(401).json({ message: "Token error" });
 		}
 
-		req.auth = { userId };
-		return next();
-	} catch {
-		return next(new UnauthorizedError("Token invalid"));
-	}
+		const [scheme, token] = parts;
+
+		if (!scheme || !/^Bearer$/i.test(scheme)) {
+			return res.status(401).json({ message: "Token malformatted" });
+		}
+
+		if (!token) {
+			return res.status(401).json({ message: "Token error" });
+		}
+
+		try {
+			const decoded = jwt.verify(token, secret);
+			if (
+				typeof decoded !== "object" ||
+				decoded === null ||
+				!("id" in decoded)
+			) {
+				return res.status(401).json({ message: "Token invalid" });
+			}
+
+			const userId = decoded.id;
+			if (typeof userId !== "string") {
+				return res.status(401).json({ message: "Token invalid" });
+			}
+
+			const user = await userRepository.findById(userId);
+
+			if (!user) {
+				return res.status(401).json({ message: "User not found" });
+			}
+
+			req.auth = {
+				userId,
+				role: user.role,
+				email: user.email,
+				name: user.name,
+			};
+			return next();
+		} catch {
+			return res.status(401).json({ message: "Token invalid" });
+		}
+	})().catch(next);
 };

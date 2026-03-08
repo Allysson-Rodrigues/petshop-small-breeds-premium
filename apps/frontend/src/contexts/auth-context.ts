@@ -1,12 +1,18 @@
 import { createContext } from "react";
-import type { User } from "../services/authService";
+import type {
+	AuthStatus,
+	SessionUser,
+} from "../services/authService";
 
 export type AuthContextValue = {
-	user: User | null;
+	user: SessionUser | null;
+	status: AuthStatus;
 	isAdmin: boolean;
 	isAuthenticated: boolean;
+	isBootstrapping: boolean;
 	getInitials: (name: string) => string;
 	logout: () => void;
+	refreshSession: () => Promise<void>;
 };
 
 export const AuthContext = createContext<AuthContextValue | null>(null);

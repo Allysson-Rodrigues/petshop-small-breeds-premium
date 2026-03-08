@@ -1,84 +1,60 @@
-# Petshop Small Breeds Premium — Frontend
+# Frontend
 
-Single Page Application (SPA) built with React 19, Vite 7, Tailwind CSS 4, and Framer Motion.
+SPA em React 19 para navegação pública, autenticação e dashboard do petshop.
 
 ## Stack
 
-- **Framework:** React 19 + TypeScript
-- **Build Tool:** Vite 7 (with SWC)
-- **Styling:** Tailwind CSS 4
-- **Animations:** Framer Motion
-- **Routing:** React Router 7
-- **Icons:** Lucide React
-
-## Development
-
-```bash
-# From the monorepo root
-npm run dev:frontend
-
-# Or directly from the frontend directory
-cd apps/frontend && npm run dev
-```
-
-The dev server starts at http://localhost:5173 with automatic API proxying (`/api` → `http://127.0.0.1:3000`).
-
-> If the backend is not running, login and registration functionality will not work.
-
-## Environment Variables
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `VITE_API_BASE_URL` | API base URL | `/api` (local proxy) |
-| `VITE_ADMIN_EMAILS` | Admin emails for client-side RBAC | `admin@petshop.com` |
+- React 19
+- Vite 7
+- Tailwind CSS 4
+- React Router 7
+- Framer Motion
+- Vitest + Testing Library
+- Playwright
 
 ## Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Dev server with HMR |
-| `npm run build` | Production build (`tsc + vite build`) |
-| `npm run type-check` | TypeScript check without emit |
-| `npm run lint` | ESLint check |
-| `npm run preview` | Local build preview |
-| `npm run test` | Run frontend unit tests with Vitest |
-| `npm run test:watch` | Run frontend unit tests in watch mode |
-| `npm run test:e2e` | Run Playwright end-to-end tests |
-| `npm run test:e2e:mobile` | Run Playwright mobile coverage |
-
-## Tests
-
-Frontend tests are available in the codebase, for example:
-
-- `src/App.test.tsx`
-- `src/services/authService.test.ts`
-- `tests/catalog_mobile.spec.ts`
-- `tests/gallery_mobile.spec.ts`
-
-## Structure
-
-```text
-src/
-├── components/        # Reusable UI components (layout, shared UI)
-├── pages/             # Page views and routing components
-│   └── dashboard/     # Dashboard for admins/clients (tabs, sub-components)
-├── services/          # Authentication service, dashboard API client
-├── App.tsx            # Main application router
-└── index.css          # Design tokens and Tailwind configuration
+```bash
+npm run dev
+npm run build
+npm run preview
+npm run lint
+npm run type-check
+npm run test
+npm run test:e2e
 ```
 
-## Docker (Alternative)
+## Contratos principais
+
+- `VITE_API_BASE_URL`: endpoint base da API
+- autenticação baseada em JWT Bearer validado no boot via `GET /api/auth/me`
+- guards formais:
+  - `ProtectedRoute`
+  - `GuestOnlyRoute`
+  - `RoleGuard`
+
+## Testes
+
+- Unitários em `src/**/*.test.ts`
+- E2E em `tests/**/*.spec.ts`
+- Configs versionadas:
+  - `vitest.config.ts`
+  - `playwright.config.ts`
+
+## Execução local de E2E
+
+Pré-requisitos:
+
+- backend com PostgreSQL acessível em `127.0.0.1:5432`
+- `apps/backend/.env.test` configurado ou `DATABASE_URL`/`E2E_DATABASE_URL` exportados
+
+Comando:
 
 ```bash
-# From the monorepo root
-docker run --rm -it -p 5173:5173 -p 3000:3000 \
-  -v "$PWD":/app -v petshop_node_modules:/app/node_modules \
-  -w /app node:24 bash -lc \
-  'npm install && npm run setup:env && (npm run dev -w backend & npm run dev -w frontend -- --host 0.0.0.0 --port 5173) && wait'
+npm run test:e2e
 ```
 
-## Build & Deployment
+O Playwright sobe:
 
-The build process generates static files in the `dist/` directory. The frontend is deployed to Vercel using the root [`vercel.json`](/home/allysson/projetos/01-projetos/petshop-small-breeds-premium/vercel.json) configuration.
-
-For a fully working environment, the frontend must point to a separately deployed backend API through `VITE_API_BASE_URL`.
+- backend em `http://127.0.0.1:3000`
+- preview do frontend em `http://127.0.0.1:4173`

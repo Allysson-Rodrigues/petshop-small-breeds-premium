@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import RoleGuard from "../components/auth/RoleGuard";
 import Sidebar from "../components/layout/Sidebar";
 import Toast from "../components/ui/Toast";
 import { useAuth } from "../hooks/useAuth";
@@ -13,8 +13,8 @@ import SettingsTab from "./dashboard/tabs/SettingsTab";
 
 export default function Dashboard() {
 
-  const navigate = useNavigate();
-  const { user, isAdmin, isAuthenticated } = useAuth();
+  const { user, isAdmin } = useAuth();
+  const restrictedTabs = ["overview", "clients", "inventory"] as const;
 
   const [activeTab, setActiveTab] = useState(() =>
     isAdmin ? "overview" : "pets",
@@ -22,12 +22,32 @@ export default function Dashboard() {
   const [toastMessage, setToastMessage] = useState("");
   const [globalSearch, setGlobalSearch] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const currentTab =
+    !isAdmin && restrictedTabs.includes(activeTab as (typeof restrictedTabs)[number])
+      ? "pets"
+      : activeTab;
 
   useEffect(() => {
-    if (!isAuthenticated || !user) {
-      navigate("/login");
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    if (!isSidebarOpen) {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleEscape);
+      return;
     }
-  }, [user, isAuthenticated, navigate]);
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [isSidebarOpen]);
 
   const showToast = (message: string) => {
     setToastMessage(message);
@@ -45,7 +65,7 @@ export default function Dashboard() {
       </a>
       {/* Sidebar Component */}
       <Sidebar
-        activeTab={activeTab}
+        activeTab={currentTab}
         setActiveTab={setActiveTab}
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
@@ -60,10 +80,10 @@ export default function Dashboard() {
       )}
 
       {/* Main Content */}
-      <main id="main-content" className="flex-1 flex flex-col h-screen overflow-hidden relative bg-background-light">
+      <main id="main-content" className="flex-1 flex flex-col min-h-screen overflow-hidden relative bg-background-light">
         {/* Header especializado */}
         <DashboardHeader
-          activeTab={activeTab}
+          activeTab={currentTab}
           globalSearch={globalSearch}
           setGlobalSearch={setGlobalSearch}
           onMenuClick={() => setIsSidebarOpen(true)}
@@ -71,42 +91,67 @@ export default function Dashboard() {
 
         {/* Dashboard Content */}
         <div className="flex-1 overflow-y-auto p-4 md:p-8">
-          {activeTab === "overview" && isAdmin ? (
-            <OverviewTab showToast={showToast} setActiveTab={setActiveTab} />
-          ) : activeTab === "clients" && isAdmin ? (
-            <ClientsTab showToast={showToast} searchQuery={globalSearch} />
-          ) : activeTab === "pets" ? (
+          {currentTab === "overview" ? (
+            <RoleGuard
+              allowedRoles={["admin"]}
+              fallback={<RestrictedState activeTab={currentTab} onReset={() => setActiveTab("pets")} />}
+            >
+              <OverviewTab showToast={showToast} setActiveTab={setActiveTab} />
+            </RoleGuard>
+          ) : currentTab === "clients" ? (
+            <RoleGuard
+              allowedRoles={["admin"]}
+              fallback={<RestrictedState activeTab={currentTab} onReset={() => setActiveTab("pets")} />}
+            >
+              <ClientsTab showToast={showToast} searchQuery={globalSearch} />
+            </RoleGuard>
+          ) : currentTab === "pets" ? (
             <PetsTab showToast={showToast} searchQuery={globalSearch} />
-          ) : activeTab === "appointments" ? (
+          ) : currentTab === "appointments" ? (
             <AppointmentsTab showToast={showToast} />
-          ) : activeTab === "inventory" && isAdmin ? (
-            <InventoryTab showToast={showToast} searchQuery={globalSearch} />
-          ) : activeTab === "settings" ? (
-            <SettingsTab showToast={showToast} />
+          ) : currentTab === "inventory" ? (
+            <RoleGuard
+              allowedRoles={["admin"]}
+              fallback={<RestrictedState activeTab={currentTab} onReset={() => setActiveTab("pets")} />}
+            >
+              <InventoryTab showToast={showToast} searchQuery={globalSearch} />
+            </RoleGuard>
           ) : (
-            <div className="flex flex-col items-center justify-center h-full text-center mt-20">
-              <span className="material-symbols-outlined text-6xl text-gray-300 mb-4">
-                lock_person
-              </span>
-              <h2 className="text-xl font-bold text-primary mb-2">
-                Acesso Restrito
-              </h2>
-              <p className="text-gray-500 max-w-md">
-                Esta área ({activeTab}) é exclusiva para administradores.
-                Por favor, utilize as abas permitidas.
-              </p>
-              <button
-                onClick={() => setActiveTab("pets")}
-                className="mt-6 px-6 py-2.5 bg-neutral-900 text-white rounded-xl font-bold hover:bg-neutral-800 transition-all shadow-lg shadow-black/10 active:scale-95"
-              >
-                Ir para Meus Pets
-              </button>
-            </div>
+            <SettingsTab showToast={showToast} />
           )}
         </div>
       </main>
 
       <Toast message={toastMessage} />
+    </div>
+  );
+}
+
+function RestrictedState({
+  activeTab,
+  onReset,
+}: {
+  activeTab: string;
+  onReset: () => void;
+}) {
+  return (
+    <div className="flex flex-col items-center justify-center h-full text-center mt-20">
+      <span className="material-symbols-outlined text-6xl text-gray-300 mb-4">
+        lock_person
+      </span>
+      <h2 className="text-xl font-bold text-primary mb-2">
+        Acesso Restrito
+      </h2>
+      <p className="text-gray-500 max-w-md">
+        Esta área ({activeTab}) é exclusiva para administradores.
+        Por favor, utilize as abas permitidas.
+      </p>
+      <button
+        onClick={onReset}
+        className="mt-6 px-6 py-2.5 bg-neutral-900 text-white rounded-xl font-bold hover:bg-neutral-800 transition-all shadow-lg shadow-black/10 active:scale-95"
+      >
+        Ir para Meus Pets
+      </button>
     </div>
   );
 }

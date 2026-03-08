@@ -1,6 +1,8 @@
 import { AnimatePresence } from "framer-motion";
 import { Suspense, lazy, useEffect } from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import GuestOnlyRoute from "./components/auth/GuestOnlyRoute";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 import PageTransition from "./components/ui/PageTransition";
 import MainLayout from "./MainLayout";
 
@@ -41,25 +43,31 @@ function AnimatedRoutes() {
           <Route
             path="/login"
             element={
-              <PageTransition withSlide={false}>
-                <Login />
-              </PageTransition>
+              <GuestOnlyRoute>
+                <PageTransition withSlide={false}>
+                  <Login />
+                </PageTransition>
+              </GuestOnlyRoute>
             }
           />
           <Route
             path="/registro"
             element={
-              <PageTransition withSlide={false}>
-                <Registro />
-              </PageTransition>
+              <GuestOnlyRoute>
+                <PageTransition withSlide={false}>
+                  <Registro />
+                </PageTransition>
+              </GuestOnlyRoute>
             }
           />
           <Route
             path="/dashboard"
             element={
-              <PageTransition withSlide={false}>
-                <Dashboard />
-              </PageTransition>
+              <ProtectedRoute>
+                <PageTransition withSlide={false}>
+                  <Dashboard />
+                </PageTransition>
+              </ProtectedRoute>
             }
           />
           <Route element={<MainLayout />}>

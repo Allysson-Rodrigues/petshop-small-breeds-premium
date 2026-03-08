@@ -1,4 +1,4 @@
-import { authService } from "./authService";
+import { authService, type ApiError } from "./authService";
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "/api").replace(
 	/\/$/,
@@ -17,27 +17,49 @@ const request = async <T>(
 	path: string,
 	options: RequestInit = {},
 ): Promise<T> => {
-	const response = await fetch(`${API_BASE_URL}${path}`, {
-		...options,
-		headers: {
-			...authHeaders(),
-			...(options.headers ?? {}),
-		},
-	});
+	try {
+		const response = await fetch(`${API_BASE_URL}${path}`, {
+			...options,
+			headers: {
+				...authHeaders(),
+				...(options.headers ?? {}),
+			},
+		});
 
-	if (!response.ok) {
-		const body = await response.json().catch(() => ({}));
+		if (!response.ok) {
+			const body = (await response.json().catch(() => ({}))) as {
+				message?: string;
+				errors?: Record<string, string[]>;
+			};
+			const apiError: ApiError = {
+				status: response.status,
+				message: body.message ?? `Request failed: ${response.status}`,
+				errors: body.errors,
+			};
 
-		if (response.status === 401) {
-			authService.handleUnauthorized();
+			if (response.status === 401) {
+				authService.handleUnauthorized("Sua sessão expirou. Faça login novamente.");
+			}
+
+			throw apiError;
 		}
 
-		throw new Error(
-			(body as { message?: string }).message ?? `Request failed: ${response.status}`,
-		);
-	}
+		return response.json() as Promise<T>;
+	} catch (error) {
+		if (
+			error &&
+			typeof error === "object" &&
+			"status" in error &&
+			"message" in error
+		) {
+			throw error;
+		}
 
-	return response.json() as Promise<T>;
+		throw {
+			status: 0,
+			message: "Falha de conexão com o servidor.",
+		} satisfies ApiError;
+	}
 };
 
 // ── Types ─────────────────────────────────────────────────────

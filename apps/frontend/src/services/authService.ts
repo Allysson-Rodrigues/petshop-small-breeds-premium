@@ -1,6 +1,6 @@
 export type UserRole = "admin" | "client";
 
-export interface User {
+export interface SessionUser {
 	id: string;
 	name: string;
 	email: string;
@@ -16,31 +16,21 @@ interface AuthApiUser {
 	gender?: "male" | "female";
 }
 
-const AUTH_TOKEN_KEY = "auth_token";
-const AUTH_USER_KEY = "auth_user";
-const AUTH_CHANGED_EVENT = "auth:changed";
-
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "/api").replace(
-	/\/$/,
-	"",
-);
-
-const mapApiUserToSessionUser = (user: AuthApiUser): User => ({
-	id: user.id,
-	name: user.name,
-	email: user.email,
-	role: user.role === "admin" ? "admin" : "client",
-	gender: user.gender,
-});
-
-type StoredSession = {
+export interface AuthSession {
 	token: string;
-	user: User;
-};
+	user: SessionUser;
+}
 
-type JwtPayload = {
-	exp?: number;
-};
+export type AuthStatus =
+	| "bootstrapping"
+	| "authenticated"
+	| "unauthenticated";
+
+export interface ApiError {
+	status: number;
+	message: string;
+	errors?: Record<string, string[]>;
+}
 
 type AuthResult =
 	| { ok: true }
@@ -49,15 +39,78 @@ type AuthResult =
 			message: string;
 	  };
 
+type BootstrapResult = AuthSession | null;
+
+const AUTH_TOKEN_KEY = "auth_token";
+const AUTH_USER_KEY = "auth_user";
+const AUTH_NOTICE_KEY = "auth_notice";
+const AUTH_CHANGED_EVENT = "auth:changed";
+
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "/api").replace(
+	/\/$/,
+	"",
+);
+
+const mapApiUserToSessionUser = (user: AuthApiUser): SessionUser => ({
+	id: user.id,
+	name: user.name,
+	email: user.email,
+	role: user.role === "admin" ? "admin" : "client",
+	gender: user.gender,
+});
+
+type JwtPayload = {
+	exp?: number;
+};
+
+const normalizeFieldErrors = (
+	value: unknown,
+): Record<string, string[]> | undefined => {
+	if (!value || typeof value !== "object" || Array.isArray(value)) {
+		return undefined;
+	}
+
+	const entries = Object.entries(value)
+		.map(([key, fieldValue]) => {
+			if (!Array.isArray(fieldValue)) {
+				return null;
+			}
+
+			const normalizedMessages = fieldValue.filter(
+				(item): item is string => typeof item === "string" && item.trim().length > 0,
+			);
+
+			if (normalizedMessages.length === 0) {
+				return null;
+			}
+
+			return [key, normalizedMessages] as const;
+		})
+		.filter(
+			(entry): entry is readonly [string, string[]] => entry !== null,
+		);
+
+	if (entries.length === 0) {
+		return undefined;
+	}
+
+	return Object.fromEntries(entries);
+};
+
+const joinFieldErrors = (errors?: Record<string, string[]>) => {
+	if (!errors) {
+		return null;
+	}
+
+	const messages = Object.values(errors).flat();
+	return messages.length > 0 ? messages.join(" ") : null;
+};
+
 const mapBackendMessageToPtBr = (
 	message: string,
 	status: number,
 ): string | null => {
 	const normalized = message.trim().toLowerCase();
-
-	if (status === 401 || normalized === "invalid credentials") {
-		return "E-mail ou senha incorretos.";
-	}
 
 	if (normalized === "email already registered") {
 		return "Este e-mail já está cadastrado.";
@@ -79,11 +132,7 @@ const mapBackendMessageToPtBr = (
 		return "A senha deve ter pelo menos 6 caracteres.";
 	}
 
-	if (status === 409) {
-		return "Este e-mail já está cadastrado.";
-	}
-
-	if (status === 422) {
+	if (normalized === "validation error" && status === 422) {
 		return "Dados inválidos. Revise os campos e tente novamente.";
 	}
 
@@ -91,25 +140,19 @@ const mapBackendMessageToPtBr = (
 		return "Não foi possível criar a conta no servidor. Tente novamente.";
 	}
 
+	if (normalized === "token invalid" || normalized === "user not found") {
+		return "Sua sessão expirou. Faça login novamente.";
+	}
+
+	if (status === 401 || normalized === "invalid credentials") {
+		return "E-mail ou senha incorretos.";
+	}
+
 	return null;
 };
 
-const getErrorMessageFromResponse = async (response: Response): Promise<string> => {
-	try {
-		const payload = (await response.json()) as { message?: unknown };
-		if (typeof payload?.message === "string" && payload.message.trim()) {
-			return (
-				mapBackendMessageToPtBr(payload.message, response.status) ??
-				payload.message
-			);
-		}
-	} catch {
-		// ignore parse errors
-	}
-
-	return response.status === 401
-		? "E-mail ou senha incorretos."
-		: "Não foi possível concluir a solicitação.";
+const persistNotice = (message: string) => {
+	sessionStorage.setItem(AUTH_NOTICE_KEY, message);
 };
 
 const notifyAuthChanged = () => {
@@ -118,11 +161,21 @@ const notifyAuthChanged = () => {
 	}
 };
 
-const clearStoredSession = (shouldNotify: boolean) => {
+const clearStoredSession = ({
+	notify,
+	notice,
+}: {
+	notify: boolean;
+	notice?: string;
+}) => {
 	localStorage.removeItem(AUTH_TOKEN_KEY);
 	localStorage.removeItem(AUTH_USER_KEY);
 
-	if (shouldNotify) {
+	if (notice) {
+		persistNotice(notice);
+	}
+
+	if (notify) {
 		notifyAuthChanged();
 	}
 };
@@ -142,14 +195,14 @@ const decodeJwtPayload = (token: string): JwtPayload | null => {
 	}
 };
 
-const readStoredUser = (): User | null => {
+const readStoredUser = (): SessionUser | null => {
 	const userJson = localStorage.getItem(AUTH_USER_KEY);
 	if (!userJson) {
 		return null;
 	}
 
 	try {
-		return JSON.parse(userJson) as User;
+		return JSON.parse(userJson) as SessionUser;
 	} catch {
 		return null;
 	}
@@ -162,6 +215,54 @@ const isTokenExpired = (token: string): boolean => {
 	}
 
 	return payload.exp * 1000 <= Date.now();
+};
+
+const buildApiError = async (response: Response): Promise<ApiError> => {
+	try {
+		const payload = (await response.json()) as {
+			message?: unknown;
+			errors?: unknown;
+		};
+
+		const fieldErrors = normalizeFieldErrors(payload.errors);
+		const fieldErrorMessage = joinFieldErrors(fieldErrors);
+		const rawMessage =
+			typeof payload.message === "string" && payload.message.trim()
+				? payload.message
+				: fieldErrorMessage ?? `Request failed: ${response.status}`;
+
+		return {
+			status: response.status,
+			message:
+				fieldErrorMessage ??
+				mapBackendMessageToPtBr(rawMessage, response.status) ??
+				rawMessage,
+			errors: fieldErrors,
+		};
+	} catch {
+		return {
+			status: response.status,
+			message:
+				response.status === 401
+					? "Sua sessão expirou. Faça login novamente."
+					: "Não foi possível concluir a solicitação.",
+		};
+	}
+};
+
+const requestCurrentUser = async (token: string): Promise<SessionUser> => {
+	const response = await fetch(`${API_BASE_URL}/auth/me`, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+
+	if (!response.ok) {
+		throw await buildApiError(response);
+	}
+
+	const payload = (await response.json()) as AuthApiUser;
+	return mapApiUserToSessionUser(payload);
 };
 
 export const authService = {
@@ -180,9 +281,10 @@ export const authService = {
 			});
 
 			if (!response.ok) {
+				const apiError = await buildApiError(response);
 				return {
 					ok: false,
-					message: await getErrorMessageFromResponse(response),
+					message: apiError.message,
 				};
 			}
 
@@ -205,7 +307,11 @@ export const authService = {
 		}
 	},
 
-	register: async (name: string, email: string, pass: string): Promise<AuthResult> => {
+	register: async (
+		name: string,
+		email: string,
+		pass: string,
+	): Promise<AuthResult> => {
 		if (!name || !email || !pass) {
 			return { ok: false, message: "Preencha todos os campos." };
 		}
@@ -220,9 +326,10 @@ export const authService = {
 			});
 
 			if (!response.ok) {
+				const apiError = await buildApiError(response);
 				return {
 					ok: false,
-					message: await getErrorMessageFromResponse(response),
+					message: apiError.message,
 				};
 			}
 
@@ -232,14 +339,34 @@ export const authService = {
 		}
 	},
 
-	saveSession: (token: string, user: User) => {
+	saveSession: (token: string, user: SessionUser, notify = true) => {
 		localStorage.setItem(AUTH_TOKEN_KEY, token);
 		localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
-		notifyAuthChanged();
+
+		if (notify) {
+			notifyAuthChanged();
+		}
 	},
 
 	logout: () => {
-		clearStoredSession(true);
+		clearStoredSession({ notify: true });
+	},
+
+	handleUnauthorized: (message = "Sua sessão expirou. Faça login novamente.") => {
+		clearStoredSession({
+			notify: true,
+			notice: message,
+		});
+	},
+
+	consumeNotice: () => {
+		const notice = sessionStorage.getItem(AUTH_NOTICE_KEY);
+		if (!notice) {
+			return "";
+		}
+
+		sessionStorage.removeItem(AUTH_NOTICE_KEY);
+		return notice;
 	},
 
 	isAuthenticated: () => {
@@ -250,34 +377,55 @@ export const authService = {
 		return authService.getSession()?.token ?? null;
 	},
 
-	getUser: (): User | null => {
+	getUser: (): SessionUser | null => {
 		return authService.getSession()?.user ?? null;
 	},
 
-	getSession: (): StoredSession | null => {
+	getSession: (): AuthSession | null => {
 		const token = localStorage.getItem(AUTH_TOKEN_KEY);
 		const user = readStoredUser();
 
 		if (!token || !user) {
 			if (token || localStorage.getItem(AUTH_USER_KEY)) {
-				clearStoredSession(false);
+				clearStoredSession({ notify: false });
 			}
 			return null;
 		}
 
 		if (isTokenExpired(token)) {
-			clearStoredSession(true);
+			clearStoredSession({
+				notify: true,
+				notice: "Sua sessão expirou. Faça login novamente.",
+			});
 			return null;
 		}
 
 		return { token, user };
 	},
 
-	handleUnauthorized: () => {
-		clearStoredSession(true);
+	bootstrapSession: async (): Promise<BootstrapResult> => {
+		const session = authService.getSession();
+		if (!session) {
+			return null;
+		}
 
-		if (typeof window !== "undefined" && window.location.pathname !== "/login") {
-			window.location.assign("/login");
+		try {
+			const user = await requestCurrentUser(session.token);
+			authService.saveSession(session.token, user, false);
+			return { token: session.token, user };
+		} catch (error) {
+			const apiError = error as ApiError;
+
+			if (apiError?.status === 401) {
+				authService.handleUnauthorized(
+					apiError.message || "Sua sessão expirou. Faça login novamente.",
+				);
+				return null;
+			}
+
+			return session;
 		}
 	},
+
+	getAuthChangedEventName: () => AUTH_CHANGED_EVENT,
 };

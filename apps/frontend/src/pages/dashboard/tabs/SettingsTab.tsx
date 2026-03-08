@@ -1,18 +1,66 @@
-import { useState } from "react";
-import { authService } from "../../../services/authService";
+import { useEffect, useState } from "react";
+import { useAuth } from "../../../hooks/useAuth";
+
+const DASHBOARD_PREFERENCES_KEY = "dashboard_preferences";
+
+type DashboardPreferences = {
+  notificationsEnabled: boolean;
+  reducedMotion: boolean;
+};
+
+const readPreferences = (): DashboardPreferences => {
+  if (typeof window === "undefined") {
+    return {
+      notificationsEnabled: true,
+      reducedMotion: false,
+    };
+  }
+
+  try {
+    const raw = window.localStorage.getItem(DASHBOARD_PREFERENCES_KEY);
+    if (!raw) {
+      return {
+        notificationsEnabled: true,
+        reducedMotion: false,
+      };
+    }
+
+    const parsed = JSON.parse(raw) as Partial<DashboardPreferences>;
+    return {
+      notificationsEnabled: parsed.notificationsEnabled ?? true,
+      reducedMotion: parsed.reducedMotion ?? false,
+    };
+  } catch {
+    return {
+      notificationsEnabled: true,
+      reducedMotion: false,
+    };
+  }
+};
 
 interface SettingsTabProps {
   showToast: (message: string) => void;
 }
 
 export default function SettingsTab({ showToast }: SettingsTabProps) {
-  const user = authService.getUser();
+  const { user } = useAuth();
   const isAdmin = user?.role === "admin";
-  const [theme, setTheme] = useState("light");
-  const [notifications, setNotifications] = useState(true);
+  const [preferences, setPreferences] = useState<DashboardPreferences>(() =>
+    readPreferences(),
+  );
+
+  useEffect(() => {
+    document.documentElement.dataset.motion = preferences.reducedMotion
+      ? "reduced"
+      : "default";
+  }, [preferences.reducedMotion]);
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
+    window.localStorage.setItem(
+      DASHBOARD_PREFERENCES_KEY,
+      JSON.stringify(preferences),
+    );
     showToast("Configurações salvas com sucesso!");
   };
 
@@ -91,8 +139,13 @@ export default function SettingsTab({ showToast }: SettingsTabProps) {
                     id="settings-push-notifications"
                     type="checkbox"
                     className="sr-only peer"
-                    checked={notifications}
-                    onChange={(e) => setNotifications(e.target.checked)}
+                    checked={preferences.notificationsEnabled}
+                    onChange={(e) =>
+                      setPreferences((currentPreferences) => ({
+                        ...currentPreferences,
+                        notificationsEnabled: e.target.checked,
+                      }))
+                    }
                   />
                   <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                 </label>
@@ -101,24 +154,30 @@ export default function SettingsTab({ showToast }: SettingsTabProps) {
               <div className="flex items-center justify-between p-4 border border-[#e5e5e5] rounded-lg gap-4">
                 <div className="flex-1">
                   <h4 className="text-sm md:text-base font-medium text-primary">
-                    Tema da Interface
+                    Movimentos Reduzidos
                   </h4>
                   <p className="text-[10px] md:text-xs text-gray-500">
-                    Forçar esquema escuro ou claro (mockup visual).
+                    Diminui animações e transições do painel para uma navegação mais estável.
                   </p>
                 </div>
-                <label htmlFor="settings-theme" className="sr-only">
-                  Tema da interface
-                </label>
-                <select
-                  id="settings-theme"
-                  className="bg-white border border-[#e5e5e5] rounded-lg text-xs md:text-sm px-3 py-1.5 focus:ring-1 focus:ring-primary outline-none shrink-0"
-                  value={theme}
-                  onChange={(e) => setTheme(e.target.value)}
+                <label
+                  htmlFor="settings-reduced-motion"
+                  className="relative inline-flex items-center cursor-pointer shrink-0"
                 >
-                  <option value="light">Sistema (Claro)</option>
-                  <option value="dark">Escuro</option>
-                </select>
+                  <input
+                    id="settings-reduced-motion"
+                    type="checkbox"
+                    className="sr-only peer"
+                    checked={preferences.reducedMotion}
+                    onChange={(e) =>
+                      setPreferences((currentPreferences) => ({
+                        ...currentPreferences,
+                        reducedMotion: e.target.checked,
+                      }))
+                    }
+                  />
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                </label>
               </div>
             </div>
           </div>

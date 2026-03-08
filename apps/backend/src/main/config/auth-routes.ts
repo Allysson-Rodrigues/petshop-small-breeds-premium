@@ -1,30 +1,21 @@
 import { Router } from "express";
-import { LoginUseCase } from "../../domain/use-cases/login.use-case.js";
-import { RegisterUserUseCase } from "../../domain/use-cases/register-user.use-case.js";
-import { JwtEncrypter } from "../../infrastructure/auth/jwt-encrypter.js";
-import { BcryptHasher } from "../../infrastructure/cryptography/bcrypt-hasher.js";
-import { PrismaUserRepository } from "../../infrastructure/prisma/prisma-user.repository.js";
-import { LoginController } from "../../presentation/controllers/login.controller.js";
-import { RegisterController } from "../../presentation/controllers/register.controller.js";
 import { adaptRoute } from "../adapters/express-route-adapter.js";
+import { authMiddleware } from "../middlewares/auth.middleware.js";
 import { authRateLimiter } from "../middlewares/rate-limiter.js";
-import { getJwtSecret } from "./env.js";
+import {
+	getCurrentUserController,
+	loginController,
+	registerController,
+} from "./dependencies.js";
 
 const router = Router();
-router.use(authRateLimiter);
 
-// Factory Simple (Composition Root)
-const userRepository = new PrismaUserRepository();
-const hasher = new BcryptHasher();
-const encrypter = new JwtEncrypter(getJwtSecret());
-
-const registerUseCase = new RegisterUserUseCase(userRepository, hasher);
-const loginUseCase = new LoginUseCase(userRepository, hasher, encrypter);
-
-const registerController = new RegisterController(registerUseCase);
-const loginController = new LoginController(loginUseCase);
+if (process.env.NODE_ENV === "production") {
+	router.use(authRateLimiter);
+}
 
 router.post("/register", adaptRoute(registerController));
 router.post("/login", adaptRoute(loginController));
+router.get("/me", authMiddleware, adaptRoute(getCurrentUserController));
 
 export default router;

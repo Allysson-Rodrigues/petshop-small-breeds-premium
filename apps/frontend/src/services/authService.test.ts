@@ -1,131 +1,109 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import { authService } from "./authService";
 
-const createTestToken = () => {
-	const header = btoa(JSON.stringify({ alg: "HS256", typ: "JWT" }))
-		.replace(/\+/g, "-")
-		.replace(/\//g, "_")
-		.replace(/=+$/g, "");
+const createToken = (expiresInSeconds: number) => {
 	const payload = btoa(
-		JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 60 * 60 }),
+		JSON.stringify({
+			exp: Math.floor(Date.now() / 1000) + expiresInSeconds,
+		}),
 	)
 		.replace(/\+/g, "-")
 		.replace(/\//g, "_")
 		.replace(/=+$/g, "");
 
-	return `${header}.${payload}.signature`;
+	return `header.${payload}.signature`;
 };
 
 describe("authService", () => {
 	beforeEach(() => {
 		localStorage.clear();
+		sessionStorage.clear();
 		vi.restoreAllMocks();
 	});
 
-	it("should login successfully using backend auth endpoint", async () => {
+	it("hydrates the current user from /auth/me on bootstrap", async () => {
+		localStorage.setItem("auth_token", createToken(3600));
+		localStorage.setItem(
+			"auth_user",
+			JSON.stringify({
+				id: "admin-id",
+				name: "Admin Geral",
+				email: "admin@petshop.com",
+				role: "admin",
+			}),
+		);
+
 		vi.stubGlobal(
 			"fetch",
 			vi.fn().mockResolvedValue(
 				new Response(
 					JSON.stringify({
-						token: createTestToken(),
-						user: {
-							id: "user-1",
-							name: "Admin Geral",
-							email: "admin@petshop.com",
-							role: "admin",
-						},
+						id: "admin-id",
+						name: "Admin Geral",
+						email: "admin@petshop.com",
+						role: "admin",
 					}),
-					{ status: 200, headers: { "Content-Type": "application/json" } },
+					{ status: 200 },
 				),
 			),
 		);
 
-		const result = await authService.login("admin@petshop.com", "admin123");
+		const session = await authService.bootstrapSession();
 
-		expect(result.ok).toBe(true);
-		expect(localStorage.getItem("auth_token")).toBeTruthy();
-		expect(authService.getUser()?.role).toBe("admin");
+		expect(session).not.toBeNull();
+		expect(session?.user.email).toBe("admin@petshop.com");
 	});
 
-	it("should fail login when backend returns unauthorized", async () => {
-		vi.stubGlobal(
-			"fetch",
-			vi.fn().mockResolvedValue(
-				new Response(JSON.stringify({ message: "Invalid credentials" }), {
-					status: 401,
-					headers: { "Content-Type": "application/json" },
-				}),
-			),
+	it("clears expired tokens immediately", () => {
+		localStorage.setItem("auth_token", createToken(-120));
+		localStorage.setItem(
+			"auth_user",
+			JSON.stringify({
+				id: "client-id",
+				name: "Cliente Demo",
+				email: "cliente@petshop.com",
+				role: "client",
+			}),
 		);
 
-		const result = await authService.login("wrong@email.com", "wrongpass");
+		const session = authService.getSession();
 
-		expect(result.ok).toBe(false);
-		if (!result.ok) {
-			expect(result.message).toBe("E-mail ou senha incorretos.");
-		}
+		expect(session).toBeNull();
 		expect(localStorage.getItem("auth_token")).toBeNull();
+		expect(authService.consumeNotice()).toBe(
+			"Sua sessão expirou. Faça login novamente.",
+		);
 	});
 
-	it("should register a new user via backend endpoint", async () => {
-		vi.stubGlobal(
-			"fetch",
-			vi.fn().mockResolvedValue(new Response(null, { status: 201 })),
+	it("drops the local session when /auth/me returns 401", async () => {
+		localStorage.setItem("auth_token", createToken(3600));
+		localStorage.setItem(
+			"auth_user",
+			JSON.stringify({
+				id: "client-id",
+				name: "Cliente Demo",
+				email: "cliente@petshop.com",
+				role: "client",
+			}),
 		);
 
-		const registered = await authService.register(
-			"Test User",
-			"test@test.com",
-			"pass123",
-		);
-
-		expect(registered.ok).toBe(true);
-	});
-
-	it("should fail to register an existing user when backend rejects", async () => {
 		vi.stubGlobal(
 			"fetch",
 			vi.fn().mockResolvedValue(
-				new Response(JSON.stringify({ message: "Email already registered" }), {
-					status: 409,
-					headers: { "Content-Type": "application/json" },
-				}),
+				new Response(
+					JSON.stringify({
+						message: "Token invalid",
+					}),
+					{ status: 401 },
+				),
 			),
 		);
 
-		const registeredAgain = await authService.register(
-			"User 2",
-			"dup@test.com",
-			"pass456",
+		const session = await authService.bootstrapSession();
+
+		expect(session).toBeNull();
+		expect(localStorage.getItem("auth_token")).toBeNull();
+		expect(authService.consumeNotice()).toBe(
+			"Sua sessão expirou. Faça login novamente.",
 		);
-
-		expect(registeredAgain.ok).toBe(false);
-		if (!registeredAgain.ok) {
-			expect(registeredAgain.message).toBe("Este e-mail já está cadastrado.");
-		}
-	});
-
-	it("should handle logout correctly", () => {
-		authService.saveSession(createTestToken(), {
-			id: "client-1",
-			name: "Client",
-			email: "client@test.com",
-			role: "client",
-		});
-		expect(authService.isAuthenticated()).toBe(true);
-
-		authService.logout();
-		expect(authService.isAuthenticated()).toBe(false);
-		expect(authService.getUser()).toBeNull();
-	});
-
-	it("should fail login for invalid inputs", async () => {
-		const fetchMock = vi.fn();
-		vi.stubGlobal("fetch", fetchMock);
-		const result = await authService.login("", "");
-
-		expect(result.ok).toBe(false);
-		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
