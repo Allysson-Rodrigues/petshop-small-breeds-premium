@@ -189,6 +189,7 @@ export default function Catalogo() {
           >
             <button
               onClick={() => setSelectedProduct(null)}
+              aria-label="Fechar modal"
               className="absolute top-3 right-3 md:top-4 md:right-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-black shadow-sm hover:opacity-70 transition-opacity"
             >
               <span className="material-symbols-outlined text-3xl">close</span>
