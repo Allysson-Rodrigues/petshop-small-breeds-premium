@@ -56,7 +56,7 @@ jobs:
     env:
       DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/petshop?schema=test
       JWT_SECRET: test-jwt-secret
-      CORS_ORIGIN: http://127.0.0.1:4173
+      CORS_ORIGIN: http://127.0.0.1:4173,http://localhost:4173,http://127.0.0.1:4273,http://localhost:4273
 
     steps:
       - name: Checkout
@@ -100,7 +100,7 @@ jobs:
       DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/petshop?schema=test
       E2E_DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/petshop?schema=e2e
       JWT_SECRET: test-jwt-secret
-      CORS_ORIGIN: http://127.0.0.1:4173
+      CORS_ORIGIN: http://127.0.0.1:4173,http://localhost:4173,http://127.0.0.1:4273,http://localhost:4273
       CI: true
 
     steps:
