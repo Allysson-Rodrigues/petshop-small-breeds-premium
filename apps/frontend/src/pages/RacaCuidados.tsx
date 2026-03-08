@@ -29,25 +29,25 @@ export default function RacaCuidados() {
             </Helmet>
 
             {/* ── HERO ── */}
-            <section className="relative bg-white border-b border-border-grey overflow-hidden min-h-[65vh] flex items-stretch">
+            <section className="relative bg-white border-b border-border-grey overflow-hidden min-h-[50vh] md:min-h-[65vh] flex items-stretch">
                 <div ref={heroRef} className="reveal-up w-full grid lg:grid-cols-2">
 
                     {/* Left — Text */}
-                    <div className="flex flex-col justify-center px-8 py-20 lg:px-16 lg:py-28">
+                    <div className="flex flex-col justify-center px-5 sm:px-8 py-14 sm:py-16 lg:px-16 lg:py-28">
                         <span className="text-[10px] font-medium uppercase tracking-[0.4em] text-medium-grey mb-6 block">
                             {breed.label}
                         </span>
-                        <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-light tracking-tight text-black leading-[0.95] mb-8">
+                        <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-light tracking-tight text-black leading-[0.95] mb-6 sm:mb-8">
                             {breed.name}
                         </h1>
-                        <div className="w-16 h-[2px] bg-black mb-8" />
+                        <div className="w-16 h-[2px] bg-black mb-6 sm:mb-8" />
                         <p className="text-base lg:text-lg text-charcoal font-light leading-relaxed max-w-md">
                             {breed.desc}
                         </p>
-                        <div className="mt-12">
+                        <div className="mt-10 sm:mt-12">
                             <Link
                                 to="/agendamento"
-                                className="inline-flex items-center gap-3 bg-black text-white px-8 py-4 text-xs font-medium uppercase tracking-[0.2em] hover:bg-neutral-800 transition-all duration-300 group"
+                                className="inline-flex min-h-11 items-center gap-3 bg-black text-white px-6 sm:px-8 py-4 text-[11px] sm:text-xs font-medium uppercase tracking-[0.2em] hover:bg-neutral-800 transition-all duration-300 group"
                             >
                                 Agendar para {breed.name}
                                 <span className="material-symbols-outlined text-base transition-transform duration-300 group-hover:translate-x-1">
@@ -58,7 +58,7 @@ export default function RacaCuidados() {
                     </div>
 
                     {/* Right — Image */}
-                    <div className="relative min-h-[400px] lg:min-h-0 bg-neutral-50 border-l border-border-grey overflow-hidden">
+                    <div className="relative min-h-[300px] sm:min-h-[400px] lg:min-h-0 bg-neutral-50 border-t lg:border-t-0 lg:border-l border-border-grey overflow-hidden">
                         <img
                             src={breed.image}
                             alt={breed.name}
@@ -71,8 +71,8 @@ export default function RacaCuidados() {
 
             {/* ── STATS BAR ── */}
             <section className="bg-black text-white">
-                <div ref={statsRef} className="reveal-up max-w-7xl mx-auto px-8">
-                    <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-white/10">
+                <div ref={statsRef} className="reveal-up max-w-7xl mx-auto px-4 sm:px-8">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 divide-y divide-white/10 sm:divide-y-0 sm:divide-x">
                         {breed.stats.map((stat) => (
                             <div key={stat.label} className="flex flex-col items-center py-8 px-6 text-center">
                                 <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-neutral-400 mb-2">
@@ -88,8 +88,8 @@ export default function RacaCuidados() {
             </section>
 
             {/* ── CARE SECTIONS ── */}
-            <section className="py-24 max-w-7xl mx-auto px-8 lg:px-16">
-                <div className="mb-16">
+            <section className="py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-8 lg:px-16">
+                <div className="mb-12 md:mb-16">
                     <span className="text-[10px] font-medium uppercase tracking-[0.4em] text-medium-grey">
                         Protocolo de Cuidados
                     </span>
@@ -98,7 +98,7 @@ export default function RacaCuidados() {
                     {breed.care.map((item, i) => (
                         <div
                             key={item.title}
-                            className="grid lg:grid-cols-12 gap-8 py-12 group"
+                            className="grid lg:grid-cols-12 gap-6 md:gap-8 py-10 md:py-12 group"
                             style={{ transitionDelay: `${i * 150}ms` }}
                         >
                             <div className="lg:col-span-1 flex lg:flex-col items-start gap-4">
@@ -110,7 +110,7 @@ export default function RacaCuidados() {
                                 <span className="material-symbols-outlined text-3xl text-charcoal mb-4 block opacity-60 group-hover:opacity-100 transition-opacity duration-300">
                                     {item.icon}
                                 </span>
-                                <h2 className="text-xl font-medium uppercase tracking-tight text-black mb-1">
+                                <h2 className="text-lg sm:text-xl font-medium uppercase tracking-tight text-black mb-1">
                                     {item.title}
                                 </h2>
                                 <span className="text-xs font-medium uppercase tracking-widest text-medium-grey">
@@ -118,7 +118,7 @@ export default function RacaCuidados() {
                                 </span>
                             </div>
                             <div className="lg:col-span-7 lg:col-start-6 flex items-center">
-                                <p className="text-base text-charcoal font-light leading-relaxed">
+                                <p className="text-sm sm:text-base text-charcoal font-light leading-relaxed">
                                     {item.desc}
                                 </p>
                             </div>
@@ -128,12 +128,12 @@ export default function RacaCuidados() {
             </section>
 
             {/* ── CTA ── */}
-            <section className="bg-neutral-50 border-t border-border-grey py-24">
-                <div ref={ctaRef} className="reveal-up max-w-4xl mx-auto px-8 text-center">
+            <section className="bg-neutral-50 border-t border-border-grey py-16 md:py-24">
+                <div ref={ctaRef} className="reveal-up max-w-4xl mx-auto px-4 sm:px-8 text-center">
                     <span className="text-[10px] font-medium uppercase tracking-[0.4em] text-medium-grey mb-6 block">
                         Consultas disponíveis Seg — Sáb
                     </span>
-                    <h2 className="text-4xl md:text-5xl font-light tracking-tight text-black mb-4">
+                    <h2 className="text-3xl md:text-5xl font-light tracking-tight text-black mb-4">
                         Pronto para agendar?
                     </h2>
                     <p className="text-base text-medium-grey font-light mb-12 max-w-lg mx-auto leading-relaxed">
@@ -142,7 +142,7 @@ export default function RacaCuidados() {
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Link
                             to="/agendamento"
-                            className="inline-flex items-center justify-center gap-2 bg-black text-white px-10 py-5 text-xs font-medium uppercase tracking-[0.2em] hover:bg-neutral-800 transition-all duration-300 group"
+                            className="inline-flex min-h-11 items-center justify-center gap-2 bg-black text-white px-8 md:px-10 py-4 md:py-5 text-[11px] md:text-xs font-medium uppercase tracking-[0.2em] hover:bg-neutral-800 transition-all duration-300 group"
                         >
                             Agendar para {breed.name}
                             <span className="material-symbols-outlined text-base transition-transform duration-300 group-hover:translate-x-1">
@@ -151,7 +151,7 @@ export default function RacaCuidados() {
                         </Link>
                         <Link
                             to="/servicos"
-                            className="inline-flex items-center justify-center border border-charcoal px-10 py-5 text-xs font-medium uppercase tracking-[0.2em] text-charcoal hover:bg-charcoal hover:text-white transition-all duration-300"
+                            className="inline-flex min-h-11 items-center justify-center border border-charcoal px-8 md:px-10 py-4 md:py-5 text-[11px] md:text-xs font-medium uppercase tracking-[0.2em] text-charcoal hover:bg-charcoal hover:text-white transition-all duration-300"
                         >
                             Ver todos os serviços
                         </Link>

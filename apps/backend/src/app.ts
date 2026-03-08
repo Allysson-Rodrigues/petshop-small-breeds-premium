@@ -54,6 +54,7 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 	const statusCode = err instanceof AppError ? err.statusCode : 500;
 	const message = err.message || "Internal server error";
+	const errors = err instanceof AppError ? err.errors : undefined;
 
 	if (statusCode === 500) {
 		console.error(`[CRITICAL] ${err.stack || err.message}`);
@@ -65,6 +66,7 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 		status: "error",
 		type: err.name,
 		message,
+		...(errors ? { errors } : {}),
 	});
 });
 
