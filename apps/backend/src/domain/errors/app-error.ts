@@ -2,6 +2,7 @@ export class AppError extends Error {
 	constructor(
 		public readonly message: string,
 		public readonly statusCode = 400,
+		public readonly errors?: Record<string, string[]>,
 	) {
 		super(message);
 		this.name = "AppError";
@@ -37,8 +38,8 @@ export class ServerError extends AppError {
 }
 
 export class InputValidationError extends AppError {
-	constructor(message: string) {
-		super(message, 422);
+	constructor(message: string, errors?: Record<string, string[]>) {
+		super(message, 422, errors);
 		this.name = "InputValidationError";
 	}
 }
