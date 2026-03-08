@@ -12,15 +12,18 @@
     "dev:seed": "prisma generate --schema=./prisma/schema.prisma && prisma db push --schema=./prisma/schema.prisma && prisma db seed --schema=./prisma/schema.prisma && tsx watch src/server.ts",
     "build": "tsc",
     "type-check": "tsc --noEmit",
-    "test": "npm run test:unit",
+    "test": "vitest run",
     "test:unit": "vitest run --config vitest.config.ts",
     "test:integration": "vitest run --config vitest.integration.config.ts",
+    "test:watch": "vitest",
     "start": "node dist/server.js",
+    "start:test": "npm run prisma:push && npm run prisma:seed && tsx src/server.ts",
     "lint": "biome check src",
     "lint:fix": "biome check --write src",
     "format": "biome format --write src",
     "prisma:generate": "prisma generate --schema=./prisma/schema.prisma",
-    "prisma:push": "prisma db push --schema=./prisma/schema.prisma"
+    "prisma:push": "prisma db push --schema=./prisma/schema.prisma",
+    "prisma:seed": "prisma db seed --schema=./prisma/schema.prisma"
   },
   "prisma": {
     "seed": "./node_modules/.bin/tsx prisma/seed.ts"
