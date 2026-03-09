@@ -107,6 +107,16 @@ export default function OverviewTab({
 			historyPoint.newClients,
 		]),
 	);
+	const visibleLowStockProducts = adminOverview.lowStockProducts.slice(0, 3);
+	const hiddenLowStockProductsCount = Math.max(
+		adminOverview.lowStockProducts.length - visibleLowStockProducts.length,
+		0,
+	);
+	const visibleRecentActivity = adminOverview.recentActivity.slice(0, 3);
+	const hiddenRecentActivityCount = Math.max(
+		adminOverview.recentActivity.length - visibleRecentActivity.length,
+		0,
+	);
 
 	return (
 		<div className="mx-auto flex max-w-7xl flex-col gap-6 md:gap-8">
@@ -206,7 +216,7 @@ export default function OverviewTab({
 					</div>
 
 					{isAdmin ? (
-						<div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+						<div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-3">
 							<div className="space-y-6 xl:col-span-2">
 								<section className="rounded-2xl border border-[#e5e5e5] bg-white p-6 shadow-sm">
 									<div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
@@ -397,50 +407,48 @@ export default function OverviewTab({
 								</div>
 							</div>
 
-							<div className="space-y-6">
-								<section className="flex h-full flex-col justify-between rounded-xl border border-[#e5e5e5] bg-white p-6">
-									<div>
-										<h3 className="mb-4 flex items-center gap-2 font-bold text-primary">
-											<span className="material-symbols-outlined text-primary">
-												bolt
-											</span>
-											Atalhos
-										</h3>
-										<div className="space-y-3">
-											<button
-												className="group w-full rounded-xl border border-[#e5e5e5] p-4 text-left transition-all hover:border-primary/30 hover:bg-gray-50"
-												onClick={() => setActiveTab("inventory")}
-											>
-												<p className="text-sm font-bold group-hover:text-primary">
-													Inventário
-												</p>
-												<p className="text-xs text-gray-500">
-													Gestão de estoque e itens críticos.
-												</p>
-											</button>
-											<button
-												className="group w-full rounded-xl border border-[#e5e5e5] p-4 text-left transition-all hover:border-primary/30 hover:bg-gray-50"
-												onClick={() => setActiveTab("clients")}
-											>
-												<p className="text-sm font-bold group-hover:text-primary">
-													Clientes
-												</p>
-												<p className="text-xs text-gray-500">
-													Base cadastral e acompanhamento comercial.
-												</p>
-											</button>
-											<button
-												className="group w-full rounded-xl border border-[#e5e5e5] p-4 text-left transition-all hover:border-primary/30 hover:bg-gray-50"
-												onClick={() => setActiveTab("appointments")}
-											>
-												<p className="text-sm font-bold group-hover:text-primary">
-													Agenda
-												</p>
-												<p className="text-xs text-gray-500">
-													Operação diária e solicitações públicas.
-												</p>
-											</button>
-										</div>
+							<div className="space-y-6 xl:self-start">
+								<section className="rounded-xl border border-[#e5e5e5] bg-white p-6 shadow-sm">
+									<h3 className="mb-4 flex items-center gap-2 font-bold text-primary">
+										<span className="material-symbols-outlined text-primary">
+											bolt
+										</span>
+										Atalhos
+									</h3>
+									<div className="space-y-3">
+										<button
+											className="group w-full rounded-xl border border-[#e5e5e5] p-4 text-left transition-all hover:border-primary/30 hover:bg-gray-50"
+											onClick={() => setActiveTab("inventory")}
+										>
+											<p className="text-sm font-bold group-hover:text-primary">
+												Inventário
+											</p>
+											<p className="text-xs text-gray-500">
+												Gestão de estoque e itens críticos.
+											</p>
+										</button>
+										<button
+											className="group w-full rounded-xl border border-[#e5e5e5] p-4 text-left transition-all hover:border-primary/30 hover:bg-gray-50"
+											onClick={() => setActiveTab("clients")}
+										>
+											<p className="text-sm font-bold group-hover:text-primary">
+												Clientes
+											</p>
+											<p className="text-xs text-gray-500">
+												Base cadastral e acompanhamento comercial.
+											</p>
+										</button>
+										<button
+											className="group w-full rounded-xl border border-[#e5e5e5] p-4 text-left transition-all hover:border-primary/30 hover:bg-gray-50"
+											onClick={() => setActiveTab("appointments")}
+										>
+											<p className="text-sm font-bold group-hover:text-primary">
+												Agenda
+											</p>
+											<p className="text-xs text-gray-500">
+												Operação diária e solicitações públicas.
+											</p>
+										</button>
 									</div>
 								</section>
 
@@ -460,8 +468,8 @@ export default function OverviewTab({
 									</div>
 
 									{adminOverview.lowStockProducts.length > 0 ? (
-										<div className="max-h-72 space-y-3 overflow-y-auto pr-1">
-											{adminOverview.lowStockProducts.map((product) => (
+										<div className="space-y-3">
+											{visibleLowStockProducts.map((product) => (
 												<div
 													key={product.id}
 													className="rounded-xl border border-red-100 bg-red-50/70 p-4"
@@ -481,6 +489,15 @@ export default function OverviewTab({
 													</div>
 												</div>
 											))}
+											{hiddenLowStockProductsCount > 0 ? (
+												<button
+													className="w-full rounded-xl border border-dashed border-red-200 px-4 py-3 text-sm font-semibold text-red-700 transition-colors hover:bg-red-50"
+													onClick={() => setActiveTab("inventory")}
+												>
+													Ver mais {hiddenLowStockProductsCount} item(ns) no
+													inventário
+												</button>
+											) : null}
 										</div>
 									) : (
 										<div className="rounded-xl border border-dashed border-[#e5e5e5] px-4 py-6 text-center text-sm text-gray-400">
@@ -503,8 +520,8 @@ export default function OverviewTab({
 									</div>
 
 									{adminOverview.recentActivity.length > 0 ? (
-										<div className="max-h-80 space-y-2 overflow-y-auto pr-1">
-											{adminOverview.recentActivity.map((activityItem) => (
+										<div className="space-y-2">
+											{visibleRecentActivity.map((activityItem) => (
 												<div
 													key={activityItem.id}
 													className={`rounded-lg border p-3 ${
@@ -542,6 +559,14 @@ export default function OverviewTab({
 													</div>
 												</div>
 											))}
+											{hiddenRecentActivityCount > 0 ? (
+												<button
+													className="w-full rounded-xl border border-dashed border-[#d9e6ff] px-4 py-3 text-sm font-semibold text-primary transition-colors hover:bg-blue-50"
+													onClick={() => setActiveTab("appointments")}
+												>
+													Ver mais {hiddenRecentActivityCount} evento(s) na agenda
+												</button>
+											) : null}
 										</div>
 									) : (
 										<div className="rounded-xl border border-dashed border-[#e5e5e5] px-4 py-6 text-center text-sm text-gray-400">
