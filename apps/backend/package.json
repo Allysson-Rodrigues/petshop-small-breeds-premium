@@ -24,9 +24,6 @@
     "prisma:push": "prisma db push --schema=./prisma/schema.prisma",
     "prisma:seed": "prisma db seed --schema=./prisma/schema.prisma"
   },
-  "prisma": {
-    "seed": "./node_modules/.bin/tsx prisma/seed.ts"
-  },
   "license": "MIT",
   "dependencies": {
     "@prisma/client": "^6.4.1",

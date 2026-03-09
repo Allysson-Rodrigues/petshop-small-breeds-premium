@@ -14,13 +14,10 @@ import {
 
 const router = Router();
 
-if (process.env.NODE_ENV === "production") {
-	router.use(authRateLimiter);
-}
-
-router.post("/register", adaptRoute(registerController));
+router.post("/register", authRateLimiter, adaptRoute(registerController));
 router.post(
 	"/login",
+	authRateLimiter,
 	adaptAsyncHandler(async (req, res) => {
 		const httpResponse = await loginController.handle({
 			body: req.body,

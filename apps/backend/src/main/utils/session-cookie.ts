@@ -1,15 +1,24 @@
 import type { CookieOptions, Response } from "express";
-import { getAuthCookieName, isProductionEnvironment } from "../config/env.js";
+import {
+	getAuthCookieDomain,
+	getAuthCookieMaxAgeMs,
+	getAuthCookieName,
+	getAuthCookieSameSite,
+	shouldUseSecureAuthCookie,
+} from "../config/env.js";
 
-const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
+export const buildCookieOptions = (): CookieOptions => {
+	const domain = getAuthCookieDomain();
 
-const buildCookieOptions = (): CookieOptions => ({
-	httpOnly: true,
-	sameSite: "lax",
-	secure: isProductionEnvironment(),
-	path: "/",
-	maxAge: ONE_DAY_IN_MS,
-});
+	return {
+		httpOnly: true,
+		sameSite: getAuthCookieSameSite(),
+		secure: shouldUseSecureAuthCookie(),
+		path: "/",
+		maxAge: getAuthCookieMaxAgeMs(),
+		...(domain ? { domain } : {}),
+	};
+};
 
 export const setAuthCookie = (response: Response, token: string) => {
 	response.cookie(getAuthCookieName(), token, buildCookieOptions());

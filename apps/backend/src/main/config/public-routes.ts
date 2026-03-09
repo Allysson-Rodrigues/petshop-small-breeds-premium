@@ -2,12 +2,14 @@ import { Router } from "express";
 import { createBookingRequestSchema } from "../../domain/schemas/validation.js";
 import { prisma } from "../../infrastructure/prisma/client.js";
 import { adaptAsyncHandler } from "../adapters/express-route-adapter.js";
+import { publicBookingRateLimiter } from "../middlewares/rate-limiter.js";
 import { parseSchema } from "../utils/validation.js";
 
 const router = Router();
 
 router.post(
 	"/booking-requests",
+	publicBookingRateLimiter,
 	adaptAsyncHandler(async (req, res) => {
 		const bookingRequestInput = parseSchema(
 			createBookingRequestSchema,

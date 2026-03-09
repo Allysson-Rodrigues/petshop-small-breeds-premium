@@ -1,3 +1,5 @@
+import type { CookieOptions } from "express";
+
 const normalizeList = (value: string | undefined): string[] => {
 	if (!value) return [];
 	return value
@@ -34,8 +36,67 @@ export const getAuthCookieName = (): string => {
 	return process.env.AUTH_COOKIE_NAME?.trim() || "petshop_session";
 };
 
+export const getAuthCookieDomain = (): string | undefined => {
+	const domain = process.env.AUTH_COOKIE_DOMAIN?.trim();
+	return domain ? domain : undefined;
+};
+
+export const getAuthCookieMaxAgeMs = (): number => {
+	const rawValue = process.env.AUTH_COOKIE_MAX_AGE_MS?.trim();
+	if (!rawValue) {
+		return 24 * 60 * 60 * 1000;
+	}
+
+	const parsedValue = Number(rawValue);
+	if (!Number.isFinite(parsedValue) || parsedValue <= 0) {
+		throw new Error(
+			"AUTH_COOKIE_MAX_AGE_MS must be a positive number when configured.",
+		);
+	}
+
+	return parsedValue;
+};
+
+export const getAuthCookieSameSite = (): CookieOptions["sameSite"] => {
+	const rawValue = process.env.AUTH_COOKIE_SAME_SITE?.trim().toLowerCase();
+	if (!rawValue) {
+		return "lax";
+	}
+
+	if (rawValue === "lax" || rawValue === "strict" || rawValue === "none") {
+		return rawValue;
+	}
+
+	throw new Error(
+		'AUTH_COOKIE_SAME_SITE must be one of "lax", "strict" or "none".',
+	);
+};
+
 export const isProductionEnvironment = (): boolean =>
 	process.env.NODE_ENV === "production";
+
+export const shouldUseSecureAuthCookie = (): boolean => {
+	const sameSite = getAuthCookieSameSite();
+	const rawValue = process.env.AUTH_COOKIE_SECURE?.trim().toLowerCase();
+
+	if (sameSite === "none") {
+		return true;
+	}
+
+	if (rawValue === "true") {
+		return true;
+	}
+
+	if (rawValue === "false") {
+		return false;
+	}
+
+	return isProductionEnvironment();
+};
+
+export const isRateLimitEnforced = (): boolean =>
+	process.env.NODE_ENV === "production" ||
+	process.env.ENABLE_RATE_LIMIT === "true";
 
 export const getAllowedCorsOrigins = (): string[] => {
 	const configuredOrigins = normalizeList(process.env.CORS_ORIGIN);
