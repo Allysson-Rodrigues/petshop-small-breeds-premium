@@ -1,6 +1,6 @@
 # Backend
 
-REST API built with Express 5, Prisma, PostgreSQL, and JWT authentication.
+REST API built with Express 5, Prisma, PostgreSQL, and JWT-based session authentication via HTTP-only cookies.
 
 ## Stack
 
@@ -17,8 +17,10 @@ REST API built with Express 5, Prisma, PostgreSQL, and JWT authentication.
 | --- | --- | --- |
 | `GET` | `/api/health` | Health check |
 | `POST` | `/api/auth/register` | Registration |
-| `POST` | `/api/auth/login` | Login |
+| `POST` | `/api/auth/login` | Login and session cookie issuance |
+| `POST` | `/api/auth/logout` | Session cookie cleanup |
 | `GET` | `/api/auth/me` | Authenticated session hydration |
+| `POST` | `/api/public/booking-requests` | Public booking request intake |
 | `GET` | `/api/dashboard/customer` | Customer dashboard |
 | `GET` | `/api/dashboard/admin` | Admin dashboard |
 | `GET/POST/PUT/DELETE` | `/api/dashboard/pets` | Pet CRUD |
@@ -53,6 +55,8 @@ Local values:
 ```env
 DATABASE_URL="postgresql://postgres:postgres@127.0.0.1:5432/petshop?schema=public"
 JWT_SECRET="change-me-to-a-strong-random-secret"
+AUTH_COOKIE_NAME="petshop_session"
+ALLOW_DEMO_SEED="false"
 CORS_ORIGIN="http://localhost:5173,http://127.0.0.1:5173"
 ```
 
@@ -83,6 +87,8 @@ npm run lint
 npm run type-check
 ```
 
+`npm run prisma:seed` only runs in `test` or in local development with `ALLOW_DEMO_SEED=true`.
+
 ## Local Docker
 
 Start PostgreSQL:
@@ -102,6 +108,7 @@ docker compose up --build
 Tests use a real PostgreSQL database with seed-based resets. The suite covers:
 
 - auth
+- public booking requests
 - `/auth/me`
 - role-based restrictions
 - creation and update of critical resources

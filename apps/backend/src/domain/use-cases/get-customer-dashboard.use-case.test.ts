@@ -35,6 +35,10 @@ const mockAppointments: Appointment[] = [
 function makeStubs() {
 	const petRepository: PetRepository = {
 		findAll: vi.fn(),
+		findRecent: vi.fn(),
+		countAll: vi.fn(),
+		countByOwnerIds: vi.fn(),
+		findById: vi.fn(),
 		findByUserId: vi.fn().mockResolvedValue(mockPets),
 		create: vi.fn(),
 		update: vi.fn(),
@@ -42,6 +46,8 @@ function makeStubs() {
 	};
 	const appointmentRepository: AppointmentRepository = {
 		findAll: vi.fn(),
+		countAll: vi.fn(),
+		findById: vi.fn(),
 		findByUserId: vi.fn().mockResolvedValue(mockAppointments),
 		create: vi.fn(),
 		updateStatus: vi.fn(),

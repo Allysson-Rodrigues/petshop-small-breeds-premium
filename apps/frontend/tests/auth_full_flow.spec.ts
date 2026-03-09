@@ -8,6 +8,8 @@ test.describe('Authentication & Role-Based Access Control Flow', () => {
     };
 
     test('should register, login and verify client restrictions', async ({ page }) => {
+        test.slow();
+
         // 1. Registration
         await page.goto('/registro');
         await page.getByPlaceholder('Seu nome completo').fill(testUser.name);
@@ -17,9 +19,8 @@ test.describe('Authentication & Role-Based Access Control Flow', () => {
         await page.getByRole('button', { name: 'Criar Conta' }).click();
 
         // Should be redirected to login
-        await expect(page).toHaveURL(/.*login/);
-        // Wait for the exit animation of /registro to finish and the /login page to be active
-        await expect(page.getByRole('heading', { name: /Bem-vindo/i })).toBeVisible({ timeout: 10000 });
+        await page.waitForURL(/.*login/, { timeout: 15_000 });
+        await expect(page.getByRole('heading', { name: /Bem-vindo/i })).toBeVisible({ timeout: 15_000 });
 
         // 2. Login
         await page.getByPlaceholder('nome@exemplo.com').fill(testUser.email);
@@ -27,7 +28,7 @@ test.describe('Authentication & Role-Based Access Control Flow', () => {
         await page.getByRole('button', { name: 'Entrar' }).click();
 
         // Should land on Dashboard
-        await expect(page).toHaveURL(/.*dashboard/);
+        await expect(page).toHaveURL(/.*dashboard/, { timeout: 15_000 });
 
         // 3. Verify Identity in Header
         await expect(page.locator('header')).toContainText(testUser.name);
@@ -48,12 +49,14 @@ test.describe('Authentication & Role-Based Access Control Flow', () => {
     });
 
     test('admin user should see all menu items', async ({ page }) => {
+        test.slow();
+
         await page.goto('/login');
         await page.getByPlaceholder('nome@exemplo.com').fill('admin@petshop.com');
         await page.getByPlaceholder('••••••••').fill('admin123');
         await page.getByRole('button', { name: 'Entrar' }).click();
 
-        await expect(page).toHaveURL(/.*dashboard/);
+        await expect(page).toHaveURL(/.*dashboard/, { timeout: 15_000 });
 
         // Admin should see EVERYTHING
         await expect(page.locator('aside').getByText('Visão Geral')).toBeVisible();

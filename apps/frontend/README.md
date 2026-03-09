@@ -27,7 +27,8 @@ npm run test:e2e
 ## Main contracts
 
 - `VITE_API_BASE_URL`: base API endpoint
-- JWT Bearer authentication validated during boot through `GET /api/auth/me`
+- session auth via HTTP-only cookie, hydrated through `GET /api/auth/me`
+- public booking requests sent to `POST /api/public/booking-requests`
 - formal guards:
   - `ProtectedRoute`
   - `GuestOnlyRoute`
