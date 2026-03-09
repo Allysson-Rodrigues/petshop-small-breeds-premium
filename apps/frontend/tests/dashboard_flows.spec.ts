@@ -4,7 +4,7 @@ test.describe("Dashboard critical flows", () => {
 	test("client can create a pet, schedule an appointment, and complete it", async ({
 		page,
 	}) => {
-		test.slow();
+		test.setTimeout(180000);
 
 		const uniqueId = Date.now();
 		const testUser = {

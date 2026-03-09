@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { PrismaUserRepository } from "../../infrastructure/prisma/prisma-user.repository.js";
 import { getJwtSecret } from "../config/env.js";
+import { sendErrorResponse } from "../utils/error-response.js";
 import { readCookie } from "../utils/session-cookie.js";
 
 const secret = getJwtSecret();
@@ -12,6 +13,17 @@ export const authMiddleware = (
 	res: Response,
 	next: NextFunction,
 ) => {
+	const rejectRequest = (code: string, message: string) => {
+		console.warn(`[AUTH][${req.requestId ?? "unknown"}] ${code}: ${message}`);
+
+		return sendErrorResponse(res, {
+			statusCode: 401,
+			code,
+			type: "UnauthorizedError",
+			message,
+		});
+	};
+
 	void (async () => {
 		const cookieToken = readCookie(req.headers.cookie);
 		const authHeader = req.headers.authorization;
@@ -21,20 +33,20 @@ export const authMiddleware = (
 			const parts = authHeader.split(" ");
 
 			if (parts.length !== 2) {
-				return res.status(401).json({ message: "Token error" });
+				return rejectRequest("AUTH_TOKEN_ERROR", "Token error");
 			}
 
 			const [scheme, bearerToken] = parts;
 
 			if (!scheme || !/^Bearer$/i.test(scheme)) {
-				return res.status(401).json({ message: "Token malformatted" });
+				return rejectRequest("AUTH_TOKEN_MALFORMATTED", "Token malformatted");
 			}
 
 			token = bearerToken ?? null;
 		}
 
 		if (!token) {
-			return res.status(401).json({ message: "Authentication required" });
+			return rejectRequest("AUTH_REQUIRED", "Authentication required");
 		}
 
 		try {
@@ -44,18 +56,18 @@ export const authMiddleware = (
 				decoded === null ||
 				!("id" in decoded)
 			) {
-				return res.status(401).json({ message: "Token invalid" });
+				return rejectRequest("AUTH_TOKEN_INVALID", "Token invalid");
 			}
 
 			const userId = decoded.id;
 			if (typeof userId !== "string") {
-				return res.status(401).json({ message: "Token invalid" });
+				return rejectRequest("AUTH_TOKEN_INVALID", "Token invalid");
 			}
 
 			const user = await userRepository.findById(userId);
 
 			if (!user) {
-				return res.status(401).json({ message: "User not found" });
+				return rejectRequest("AUTH_USER_NOT_FOUND", "User not found");
 			}
 
 			req.auth = {
@@ -66,7 +78,7 @@ export const authMiddleware = (
 			};
 			return next();
 		} catch {
-			return res.status(401).json({ message: "Token invalid" });
+			return rejectRequest("AUTH_TOKEN_INVALID", "Token invalid");
 		}
 	})().catch(next);
 };

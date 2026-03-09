@@ -1,10 +1,12 @@
 import type {
 	AdminDashboardData,
 	ApiAppointment,
+	ApiBookingRequest,
 	ApiClient,
 	ApiPet,
 	ApiProduct,
 	AppointmentStatus,
+	BookingRequestStatus,
 	CreateAppointmentInput,
 	CreatePetInput,
 	DashboardData,
@@ -38,10 +40,12 @@ const request = async <T>(
 export type {
 	AdminDashboardData,
 	ApiAppointment,
+	ApiBookingRequest,
 	ApiClient,
 	ApiPet,
 	ApiProduct,
 	AppointmentStatus,
+	BookingRequestStatus,
 	CreateAppointmentInput,
 	CreatePetInput,
 	DashboardData,
@@ -77,6 +81,16 @@ export const dashboardService = {
 		}),
 	deleteAppointment: (id: string) =>
 		request<void>(`/dashboard/appointments/${id}`, { method: "DELETE" }),
+	getBookingRequests: () =>
+		request<ApiBookingRequest[]>("/dashboard/booking-requests"),
+	updateBookingRequestStatus: (
+		id: string,
+		status: BookingRequestStatus,
+	) =>
+		request<ApiBookingRequest>(`/dashboard/booking-requests/${id}`, {
+			method: "PUT",
+			body: JSON.stringify({ status }),
+		}),
 	getClients: () => request<ApiClient[]>("/dashboard/clients"),
 	updateClient: (id: string, data: Partial<ApiClient>) =>
 		request<ApiClient>(`/dashboard/clients/${id}`, {

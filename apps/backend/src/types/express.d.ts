@@ -9,5 +9,6 @@ declare module "express-serve-static-core" {
 			email: string;
 			name: string;
 		};
+		requestId?: string;
 	}
 }

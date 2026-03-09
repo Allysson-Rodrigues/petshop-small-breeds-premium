@@ -1,8 +1,18 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { dashboardService, type ApiProduct } from "../../../services/dashboardService";
+import { DashboardActionButton } from "../components/DashboardActionButton";
+import {
+  DashboardCollectionPanel,
+  DashboardFormField,
+  DashboardFormGrid,
+  DashboardInlineForm,
+  dashboardInputClassName,
+  dashboardSelectClassName,
+} from "../components/DashboardForm";
+import { ResponsiveCollectionView } from "../components/ResponsiveCollectionView";
 import { TabSectionHeader } from "../components/TabSectionHeader";
-import { TabEmptyState, TabLoadingState } from "../components/TabState";
+import { TabLoadingState } from "../components/TabState";
+import { useInventoryData } from "../hooks/useDashboardData";
 
 interface InventoryTabProps {
   showToast: (message: string) => void;
@@ -28,24 +38,22 @@ const levelClass = (level: string) => {
 };
 
 export default function InventoryTab({ showToast, searchQuery = "" }: InventoryTabProps) {
-  const [products, setProducts] = useState<ApiProduct[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    addProduct,
+    loading,
+    products,
+    removeProduct,
+    updateProductInList,
+  } = useInventoryData(showToast);
   const [isEditing, setIsEditing] = useState(false);
   const [currentItem, setCurrentItem] = useState<ProductForm>(emptyForm);
-
-  useEffect(() => {
-    dashboardService.getProducts()
-      .then(setProducts)
-      .catch(() => showToast("Falha ao carregar estoque."))
-      .finally(() => setLoading(false));
-  }, []);
 
   const handleRestock = async (id: string, name: string) => {
     const product = products.find((p) => p.id === id);
     if (!product) return;
     try {
       const updated = await dashboardService.updateProduct(id, { stock: product.stock + 10 });
-      setProducts((prev) => prev.map((p) => (p.id === id ? updated : p)));
+      updateProductInList(id, () => updated);
       showToast(`Estoque de ${name} atualizado (+10)!`);
     } catch {
       showToast("Falha ao repor estoque.");
@@ -65,7 +73,7 @@ export default function InventoryTab({ showToast, searchQuery = "" }: InventoryT
   const handleDelete = async (id: string, name: string) => {
     try {
       await dashboardService.deleteProduct(id);
-      setProducts((prev) => prev.filter((p) => p.id !== id));
+      removeProduct(id);
       showToast(`${name} removido do estoque.`);
     } catch {
       showToast("Falha ao excluir item.");
@@ -87,11 +95,11 @@ export default function InventoryTab({ showToast, searchQuery = "" }: InventoryT
     try {
       if (currentItem.id) {
         const updated = await dashboardService.updateProduct(currentItem.id, data);
-        setProducts((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
+        updateProductInList(currentItem.id, () => updated);
         showToast(`${currentItem.name} atualizado!`);
       } else {
         const created = await dashboardService.createProduct(data);
-        setProducts((prev) => [...prev, created]);
+        addProduct(created);
         showToast(`${currentItem.name} adicionado!`);
       }
       setIsEditing(false);
@@ -120,146 +128,175 @@ export default function InventoryTab({ showToast, searchQuery = "" }: InventoryT
         }
       />
 
-      <div className={`bg-white rounded-2xl border border-[#e5e5e5] shadow-sm relative transition-all duration-300 ${isEditing ? "border-primary/20 shadow-md" : "overflow-hidden"}`}>
+      <DashboardCollectionPanel isEditing={isEditing}>
         {isEditing && (
-          <div className="bg-white/98 z-10 flex flex-col p-6 md:p-8 backdrop-blur-md animate-in fade-in zoom-in-95 duration-300 rounded-2xl min-h-[400px]">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-primary">{currentItem.id ? "Editar Item" : "Novo Item"}</h2>
-              <button onClick={() => setIsEditing(false)} className="text-gray-400 hover:text-primary transition-colors" title="Fechar">
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
-              <div className="col-span-1 sm:col-span-2 space-y-1.5">
-                <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider ml-1">Nome</label>
-                <input type="text" placeholder="Nome do Produto" value={currentItem.name}
-                  onChange={(e) => setCurrentItem({ ...currentItem, name: e.target.value })}
-                  className="w-full border border-[#e5e5e5] rounded-xl p-3.5 text-sm outline-none focus:ring-2 focus:ring-primary/5 focus:border-primary transition-all bg-gray-50/30" />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider ml-1">Categoria</label>
-                <select value={currentItem.category} onChange={(e) => setCurrentItem({ ...currentItem, category: e.target.value })}
-                  className="w-full border border-[#e5e5e5] rounded-xl p-3.5 text-sm outline-none focus:ring-2 focus:ring-primary/5 focus:border-primary transition-all bg-white">
+          <DashboardInlineForm
+            onCancel={() => setIsEditing(false)}
+            onClose={() => setIsEditing(false)}
+            onSubmit={saveItem}
+            submitLabel="Salvar"
+            title={currentItem.id ? "Editar Item" : "Novo Item"}
+          >
+            <DashboardFormGrid className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+              <DashboardFormField className="col-span-1 sm:col-span-2" label="Nome">
+                <input
+                  type="text"
+                  placeholder="Nome do Produto"
+                  value={currentItem.name}
+                  onChange={(e) =>
+                    setCurrentItem({ ...currentItem, name: e.target.value })
+                  }
+                  className={dashboardInputClassName}
+                />
+              </DashboardFormField>
+              <DashboardFormField label="Categoria">
+                <select
+                  value={currentItem.category}
+                  onChange={(e) =>
+                    setCurrentItem({
+                      ...currentItem,
+                      category: e.target.value,
+                    })
+                  }
+                  className={dashboardSelectClassName}
+                >
                   <option value="FOOD">Alimentação</option>
                   <option value="ACCESSORY">Acessórios</option>
                 </select>
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider ml-1">Preço (R$)</label>
-                <input type="number" step="0.01" placeholder="0.00" value={currentItem.price}
-                  onChange={(e) => setCurrentItem({ ...currentItem, price: e.target.value })}
-                  className="w-full border border-[#e5e5e5] rounded-xl p-3.5 text-sm outline-none focus:ring-2 focus:ring-primary/5 focus:border-primary transition-all bg-gray-50/30" />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider ml-1">Estoque</label>
-                <input type="number" placeholder="0" value={currentItem.stock}
-                  onChange={(e) => setCurrentItem({ ...currentItem, stock: e.target.value })}
-                  className="w-full border border-[#e5e5e5] rounded-xl p-3.5 text-sm outline-none focus:ring-2 focus:ring-primary/5 focus:border-primary transition-all bg-gray-50/30" />
-              </div>
-              <div className="col-span-1 sm:col-span-2 lg:col-span-3 space-y-1.5">
-                <label className="text-xs font-semibold text-gray-400 uppercase tracking-wider ml-1">Descrição</label>
-                <input type="text" placeholder="Descrição do produto" value={currentItem.description}
-                  onChange={(e) => setCurrentItem({ ...currentItem, description: e.target.value })}
-                  className="w-full border border-[#e5e5e5] rounded-xl p-3.5 text-sm outline-none focus:ring-2 focus:ring-primary/5 focus:border-primary transition-all bg-gray-50/30" />
-              </div>
-            </div>
-            <div className="flex flex-col sm:flex-row justify-end gap-3 mt-4 pt-6 border-t border-gray-100">
-              <button onClick={() => setIsEditing(false)} className="px-6 py-2.5 text-sm font-semibold text-gray-500 hover:bg-gray-100 rounded-xl transition-colors order-2 sm:order-1">Cancelar</button>
-              <button onClick={saveItem} className="bg-neutral-900 text-white px-10 py-3 rounded-xl text-sm font-bold hover:bg-neutral-800 transition-all shadow-lg shadow-black/10 order-1 sm:order-2 active:scale-[0.98]">Salvar</button>
-            </div>
-          </div>
+              </DashboardFormField>
+              <DashboardFormField label="Preço (R$)">
+                <input
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
+                  value={currentItem.price}
+                  onChange={(e) =>
+                    setCurrentItem({ ...currentItem, price: e.target.value })
+                  }
+                  className={dashboardInputClassName}
+                />
+              </DashboardFormField>
+              <DashboardFormField label="Estoque">
+                <input
+                  type="number"
+                  placeholder="0"
+                  value={currentItem.stock}
+                  onChange={(e) =>
+                    setCurrentItem({ ...currentItem, stock: e.target.value })
+                  }
+                  className={dashboardInputClassName}
+                />
+              </DashboardFormField>
+              <DashboardFormField
+                className="col-span-1 sm:col-span-2 lg:col-span-3"
+                label="Descrição"
+              >
+                <input
+                  type="text"
+                  placeholder="Descrição do produto"
+                  value={currentItem.description}
+                  onChange={(e) =>
+                    setCurrentItem({
+                      ...currentItem,
+                      description: e.target.value,
+                    })
+                  }
+                  className={dashboardInputClassName}
+                />
+              </DashboardFormField>
+            </DashboardFormGrid>
+          </DashboardInlineForm>
         )}
 
         {loading ? (
           <TabLoadingState />
         ) : (
-          <>
-            {/* Mobile */}
-            <div className="md:hidden divide-y divide-[#e5e5e5]">
-              {filteredProducts.map((item) => {
-                const level = stockLevel(item.stock);
-                return (
-                  <div key={item.id} className="p-4 flex flex-col gap-3">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-bold text-primary">{item.name}</h3>
-                        <p className="text-xs text-gray-500">{item.category} • R$ {item.price.toFixed(2)}</p>
-                      </div>
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${levelClass(level)}`}>
-                        {level}
-                      </span>
+          <ResponsiveCollectionView
+            items={filteredProducts}
+            emptyLabel="Nenhum item encontrado."
+            isEditing={isEditing}
+            desktopHeaderRow={(
+              <tr>
+                <th className="px-6 py-4">Item</th>
+                <th className="px-6 py-4">Categoria</th>
+                <th className="px-6 py-4">Preço</th>
+                <th className="px-6 py-4">Estoque</th>
+                <th className="px-6 py-4">Nível</th>
+                <th className="px-6 py-4 text-right">Ações</th>
+              </tr>
+            )}
+            renderMobileItem={(item) => {
+              const level = stockLevel(item.stock);
+
+              return (
+                <div key={item.id} className="p-4 flex flex-col gap-3">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-bold text-primary">{item.name}</h3>
+                      <p className="text-xs text-gray-500">{item.category} • R$ {item.price.toFixed(2)}</p>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs text-gray-600"><span className="font-medium">Estoque:</span> {item.stock}</span>
-                      <div className="flex gap-2">
-                        <button onClick={() => handleRestock(item.id, item.name)}
-                          className="w-9 h-9 flex items-center justify-center rounded-full bg-neutral-200 border border-neutral-300 text-neutral-900">
-                          <span className="material-symbols-outlined text-lg">add_circle</span>
-                        </button>
-                        <button onClick={() => handleEdit(item)}
-                          className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-50 text-gray-400 border border-gray-100">
-                          <span className="material-symbols-outlined text-lg">edit</span>
-                        </button>
-                      </div>
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${levelClass(level)}`}>
+                      {level}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-600"><span className="font-medium">Estoque:</span> {item.stock}</span>
+                    <div className="flex gap-2">
+                      <DashboardActionButton
+                        icon="add_circle"
+                        onClick={() => handleRestock(item.id, item.name)}
+                        variant="mobile-muted"
+                      />
+                      <DashboardActionButton
+                        icon="edit"
+                        onClick={() => handleEdit(item)}
+                        variant="mobile-muted"
+                      />
                     </div>
                   </div>
-                );
-              })}
-              {filteredProducts.length === 0 && !isEditing && (
-                <TabEmptyState label="Nenhum item encontrado." />
-              )}
-            </div>
+                </div>
+              );
+            }}
+            renderDesktopRow={(item) => {
+              const level = stockLevel(item.stock);
 
-            {/* Desktop */}
-            <div className="hidden md:block overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="bg-gray-50 border-b border-[#e5e5e5] text-xs uppercase text-gray-500 font-medium">
-                  <tr>
-                    <th className="px-6 py-4">Item</th>
-                    <th className="px-6 py-4">Categoria</th>
-                    <th className="px-6 py-4">Preço</th>
-                    <th className="px-6 py-4">Estoque</th>
-                    <th className="px-6 py-4">Nível</th>
-                    <th className="px-6 py-4 text-right">Ações</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#e5e5e5]">
-                  {filteredProducts.map((item) => {
-                    const level = stockLevel(item.stock);
-                    return (
-                      <tr key={item.id} className="hover:bg-gray-50/50 transition-all duration-500 ease-in-out">
-                        <td className="px-6 py-4 font-medium text-primary">{item.name}</td>
-                        <td className="px-6 py-4 text-gray-600">{item.category}</td>
-                        <td className="px-6 py-4 text-gray-600">R$ {item.price.toFixed(2)}</td>
-                        <td className="px-6 py-4 text-gray-600">{item.stock}</td>
-                        <td className="px-6 py-4">
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${levelClass(level)}`}>
-                            {level}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-right">
-                          <button onClick={() => handleRestock(item.id, item.name)} className="text-neutral-900 hover:text-blue-700 transition-all p-1" title="Repor (+10)">
-                            <span className="material-symbols-outlined text-[18px]">add_circle</span>
-                          </button>
-                          <button onClick={() => handleEdit(item)} className="text-gray-400 hover:text-primary transition-all p-1 ml-2" title="Editar">
-                            <span className="material-symbols-outlined text-[18px]">edit</span>
-                          </button>
-                          <button onClick={() => handleDelete(item.id, item.name)} className="text-gray-400 hover:text-red-500 transition-all p-1 ml-2" title="Excluir">
-                            <span className="material-symbols-outlined text-[18px]">delete</span>
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-              {filteredProducts.length === 0 && !isEditing && (
-                <TabEmptyState label="Nenhum item encontrado." />
-              )}
-            </div>
-          </>
+              return (
+                <tr key={item.id} className="hover:bg-gray-50/50 transition-all duration-500 ease-in-out">
+                  <td className="px-6 py-4 font-medium text-primary">{item.name}</td>
+                  <td className="px-6 py-4 text-gray-600">{item.category}</td>
+                  <td className="px-6 py-4 text-gray-600">R$ {item.price.toFixed(2)}</td>
+                  <td className="px-6 py-4 text-gray-600">{item.stock}</td>
+                  <td className="px-6 py-4">
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${levelClass(level)}`}>
+                      {level}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <DashboardActionButton
+                      icon="add_circle"
+                      onClick={() => handleRestock(item.id, item.name)}
+                      title="Repor (+10)"
+                      variant="desktop-strong"
+                    />
+                    <DashboardActionButton
+                      icon="edit"
+                      onClick={() => handleEdit(item)}
+                      title="Editar"
+                      variant="desktop-muted"
+                    />
+                    <DashboardActionButton
+                      icon="delete"
+                      onClick={() => handleDelete(item.id, item.name)}
+                      title="Excluir"
+                      variant="desktop-danger"
+                    />
+                  </td>
+                </tr>
+              );
+            }}
+          />
         )}
-      </div>
+      </DashboardCollectionPanel>
     </div>
   );
 }

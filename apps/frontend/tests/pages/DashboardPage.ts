@@ -8,7 +8,9 @@ export class DashboardPage {
 	}
 
 	async openTab(name: string) {
-		await this.sidebar().getByText(name, { exact: true }).click();
+		await this.sidebar()
+			.getByRole("button", { name: new RegExp(name, "i") })
+			.click({ noWaitAfter: true });
 	}
 
 	async openMobileSidebar() {

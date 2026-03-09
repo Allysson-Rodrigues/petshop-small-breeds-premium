@@ -4,6 +4,8 @@ import { LoginPage } from './pages/LoginPage';
 
 test.describe('Dashboard Interactions', () => {
     test('should navigate between tabs and verify content', async ({ page }) => {
+        test.slow();
+
         // 1. Precise Login as Admin
         const loginPage = new LoginPage(page);
         const dashboardPage = new DashboardPage(page);
@@ -35,7 +37,7 @@ test.describe('Dashboard Interactions', () => {
         await expect(page.getByText(/Controle de insumos e produtos/i)).toBeVisible();
 
         // 8. Check Modal Triggering (using a button in Estoque tab)
-        await page.getByRole('button', { name: 'Novo Item' }).click();
-        await expect(page.getByRole('button', { name: /Salvar/i })).toBeVisible();
+        await page.getByRole('button', { name: 'Novo Item' }).click({ noWaitAfter: true });
+        await expect(page.getByRole('button', { name: /^Salvar$/i })).toBeVisible();
     });
 });

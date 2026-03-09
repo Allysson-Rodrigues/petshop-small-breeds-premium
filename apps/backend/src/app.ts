@@ -17,6 +17,11 @@ import {
 } from "./main/config/env.js";
 import healthRoutes from "./main/config/health-routes.js";
 import publicRoutes from "./main/config/public-routes.js";
+import { requestIdMiddleware } from "./main/middlewares/request-id.js";
+import {
+	normalizeErrorCode,
+	sendErrorResponse,
+} from "./main/utils/error-response.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,6 +30,7 @@ const app: Application = express();
 const allowedCorsOrigins = getAllowedCorsOrigins();
 
 app.use(helmet());
+app.use(requestIdMiddleware);
 
 app.use(
 	cors({
@@ -53,22 +59,32 @@ app.use("/api/public", publicRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
 // Global error handler — prevents stack traces leaking to client
-app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
 	const statusCode = err instanceof AppError ? err.statusCode : 500;
 	const message = err.message || "Internal server error";
 	const details = err instanceof AppError ? err.details : undefined;
+	const code =
+		err instanceof AppError
+			? normalizeErrorCode(err.name)
+			: "INTERNAL_SERVER_ERROR";
+	const requestId = req.requestId ?? "unknown";
 
 	if (statusCode === 500) {
-		console.error(`[CRITICAL] ${err.stack || err.message}`);
+		console.error(
+			`[CRITICAL][${requestId}][${code}] ${err.stack || err.message}`,
+		);
 	} else {
-		console.warn(`[APP_ERROR] ${err.name}: ${err.message}`);
+		console.warn(
+			`[APP_ERROR][${requestId}][${code}] ${err.name}: ${err.message}`,
+		);
 	}
 
-	res.status(statusCode).json({
-		status: "error",
+	return sendErrorResponse(res, {
+		statusCode,
+		code,
 		type: err.name,
 		message,
-		...(details ? { errors: details } : {}),
+		errors: details,
 	});
 });
 

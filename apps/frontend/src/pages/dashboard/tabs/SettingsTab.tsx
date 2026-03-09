@@ -1,45 +1,10 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../../hooks/useAuth";
-
-const DASHBOARD_PREFERENCES_KEY = "dashboard_preferences";
-
-type DashboardPreferences = {
-  notificationsEnabled: boolean;
-  reducedMotion: boolean;
-};
-
-const getPreferencesStorageKey = (userId?: string): string =>
-	userId ? `${DASHBOARD_PREFERENCES_KEY}:${userId}` : DASHBOARD_PREFERENCES_KEY;
-
-const readPreferences = (userId?: string): DashboardPreferences => {
-  if (typeof window === "undefined") {
-    return {
-      notificationsEnabled: true,
-      reducedMotion: false,
-    };
-  }
-
-  try {
-    const raw = window.localStorage.getItem(getPreferencesStorageKey(userId));
-    if (!raw) {
-      return {
-        notificationsEnabled: true,
-        reducedMotion: false,
-      };
-    }
-
-    const parsed = JSON.parse(raw) as Partial<DashboardPreferences>;
-    return {
-      notificationsEnabled: parsed.notificationsEnabled ?? true,
-      reducedMotion: parsed.reducedMotion ?? false,
-    };
-  } catch {
-    return {
-      notificationsEnabled: true,
-      reducedMotion: false,
-    };
-  }
-};
+import {
+  readDashboardPreferences,
+  saveDashboardPreferences,
+  type DashboardPreferences,
+} from "../dashboardPreferences";
 
 interface SettingsTabProps {
   showToast: (message: string) => void;
@@ -54,12 +19,12 @@ export default function SettingsTab({ showToast }: SettingsTabProps) {
     values: DashboardPreferences;
   }>(() => ({
     ownerId: activeUserId,
-    values: readPreferences(user?.id),
+    values: readDashboardPreferences(user?.id),
   }));
   const preferences =
     preferencesState.ownerId === activeUserId
       ? preferencesState.values
-      : readPreferences(user?.id);
+      : readDashboardPreferences(user?.id);
   const setPreferences = (
     updater: (currentPreferences: DashboardPreferences) => DashboardPreferences,
   ) => {
@@ -77,10 +42,7 @@ export default function SettingsTab({ showToast }: SettingsTabProps) {
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    window.localStorage.setItem(
-      getPreferencesStorageKey(user?.id),
-      JSON.stringify(preferences),
-    );
+    saveDashboardPreferences(user?.id, preferences);
     showToast("Configurações salvas com sucesso!");
   };
 

@@ -9,11 +9,13 @@ describe("Health Check Integration", () => {
 		expect(response.body.status).toBe("UP");
 		expect(response.body).toHaveProperty("uptime");
 		expect(response.body).toHaveProperty("timestamp");
+		expect(response.headers["x-request-id"]).toBeTruthy();
 	});
 
 	it("should return 200 on root path", async () => {
 		const response = await request(app).get("/");
 		expect(response.status).toBe(200);
 		expect(response.text).toContain("PetShop Small Breeds");
+		expect(response.headers["x-request-id"]).toBeTruthy();
 	});
 });

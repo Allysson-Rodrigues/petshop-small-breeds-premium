@@ -1,15 +1,17 @@
-import { useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import RoleGuard from "../components/auth/RoleGuard";
 import Sidebar from "../components/layout/Sidebar";
 import Toast from "../components/ui/Toast";
 import { useAuth } from "../hooks/useAuth";
 import DashboardHeader from "./dashboard/components/DashboardHeader";
-import AppointmentsTab from "./dashboard/tabs/AppointmentsTab";
-import ClientsTab from "./dashboard/tabs/ClientsTab";
-import InventoryTab from "./dashboard/tabs/InventoryTab";
-import OverviewTab from "./dashboard/tabs/OverviewTab";
-import PetsTab from "./dashboard/tabs/PetsTab";
-import SettingsTab from "./dashboard/tabs/SettingsTab";
+import { TabLoadingState } from "./dashboard/components/TabState";
+
+const AppointmentsTab = lazy(() => import("./dashboard/tabs/AppointmentsTab"));
+const ClientsTab = lazy(() => import("./dashboard/tabs/ClientsTab"));
+const InventoryTab = lazy(() => import("./dashboard/tabs/InventoryTab"));
+const OverviewTab = lazy(() => import("./dashboard/tabs/OverviewTab"));
+const PetsTab = lazy(() => import("./dashboard/tabs/PetsTab"));
+const SettingsTab = lazy(() => import("./dashboard/tabs/SettingsTab"));
 
 export default function Dashboard() {
 
@@ -91,38 +93,51 @@ export default function Dashboard() {
 
         {/* Dashboard Content */}
         <div className="flex-1 overflow-y-auto p-4 md:p-8">
-          {currentTab === "overview" ? (
-            <RoleGuard
-              allowedRoles={["admin"]}
-              fallback={<RestrictedState activeTab={currentTab} onReset={() => setActiveTab("pets")} />}
-            >
-              <OverviewTab showToast={showToast} setActiveTab={setActiveTab} />
-            </RoleGuard>
-          ) : currentTab === "clients" ? (
-            <RoleGuard
-              allowedRoles={["admin"]}
-              fallback={<RestrictedState activeTab={currentTab} onReset={() => setActiveTab("pets")} />}
-            >
-              <ClientsTab showToast={showToast} searchQuery={globalSearch} />
-            </RoleGuard>
-          ) : currentTab === "pets" ? (
-            <PetsTab showToast={showToast} searchQuery={globalSearch} />
-          ) : currentTab === "appointments" ? (
-            <AppointmentsTab showToast={showToast} />
-          ) : currentTab === "inventory" ? (
-            <RoleGuard
-              allowedRoles={["admin"]}
-              fallback={<RestrictedState activeTab={currentTab} onReset={() => setActiveTab("pets")} />}
-            >
-              <InventoryTab showToast={showToast} searchQuery={globalSearch} />
-            </RoleGuard>
-          ) : (
-            <SettingsTab showToast={showToast} />
-          )}
+          <Suspense fallback={<DashboardTabFallback activeTab={currentTab} />}>
+            {currentTab === "overview" ? (
+              <RoleGuard
+                allowedRoles={["admin"]}
+                fallback={<RestrictedState activeTab={currentTab} onReset={() => setActiveTab("pets")} />}
+              >
+                <OverviewTab showToast={showToast} setActiveTab={setActiveTab} />
+              </RoleGuard>
+            ) : currentTab === "clients" ? (
+              <RoleGuard
+                allowedRoles={["admin"]}
+                fallback={<RestrictedState activeTab={currentTab} onReset={() => setActiveTab("pets")} />}
+              >
+                <ClientsTab showToast={showToast} searchQuery={globalSearch} />
+              </RoleGuard>
+            ) : currentTab === "pets" ? (
+              <PetsTab showToast={showToast} searchQuery={globalSearch} />
+            ) : currentTab === "appointments" ? (
+              <AppointmentsTab showToast={showToast} />
+            ) : currentTab === "inventory" ? (
+              <RoleGuard
+                allowedRoles={["admin"]}
+                fallback={<RestrictedState activeTab={currentTab} onReset={() => setActiveTab("pets")} />}
+              >
+                <InventoryTab showToast={showToast} searchQuery={globalSearch} />
+              </RoleGuard>
+            ) : (
+              <SettingsTab showToast={showToast} />
+            )}
+          </Suspense>
         </div>
       </main>
 
       <Toast message={toastMessage} />
+    </div>
+  );
+}
+
+function DashboardTabFallback({ activeTab }: { activeTab: string }) {
+  return (
+    <div
+      className="rounded-2xl border border-[#e5e5e5] bg-white shadow-sm"
+      aria-live="polite"
+    >
+      <TabLoadingState label={`Carregando ${activeTab}...`} />
     </div>
   );
 }

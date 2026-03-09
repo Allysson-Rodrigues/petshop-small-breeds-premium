@@ -30,7 +30,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://petshop-small-breeds-premium-backen.vercel.app/api/$1"
+      "destination": "https://petshop-small-breeds-premium-backend.vercel.app/api/$1"
     },
     {
       "source": "/(.*)",
