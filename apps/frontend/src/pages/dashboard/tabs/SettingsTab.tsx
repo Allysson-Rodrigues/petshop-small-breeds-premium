@@ -8,7 +8,10 @@ type DashboardPreferences = {
   reducedMotion: boolean;
 };
 
-const readPreferences = (): DashboardPreferences => {
+const getPreferencesStorageKey = (userId?: string): string =>
+	userId ? `${DASHBOARD_PREFERENCES_KEY}:${userId}` : DASHBOARD_PREFERENCES_KEY;
+
+const readPreferences = (userId?: string): DashboardPreferences => {
   if (typeof window === "undefined") {
     return {
       notificationsEnabled: true,
@@ -17,7 +20,7 @@ const readPreferences = (): DashboardPreferences => {
   }
 
   try {
-    const raw = window.localStorage.getItem(DASHBOARD_PREFERENCES_KEY);
+    const raw = window.localStorage.getItem(getPreferencesStorageKey(userId));
     if (!raw) {
       return {
         notificationsEnabled: true,
@@ -45,9 +48,26 @@ interface SettingsTabProps {
 export default function SettingsTab({ showToast }: SettingsTabProps) {
   const { user } = useAuth();
   const isAdmin = user?.role === "admin";
-  const [preferences, setPreferences] = useState<DashboardPreferences>(() =>
-    readPreferences(),
-  );
+  const activeUserId = user?.id ?? null;
+  const [preferencesState, setPreferencesState] = useState<{
+    ownerId: string | null;
+    values: DashboardPreferences;
+  }>(() => ({
+    ownerId: activeUserId,
+    values: readPreferences(user?.id),
+  }));
+  const preferences =
+    preferencesState.ownerId === activeUserId
+      ? preferencesState.values
+      : readPreferences(user?.id);
+  const setPreferences = (
+    updater: (currentPreferences: DashboardPreferences) => DashboardPreferences,
+  ) => {
+    setPreferencesState({
+      ownerId: activeUserId,
+      values: updater(preferences),
+    });
+  };
 
   useEffect(() => {
     document.documentElement.dataset.motion = preferences.reducedMotion
@@ -58,7 +78,7 @@ export default function SettingsTab({ showToast }: SettingsTabProps) {
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     window.localStorage.setItem(
-      DASHBOARD_PREFERENCES_KEY,
+      getPreferencesStorageKey(user?.id),
       JSON.stringify(preferences),
     );
     showToast("Configurações salvas com sucesso!");

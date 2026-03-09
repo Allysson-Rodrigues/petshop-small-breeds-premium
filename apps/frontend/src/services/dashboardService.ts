@@ -1,57 +1,30 @@
-import { authService, type ApiError } from "./authService";
-
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "/api").replace(
-	/\/$/,
-	"",
-);
-
-const authHeaders = (): HeadersInit => {
-	const token = authService.getToken();
-	return {
-		"Content-Type": "application/json",
-		...(token ? { Authorization: `Bearer ${token}` } : {}),
-	};
-};
+import type {
+	AdminDashboardData,
+	ApiAppointment,
+	ApiClient,
+	ApiPet,
+	ApiProduct,
+	AppointmentStatus,
+	CreateAppointmentInput,
+	CreatePetInput,
+	DashboardData,
+	UpdatePetInput,
+} from "../types/api";
+import { isApiError, type ApiError, requestJson } from "./api";
+import { authService } from "./authService";
 
 const request = async <T>(
 	path: string,
 	options: RequestInit = {},
 ): Promise<T> => {
 	try {
-		const response = await fetch(`${API_BASE_URL}${path}`, {
-			...options,
-			headers: {
-				...authHeaders(),
-				...(options.headers ?? {}),
-			},
-		});
-
-		if (!response.ok) {
-			const body = (await response.json().catch(() => ({}))) as {
-				message?: string;
-				errors?: Record<string, string[]>;
-			};
-			const apiError: ApiError = {
-				status: response.status,
-				message: body.message ?? `Request failed: ${response.status}`,
-				errors: body.errors,
-			};
-
-			if (response.status === 401) {
+		return await requestJson<T>(path, options);
+	} catch (error) {
+		if (isApiError(error)) {
+			if (error.status === 401) {
 				authService.handleUnauthorized("Sua sessão expirou. Faça login novamente.");
 			}
 
-			throw apiError;
-		}
-
-		return response.json() as Promise<T>;
-	} catch (error) {
-		if (
-			error &&
-			typeof error === "object" &&
-			"status" in error &&
-			"message" in error
-		) {
 			throw error;
 		}
 
@@ -62,93 +35,22 @@ const request = async <T>(
 	}
 };
 
-// ── Types ─────────────────────────────────────────────────────
-export interface ApiPet {
-	id: string;
-	name: string;
-	breed: string;
-	age: number;
-	userId: string;
-}
+export type {
+	AdminDashboardData,
+	ApiAppointment,
+	ApiClient,
+	ApiPet,
+	ApiProduct,
+	AppointmentStatus,
+	CreateAppointmentInput,
+	CreatePetInput,
+	DashboardData,
+	UpdatePetInput,
+} from "../types/api";
 
-export interface ApiAppointment {
-	id: string;
-	date: string;
-	type: string;
-	status: AppointmentStatus;
-	userId: string;
-	petId: string;
-}
-
-export interface ApiClient {
-	id: string;
-	name: string;
-	email: string;
-	createdAt: string;
-	petsCount: number;
-}
-
-export interface ApiProduct {
-	id: string;
-	name: string;
-	description: string;
-	price: number;
-	category: string;
-	stock: number;
-}
-
-export type AppointmentStatus =
-	| "PENDING"
-	| "CONFIRMED"
-	| "CANCELLED"
-	| "COMPLETED";
-
-export interface CreatePetInput {
-	name: string;
-	breed: string;
-	age: number;
-}
-
-export interface UpdatePetInput {
-	name?: string;
-	breed?: string;
-	age?: number;
-}
-
-export interface CreateAppointmentInput {
-	date: string;
-	type: string;
-	petId: string;
-}
-
-export interface AdminDashboardData {
-	stats: {
-		totalPets: number;
-		totalAppointments: number;
-		totalClients: number;
-		totalProducts: number;
-		lowStockItems: number;
-	};
-	recentPets: ApiPet[];
-}
-
-export interface DashboardData {
-	pets: ApiPet[];
-	appointments: ApiAppointment[];
-	stats: {
-		totalPets: number;
-		totalAppointments: number;
-		nextAppointment: ApiAppointment | null;
-	};
-}
-
-// ── API Methods ───────────────────────────────────────────────
 export const dashboardService = {
-	// Dashboard overview
 	getDashboard: () => request<DashboardData>("/dashboard/customer"),
 	getAdminDashboard: () => request<AdminDashboardData>("/dashboard/admin"),
-
-	// Pets
 	getPets: () => request<ApiPet[]>("/dashboard/pets"),
 	createPet: (data: CreatePetInput) =>
 		request<ApiPet>("/dashboard/pets", {
@@ -162,10 +64,7 @@ export const dashboardService = {
 		}),
 	deletePet: (id: string) =>
 		request<void>(`/dashboard/pets/${id}`, { method: "DELETE" }),
-
-	// Appointments
-	getAppointments: () =>
-		request<ApiAppointment[]>("/dashboard/appointments"),
+	getAppointments: () => request<ApiAppointment[]>("/dashboard/appointments"),
 	createAppointment: (data: CreateAppointmentInput) =>
 		request<ApiAppointment>("/dashboard/appointments", {
 			method: "POST",
@@ -178,8 +77,6 @@ export const dashboardService = {
 		}),
 	deleteAppointment: (id: string) =>
 		request<void>(`/dashboard/appointments/${id}`, { method: "DELETE" }),
-
-	// Clients
 	getClients: () => request<ApiClient[]>("/dashboard/clients"),
 	updateClient: (id: string, data: Partial<ApiClient>) =>
 		request<ApiClient>(`/dashboard/clients/${id}`, {
@@ -188,8 +85,6 @@ export const dashboardService = {
 		}),
 	deleteClient: (id: string) =>
 		request<void>(`/dashboard/clients/${id}`, { method: "DELETE" }),
-
-	// Products (Inventory)
 	getProducts: () => request<ApiProduct[]>("/dashboard/products"),
 	createProduct: (data: Omit<ApiProduct, "id">) =>
 		request<ApiProduct>("/dashboard/products", {

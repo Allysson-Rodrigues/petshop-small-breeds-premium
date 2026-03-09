@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Inter";
+  src: local("Inter"), local("Arial");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Playfair Display";
+  src: local("Playfair Display"), local("Georgia");
+  font-display: swap;
+}
+
 @theme {
   /* Cores Principais */
   --color-background-light: hsl(30, 20%, 98%);

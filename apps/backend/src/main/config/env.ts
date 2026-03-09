@@ -30,6 +30,13 @@ export const getJwtSecret = (): string => {
 	);
 };
 
+export const getAuthCookieName = (): string => {
+	return process.env.AUTH_COOKIE_NAME?.trim() || "petshop_session";
+};
+
+export const isProductionEnvironment = (): boolean =>
+	process.env.NODE_ENV === "production";
+
 export const getAllowedCorsOrigins = (): string[] => {
 	const configuredOrigins = normalizeList(process.env.CORS_ORIGIN);
 	if (configuredOrigins.length > 0) {

@@ -3,7 +3,10 @@ import {
 	ForbiddenError,
 	NotFoundError,
 } from "../../../domain/errors/app-error.js";
-import { updatePetSchema } from "../../../domain/schemas/validation.js";
+import {
+	createPetSchema,
+	updatePetSchema,
+} from "../../../domain/schemas/validation.js";
 import {
 	adaptAsyncHandler,
 	adaptRoute,
@@ -35,7 +38,15 @@ router.get(
 	}),
 );
 
-router.post("/", authMiddleware, adaptRoute(createPetController));
+router.post(
+	"/",
+	authMiddleware,
+	adaptAsyncHandler(async (req, _res, next) => {
+		req.body = parseSchema(createPetSchema, req.body);
+		next();
+	}),
+	adaptRoute(createPetController),
+);
 
 router.put(
 	"/:id",

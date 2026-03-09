@@ -12,6 +12,20 @@ export class PrismaProductRepository implements ProductRepository {
 		return products as unknown as Product[];
 	}
 
+	async countAll(): Promise<number> {
+		return this.prisma.product.count();
+	}
+
+	async countLowStock(threshold: number): Promise<number> {
+		return this.prisma.product.count({
+			where: {
+				stock: {
+					lte: threshold,
+				},
+			},
+		});
+	}
+
 	async findById(id: string): Promise<Product | null> {
 		const product = await this.prisma.product.findUnique({
 			where: { id },

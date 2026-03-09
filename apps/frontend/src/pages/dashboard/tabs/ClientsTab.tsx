@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { dashboardService, type ApiClient } from "../../../services/dashboardService";
 import ConfirmationModal from "../components/ConfirmationModal";
 import NotionAvatar from "../components/NotionAvatar";
+import { TabSectionHeader } from "../components/TabSectionHeader";
+import { TabEmptyState, TabLoadingState } from "../components/TabState";
 
 interface ClientsTabProps {
   showToast: (message: string) => void;
@@ -84,14 +86,10 @@ export default function ClientsTab({ showToast, searchQuery = "" }: ClientsTabPr
 
   return (
     <div className="max-w-7xl mx-auto flex flex-col gap-6 md:gap-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl md:text-2xl font-bold text-primary tracking-tight">Clientes</h1>
-          <p className="text-gray-500 text-xs md:text-sm mt-1">
-            Gerencie o cadastro de tutores e seus dados.
-          </p>
-        </div>
-      </div>
+      <TabSectionHeader
+        title="Clientes"
+        description="Gerencie o cadastro de tutores e seus dados."
+      />
 
       <div className={`bg-white rounded-2xl border border-[#e5e5e5] shadow-sm relative transition-all duration-300 ${isEditing ? "border-primary/20 shadow-md" : "overflow-hidden"}`}>
         {isEditing && (
@@ -124,7 +122,7 @@ export default function ClientsTab({ showToast, searchQuery = "" }: ClientsTabPr
         )}
 
         {loading ? (
-          <div className="p-8 text-center text-gray-400 text-sm animate-pulse">Carregando...</div>
+          <TabLoadingState />
         ) : (
           <>
             {/* Mobile */}
@@ -156,7 +154,7 @@ export default function ClientsTab({ showToast, searchQuery = "" }: ClientsTabPr
                 </div>
               ))}
               {filteredClients.length === 0 && !isEditing && (
-                <div className="p-8 text-center text-gray-500">Nenhum cliente encontrado.</div>
+                <TabEmptyState label="Nenhum cliente encontrado." />
               )}
             </div>
 
@@ -195,7 +193,7 @@ export default function ClientsTab({ showToast, searchQuery = "" }: ClientsTabPr
                 </tbody>
               </table>
               {filteredClients.length === 0 && !isEditing && (
-                <div className="p-8 text-center text-gray-500">Nenhum cliente encontrado.</div>
+                <TabEmptyState label="Nenhum cliente encontrado." />
               )}
             </div>
           </>

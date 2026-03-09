@@ -12,6 +12,20 @@ export class PrismaUserRepository implements UserRepository {
 		return users as User[];
 	}
 
+	async findClients(): Promise<User[]> {
+		const users = await this.prisma.user.findMany({
+			where: { role: "client" },
+			orderBy: { createdAt: "desc" },
+		});
+		return users as User[];
+	}
+
+	async countClients(): Promise<number> {
+		return this.prisma.user.count({
+			where: { role: "client" },
+		});
+	}
+
 	async create(user: Omit<User, "id" | "createdAt">): Promise<User> {
 		const createdUser = await this.prisma.user.create({
 			data: {

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { dashboardService, type ApiAppointment, type ApiPet } from "../../../services/dashboardService";
 import ConfirmationModal from "../components/ConfirmationModal";
 import NotionAvatar from "../components/NotionAvatar";
+import { TabSectionHeader } from "../components/TabSectionHeader";
+import { TabEmptyState, TabLoadingState } from "../components/TabState";
 
 interface AppointmentsTabProps {
   showToast: (message: string) => void;
@@ -97,19 +99,17 @@ export default function AppointmentsTab({ showToast }: AppointmentsTabProps) {
 
   return (
     <div className="max-w-7xl mx-auto flex flex-col gap-6 md:gap-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl md:text-2xl font-bold text-primary tracking-tight">Agendamentos</h1>
-          <p className="text-gray-500 text-xs md:text-sm mt-1">
-            Controle a agenda de serviços do petshop.
-          </p>
-        </div>
-        <button onClick={handleNew}
-          className="bg-neutral-900 text-white pl-4 pr-6 py-2.5 rounded-xl text-sm font-bold hover:bg-neutral-800 transition-all duration-300 flex items-center justify-center gap-2 w-full md:w-auto shadow-lg shadow-black/10 active:scale-95">
-          <span className="material-symbols-outlined text-[20px]">calendar_add_on</span>
-          Novo Agendamento
-        </button>
-      </div>
+      <TabSectionHeader
+        title="Agendamentos"
+        description="Controle a agenda de serviços do petshop."
+        action={
+          <button onClick={handleNew}
+            className="bg-neutral-900 text-white pl-4 pr-6 py-2.5 rounded-xl text-sm font-bold hover:bg-neutral-800 transition-all duration-300 flex items-center justify-center gap-2 w-full md:w-auto shadow-lg shadow-black/10 active:scale-95">
+            <span className="material-symbols-outlined text-[20px]">calendar_add_on</span>
+            Novo Agendamento
+          </button>
+        }
+      />
 
       <div className={`bg-white rounded-2xl border border-[#e5e5e5] shadow-sm relative transition-all duration-300 ${isEditing ? "border-primary/20 shadow-md" : "overflow-hidden"}`}>
         {isEditing && (
@@ -160,7 +160,7 @@ export default function AppointmentsTab({ showToast }: AppointmentsTabProps) {
         )}
 
         {loading ? (
-          <div className="p-8 text-center text-gray-400 text-sm animate-pulse">Carregando...</div>
+          <TabLoadingState />
         ) : (
           <>
             {/* Mobile */}
@@ -241,7 +241,7 @@ export default function AppointmentsTab({ showToast }: AppointmentsTabProps) {
                 </tbody>
               </table>
               {appointments.length === 0 && !isEditing && (
-                <div className="p-8 text-center text-gray-500">Nenhum agendamento encontrado.</div>
+                <TabEmptyState label="Nenhum agendamento encontrado." />
               )}
             </div>
           </>

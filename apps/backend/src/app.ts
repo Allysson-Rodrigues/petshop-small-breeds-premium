@@ -16,6 +16,7 @@ import {
 	isCorsOriginAllowed,
 } from "./main/config/env.js";
 import healthRoutes from "./main/config/health-routes.js";
+import publicRoutes from "./main/config/public-routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -48,6 +49,7 @@ app.get("/", (_req: Request, res: Response) => {
 // Modular routes
 app.use("/api", healthRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/public", publicRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
 // Global error handler — prevents stack traces leaking to client

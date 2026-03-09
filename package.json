@@ -11,7 +11,7 @@
     "db:down": "docker compose -f apps/backend/docker-compose.yml down",
     "db:logs": "docker compose -f apps/backend/docker-compose.yml logs -f postgres",
     "backend:db:push": "npm --prefix apps/backend run prisma:push",
-    "backend:db:seed": "npm --prefix apps/backend run prisma:seed",
+    "backend:db:seed": "ALLOW_DEMO_SEED=true npm --prefix apps/backend run prisma:seed",
     "dev:backend": "npm --prefix apps/backend run dev:seed",
     "dev:frontend": "npm --prefix apps/frontend run dev",
     "dev:all": "npx -y concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",

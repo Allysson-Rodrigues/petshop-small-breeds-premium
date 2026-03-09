@@ -19,17 +19,15 @@ router.get(
 	authMiddleware,
 	requireRole("admin"),
 	adaptAsyncHandler(async (_req, res) => {
-		const [users, pets] = await Promise.all([
-			userRepository.findAll(),
-			petRepository.findAll(),
-		]);
+		const users = await userRepository.findClients();
+		const petsCountByOwnerId = await petRepository.countByOwnerIds(
+			users.map((user) => user.id),
+		);
 
-		const safeUsers = users
-			.filter((user) => user.role !== "admin")
-			.map((user) => ({
-				...toSafeUser(user),
-				petsCount: pets.filter((pet) => pet.userId === user.id).length,
-			}));
+		const safeUsers = users.map((user) => ({
+			...toSafeUser(user),
+			petsCount: petsCountByOwnerId[user.id] ?? 0,
+		}));
 
 		res.json(safeUsers);
 	}),

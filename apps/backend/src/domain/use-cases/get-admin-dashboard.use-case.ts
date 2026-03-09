@@ -24,24 +24,31 @@ export class GetAdminDashboardUseCase {
 	) {}
 
 	async execute(): Promise<AdminDashboardData> {
-		const [pets, appointments, users, products] = await Promise.all([
-			this.petRepository.findAll(),
-			this.appointmentRepository.findAll(),
-			this.userRepository.findAll(),
-			this.productRepository.findAll(),
+		const [
+			totalPets,
+			totalAppointments,
+			totalClients,
+			totalProducts,
+			lowStockItems,
+			recentPets,
+		] = await Promise.all([
+			this.petRepository.countAll(),
+			this.appointmentRepository.countAll(),
+			this.userRepository.countClients(),
+			this.productRepository.countAll(),
+			this.productRepository.countLowStock(5),
+			this.petRepository.findRecent(5),
 		]);
-
-		const lowStockItems = products.filter((p) => p.stock <= 5).length;
 
 		return {
 			stats: {
-				totalPets: pets.length,
-				totalAppointments: appointments.length,
-				totalClients: users.length,
-				totalProducts: products.length,
+				totalPets,
+				totalAppointments,
+				totalClients,
+				totalProducts,
 				lowStockItems,
 			},
-			recentPets: pets.slice(0, 5),
+			recentPets,
 		};
 	}
 }

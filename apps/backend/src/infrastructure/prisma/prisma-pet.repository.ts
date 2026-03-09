@@ -12,6 +12,40 @@ export class PrismaPetRepository implements PetRepository {
 		return pets as Pet[];
 	}
 
+	async findRecent(limit: number): Promise<Pet[]> {
+		const pets = await this.prisma.pet.findMany({
+			take: limit,
+			orderBy: { id: "desc" },
+		});
+		return pets as Pet[];
+	}
+
+	async countAll(): Promise<number> {
+		return this.prisma.pet.count();
+	}
+
+	async countByOwnerIds(userIds: string[]): Promise<Record<string, number>> {
+		if (userIds.length === 0) {
+			return {};
+		}
+
+		const counts = await this.prisma.pet.groupBy({
+			by: ["userId"],
+			where: {
+				userId: {
+					in: userIds,
+				},
+			},
+			_count: {
+				_all: true,
+			},
+		});
+
+		return Object.fromEntries(
+			counts.map((entry) => [entry.userId, entry._count._all]),
+		);
+	}
+
 	async findById(id: string): Promise<Pet | null> {
 		const pet = await this.prisma.pet.findUnique({
 			where: { id },

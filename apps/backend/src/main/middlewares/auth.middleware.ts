@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { PrismaUserRepository } from "../../infrastructure/prisma/prisma-user.repository.js";
 import { getJwtSecret } from "../config/env.js";
+import { readCookie } from "../utils/session-cookie.js";
 
 const secret = getJwtSecret();
 const userRepository = new PrismaUserRepository();
@@ -12,26 +13,28 @@ export const authMiddleware = (
 	next: NextFunction,
 ) => {
 	void (async () => {
+		const cookieToken = readCookie(req.headers.cookie);
 		const authHeader = req.headers.authorization;
+		let token = cookieToken;
 
-		if (!authHeader) {
-			return res.status(401).json({ message: "No token provided" });
-		}
+		if (!token && authHeader) {
+			const parts = authHeader.split(" ");
 
-		const parts = authHeader.split(" ");
+			if (parts.length !== 2) {
+				return res.status(401).json({ message: "Token error" });
+			}
 
-		if (parts.length !== 2) {
-			return res.status(401).json({ message: "Token error" });
-		}
+			const [scheme, bearerToken] = parts;
 
-		const [scheme, token] = parts;
+			if (!scheme || !/^Bearer$/i.test(scheme)) {
+				return res.status(401).json({ message: "Token malformatted" });
+			}
 
-		if (!scheme || !/^Bearer$/i.test(scheme)) {
-			return res.status(401).json({ message: "Token malformatted" });
+			token = bearerToken ?? null;
 		}
 
 		if (!token) {
-			return res.status(401).json({ message: "Token error" });
+			return res.status(401).json({ message: "Authentication required" });
 		}
 
 		try {
