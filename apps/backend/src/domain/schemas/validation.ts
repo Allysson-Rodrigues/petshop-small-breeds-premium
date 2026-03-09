@@ -67,6 +67,14 @@ export const createBookingRequestSchema = z
 	})
 	.strict();
 
+export const updateBookingRequestStatusSchema = z
+	.object({
+		status: z.enum(["PENDING", "CONTACTED", "APPROVED", "REJECTED"], {
+			message: "Invalid booking request status",
+		}),
+	})
+	.strict();
+
 // ── Client Schemas ────────────────────────────────────────────
 export const updateClientSchema = z
 	.object({

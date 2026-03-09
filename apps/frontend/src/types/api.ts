@@ -38,15 +38,37 @@ export interface ApiProduct {
 	stock: number;
 }
 
+export interface AdminDashboardHistoryPoint {
+	appointments: number;
+	date: string;
+	newClients: number;
+}
+
+export interface AdminDashboardActivityItem {
+	description: string;
+	id: string;
+	kind: "appointment" | "client";
+	occurredAt: string;
+	title: string;
+	tone: "info" | "success" | "warning";
+}
+
 export interface AdminDashboardData {
 	stats: {
+		completedAppointments: number;
+		newClientsThisMonth: number;
+		todayAppointments: number;
 		totalPets: number;
 		totalAppointments: number;
 		totalClients: number;
 		totalProducts: number;
+		upcomingAppointments: number;
 		lowStockItems: number;
 	};
+	lowStockProducts: ApiProduct[];
+	operationalHistory: AdminDashboardHistoryPoint[];
 	recentPets: ApiPet[];
+	recentActivity: AdminDashboardActivityItem[];
 }
 
 export interface DashboardData {
@@ -94,4 +116,25 @@ export interface BookingRequestResponse {
 	status: string;
 	protocol: string;
 	message: string;
+}
+
+export type BookingRequestStatus =
+	| "PENDING"
+	| "CONTACTED"
+	| "APPROVED"
+	| "REJECTED";
+
+export interface ApiBookingRequest {
+	id: string;
+	petName: string;
+	petBreed: string;
+	serviceType: string;
+	preferredDate: string;
+	preferredPeriod: "manha" | "tarde";
+	ownerName: string;
+	ownerEmail: string;
+	ownerPhone?: string | null;
+	notes?: string | null;
+	status: BookingRequestStatus;
+	createdAt: string;
 }
