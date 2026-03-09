@@ -29,6 +29,7 @@ npm run test:e2e
 - `VITE_API_BASE_URL`: base API endpoint
 - session auth via HTTP-only cookie, hydrated through `GET /api/auth/me`
 - public booking requests sent to `POST /api/public/booking-requests`
+- in production on Vercel, `/api/*` stays same-origin on the frontend domain and is rewritten to the backend deployment
 - formal guards:
   - `ProtectedRoute`
   - `GuestOnlyRoute`
