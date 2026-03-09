@@ -3,7 +3,7 @@
 ## Environments
 
 - `local`: Docker + local PostgreSQL
-- `preview`: frontend on Vercel + backend on Railway + database on Neon
+- `preview`: frontend on Vercel + backend on Vercel + PostgreSQL configured through backend environment variables
 - `production`: same split, with dedicated environment variables and deploy smoke checks
 
 ## Release checklist
@@ -27,7 +27,7 @@ Frontend:
 
 Backend:
 
-1. Roll back the Railway release
+1. Roll back the backend Vercel deployment
 2. Validate `API_HEALTH_URL`
 3. Run the login smoke check
 
@@ -43,6 +43,7 @@ Backend:
 
 - check `VITE_API_BASE_URL`
 - check `CORS_ORIGIN`
+- validate the `/api/*` rewrite in `vercel.json`
 - validate `API_HEALTH_URL`
 
 ### Backend tests failing because of the database

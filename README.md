@@ -27,6 +27,12 @@ The public website can open booking requests without prior login via `POST /api/
 └── RUNBOOK.md
 ```
 
+Repository hygiene:
+
+- single lockfile at the repository root
+- frontend and backend documentation kept inside each workspace
+- local-only artifacts such as `.vercel/`, `dist/`, `playwright-report/`, `test-results/`, and development databases are not part of the repository
+
 ## Local setup
 
 Prerequisites:

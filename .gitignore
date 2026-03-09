@@ -62,7 +62,6 @@ apps/frontend/download_cushion.py
 # Local-only workspace tooling
 apps/frontend/.agent/
 .agent/
-.github/
 
 # Local-only tests (keep in workspace, not on GitHub)
 apps/**/tests/
