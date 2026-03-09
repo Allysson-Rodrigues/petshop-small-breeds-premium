@@ -36,6 +36,11 @@ type AuthResult =
 	  };
 
 type BootstrapResult = AuthSession | null;
+type AuthChangeSource = "local" | "remote";
+type AuthChangeDetail = {
+	source: AuthChangeSource;
+	user?: SessionUser | null;
+};
 
 const AUTH_CHANGED_EVENT = "auth:changed";
 const AUTH_SYNC_CHANNEL = "petshop-auth";
@@ -160,15 +165,25 @@ const ensureAuthSyncChannel = () => {
 			return;
 		}
 
-		window.dispatchEvent(new Event(AUTH_CHANGED_EVENT));
+		window.dispatchEvent(
+			new CustomEvent<AuthChangeDetail>(AUTH_CHANGED_EVENT, {
+				detail: {
+					source: "remote",
+				},
+			}),
+		);
 	});
 	isAuthSyncInitialized = true;
 };
 
-const notifyAuthChanged = () => {
+const notifyAuthChanged = (detail: AuthChangeDetail) => {
 	if (typeof window !== "undefined") {
 		ensureAuthSyncChannel();
-		window.dispatchEvent(new Event(AUTH_CHANGED_EVENT));
+		window.dispatchEvent(
+			new CustomEvent<AuthChangeDetail>(AUTH_CHANGED_EVENT, {
+				detail,
+			}),
+		);
 		authSyncChannel?.postMessage({ type: AUTH_CHANGED_EVENT });
 	}
 };
@@ -177,7 +192,10 @@ const setCurrentUser = (user: SessionUser | null, notify = false) => {
 	currentUser = user;
 
 	if (notify) {
-		notifyAuthChanged();
+		notifyAuthChanged({
+			source: "local",
+			user,
+		});
 	}
 };
 

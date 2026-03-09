@@ -129,6 +129,9 @@ jobs:
       - name: Run frontend E2E tests
         run: npm run test:e2e
 
+      - name: Re-run critical E2E flows for stability
+        run: npm --prefix apps/frontend run test:e2e -- --repeat-each=2 tests/dashboard_flows.spec.ts tests/login.spec.ts
+
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4

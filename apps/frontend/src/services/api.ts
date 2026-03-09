@@ -1,4 +1,6 @@
 export interface ApiError {
+	code?: string;
+	requestId?: string;
 	status: number;
 	message: string;
 	errors?: Record<string, string[]>;
@@ -25,11 +27,16 @@ export const buildApiError = async (
 ): Promise<ApiError> => {
 	try {
 		const payload = (await response.json()) as {
+			code?: unknown;
 			message?: unknown;
 			errors?: unknown;
+			requestId?: unknown;
 		};
 
 		return {
+			code: typeof payload.code === "string" ? payload.code : undefined,
+			requestId:
+				typeof payload.requestId === "string" ? payload.requestId : undefined,
 			status: response.status,
 			message:
 				typeof payload.message === "string" && payload.message.trim().length > 0

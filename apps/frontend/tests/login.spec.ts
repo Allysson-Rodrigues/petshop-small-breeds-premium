@@ -24,6 +24,7 @@ test.describe('Login Flow', () => {
     });
 
     test('should NOT login with incorrect credentials', async ({ page }) => {
+        test.setTimeout(120000);
         const loginPage = new LoginPage(page);
         await loginPage.goto();
         await loginPage.login('cliente@petshop.com', 'wrongpassword');

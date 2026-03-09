@@ -1,6 +1,11 @@
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useEffect, useEffectEvent, useState } from "react";
 import type { AuthStatus, SessionUser } from "../services/authService";
 import { authService } from "../services/authService";
+import {
+	createResolvedAuthState,
+	type AuthSyncDetail,
+	shouldRefreshSessionOnAuthSync,
+} from "./auth-state";
 import { AuthContext } from "./auth-context";
 
 const getInitials = (name: string): string => {
@@ -22,6 +27,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		user: authService.getUser(),
 	}));
 
+	const applySessionState = (user: SessionUser | null) => {
+		setAuthState(createResolvedAuthState(user));
+	};
+
 	const refreshSession = async () => {
 		setAuthState((currentState) =>
 			currentState.status === "bootstrapping"
@@ -34,10 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 		const session = await authService.bootstrapSession();
 
-		setAuthState({
-			status: session ? "authenticated" : "unauthenticated",
-			user: session?.user ?? null,
-		});
+		applySessionState(session?.user ?? null);
 	};
 
 	useEffect(() => {
@@ -48,10 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 				return;
 			}
 
-			setAuthState({
-				status: session ? "authenticated" : "unauthenticated",
-				user: session?.user ?? null,
-			});
+			applySessionState(session?.user ?? null);
 		});
 
 		return () => {
@@ -59,17 +62,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		};
 	}, []);
 
-	useEffect(() => {
-		const syncAuthState = () => {
-			void refreshSession();
-		};
+	const handleAuthStateSync = useEffectEvent((event: Event) => {
+		const customEvent = event as CustomEvent<AuthSyncDetail>;
 
+		if (!shouldRefreshSessionOnAuthSync(customEvent.detail)) {
+			applySessionState(customEvent.detail.user ?? null);
+			return;
+		}
+
+		void refreshSession();
+	});
+
+	useEffect(() => {
 		const authEventName = authService.getAuthChangedEventName();
 
-		window.addEventListener(authEventName, syncAuthState);
+		window.addEventListener(authEventName, handleAuthStateSync);
 
 		return () => {
-			window.removeEventListener(authEventName, syncAuthState);
+			window.removeEventListener(authEventName, handleAuthStateSync);
 		};
 	}, []);
 

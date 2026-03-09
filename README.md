@@ -129,14 +129,13 @@ Frontend:
 
 Versioned workflows:
 
-- `CI`: lint, type-check, build, backend tests, frontend unit tests, and frontend E2E
-- `Deploy Smoke`: manual smoke check for frontend, API health, and admin login
+- `CI`: lint, type-check, build, backend tests, frontend unit tests, frontend E2E, and a repeated stability pass for critical Playwright flows
+- `Deploy Smoke`: manual smoke check for frontend, frontend `/api` rewrite, API health, and admin login
 
 Required secrets for the manual smoke workflow:
 
 - `FRONTEND_URL`
 - `API_HEALTH_URL`
-- `API_LOGIN_URL`
 - `SMOKE_ADMIN_EMAIL`
 - `SMOKE_ADMIN_PASSWORD`
 
