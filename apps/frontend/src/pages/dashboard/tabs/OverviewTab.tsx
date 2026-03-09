@@ -13,6 +13,17 @@ const activityToneClassNames = {
 	warning: "border-amber-100 bg-amber-50 text-amber-700",
 } as const;
 
+const activityToneDotClassNames = {
+	info: "bg-blue-500",
+	success: "bg-emerald-500",
+	warning: "bg-amber-500",
+} as const;
+
+const activityKindLabels = {
+	appointment: "Agenda",
+	client: "Cliente",
+} as const;
+
 function formatDateLabel(date: string) {
 	return new Intl.DateTimeFormat("pt-BR", {
 		day: "2-digit",
@@ -449,7 +460,7 @@ export default function OverviewTab({
 									</div>
 
 									{adminOverview.lowStockProducts.length > 0 ? (
-										<div className="space-y-3">
+										<div className="max-h-72 space-y-3 overflow-y-auto pr-1">
 											{adminOverview.lowStockProducts.map((product) => (
 												<div
 													key={product.id}
@@ -479,38 +490,56 @@ export default function OverviewTab({
 								</section>
 
 								<section className="rounded-xl border border-[#e5e5e5] bg-white p-6 shadow-sm">
-									<div className="mb-4">
-										<h3 className="font-bold text-primary">Atividade recente</h3>
-										<p className="text-xs text-gray-500">
-											Eventos reais do fluxo operacional mais recente.
-										</p>
+									<div className="mb-4 flex items-start justify-between gap-3">
+										<div>
+											<h3 className="font-bold text-primary">Atividade recente</h3>
+											<p className="text-xs text-gray-500">
+												Eventos reais do fluxo operacional mais recente.
+											</p>
+										</div>
+										<span className="rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary">
+											{adminOverview.recentActivity.length} item(ns)
+										</span>
 									</div>
 
 									{adminOverview.recentActivity.length > 0 ? (
-										<div className="space-y-3">
+										<div className="max-h-80 space-y-2 overflow-y-auto pr-1">
 											{adminOverview.recentActivity.map((activityItem) => (
 												<div
 													key={activityItem.id}
-													className={`rounded-xl border p-4 ${
+													className={`rounded-lg border p-3 ${
 														activityToneClassNames[activityItem.tone]
 													}`}
 												>
-													<div className="flex items-start justify-between gap-3">
-														<div>
-															<p className="font-semibold">
-																{activityItem.title}
-															</p>
-															<p className="mt-1 text-sm opacity-90">
-																{activityItem.description}
+													<div className="flex items-start gap-3">
+														<span
+															className={`mt-1 h-2.5 w-2.5 shrink-0 rounded-full ${
+																activityToneDotClassNames[activityItem.tone]
+															}`}
+															aria-hidden="true"
+														/>
+														<div className="min-w-0 flex-1">
+															<div className="flex flex-wrap items-start justify-between gap-2">
+																<div className="min-w-0">
+																	<p className="text-sm font-semibold leading-snug">
+																		{activityItem.title}
+																	</p>
+																	<p
+																		className="mt-1 truncate text-xs opacity-90"
+																		title={activityItem.description}
+																	>
+																		{activityItem.description}
+																	</p>
+																</div>
+																<span className="rounded-full bg-white/80 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.14em]">
+																	{activityKindLabels[activityItem.kind]}
+																</span>
+															</div>
+															<p className="mt-2 text-[11px] font-medium opacity-80">
+																{formatDateTimeLabel(activityItem.occurredAt)}
 															</p>
 														</div>
-														<span className="rounded-full bg-white/80 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em]">
-															{activityItem.kind}
-														</span>
 													</div>
-													<p className="mt-3 text-xs font-medium opacity-80">
-														{formatDateTimeLabel(activityItem.occurredAt)}
-													</p>
 												</div>
 											))}
 										</div>
