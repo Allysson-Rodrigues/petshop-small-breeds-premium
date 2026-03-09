@@ -13,7 +13,7 @@ The public website can open booking requests without prior login via `POST /api/
 | Database | PostgreSQL |
 | Auth | JWT em cookie HTTP-only + bcrypt |
 | Quality | ESLint, Biome, Vitest, Playwright |
-| Deploy | Frontend on Vercel, backend planned for Railway, database planned for Neon |
+| Deploy | Frontend on Vercel, backend on Vercel, database PostgreSQL managed externally |
 
 ## Structure
 
@@ -83,6 +83,8 @@ Frontend:
 | --- | --- |
 | `VITE_API_BASE_URL` | `/api` |
 
+In production, the frontend keeps using `/api` and the Vercel project rewrites those requests to the dedicated backend deployment. That preserves same-origin requests in the browser and avoids CORS issues for session cookies.
+
 ## Demo credentials
 
 - Admin: `admin@petshop.com` / `admin123`
@@ -134,10 +136,10 @@ Required secrets for the manual smoke workflow:
 
 ## Deployment
 
-Recommended setup:
+Current production setup:
 
-- Frontend: Vercel
-- Backend: Railway
-- Database: Neon
+- Frontend: Vercel project `petshop-small-breeds-premium`
+- Backend: Vercel project `petshop-small-breeds-premium-backend`
+- Database: PostgreSQL configured through backend environment variables
 
-The repository is already documented for this split setup, but the actual infrastructure provisioning and secret management are still manual.
+Production requests from the public site use the frontend domain and are rewritten to the backend deployment through [vercel.json](/home/allysson/projetos/01-projetos/petshop-small-breeds-premium/vercel.json).

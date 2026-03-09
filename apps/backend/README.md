@@ -2,6 +2,8 @@
 
 REST API built with Express 5, Prisma, PostgreSQL, and JWT-based session authentication via HTTP-only cookies.
 
+Production deploy currently runs on the dedicated Vercel project `petshop-small-breeds-premium-backend`. The public frontend consumes it through a rewrite on the frontend Vercel project, so browser requests stay on the frontend domain.
+
 ## Stack
 
 - Express 5
@@ -59,6 +61,8 @@ AUTH_COOKIE_NAME="petshop_session"
 ALLOW_DEMO_SEED="false"
 CORS_ORIGIN="http://localhost:5173,http://127.0.0.1:5173"
 ```
+
+For production, `CORS_ORIGIN` must include the public frontend origin, for example `https://petshop-small-breeds.vercel.app`.
 
 Test file:
 
