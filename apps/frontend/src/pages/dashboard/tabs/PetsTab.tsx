@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { dashboardService, type ApiPet } from "../../../services/dashboardService";
 import ConfirmationModal from "../components/ConfirmationModal";
 import NotionAvatar from "../components/NotionAvatar";
+import { TabSectionHeader } from "../components/TabSectionHeader";
+import { TabEmptyState, TabLoadingState } from "../components/TabState";
 
 interface PetsTabProps {
   showToast: (message: string) => void;
@@ -97,21 +99,19 @@ export default function PetsTab({ showToast, searchQuery = "" }: PetsTabProps) {
 
   return (
     <div className="max-w-7xl mx-auto flex flex-col gap-6 md:gap-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl md:text-2xl font-bold text-primary tracking-tight">Pets</h1>
-          <p className="text-gray-500 text-xs md:text-sm mt-1">
-            Gerencie os animais cadastrados e seus prontuários.
-          </p>
-        </div>
-        <button
-          onClick={handleNew}
-          className="bg-neutral-900 text-white pl-4 pr-5 py-2.5 rounded-xl text-sm font-bold hover:bg-neutral-800 transition-all duration-300 flex items-center justify-center gap-2 w-full md:w-auto shadow-lg shadow-black/10 active:scale-95"
-        >
-          <span className="material-symbols-outlined text-[20px]">add_circle</span>
-          Novo Pet
-        </button>
-      </div>
+      <TabSectionHeader
+        title="Pets"
+        description="Gerencie os animais cadastrados e seus prontuários."
+        action={
+          <button
+            onClick={handleNew}
+            className="bg-neutral-900 text-white pl-4 pr-5 py-2.5 rounded-xl text-sm font-bold hover:bg-neutral-800 transition-all duration-300 flex items-center justify-center gap-2 w-full md:w-auto shadow-lg shadow-black/10 active:scale-95"
+          >
+            <span className="material-symbols-outlined text-[20px]">add_circle</span>
+            Novo Pet
+          </button>
+        }
+      />
 
       <div className={`bg-white rounded-2xl border border-[#e5e5e5] shadow-sm relative transition-all duration-300 ${isEditing ? "border-primary/20 shadow-md" : "overflow-hidden"}`}>
         {isEditing && (
@@ -158,7 +158,7 @@ export default function PetsTab({ showToast, searchQuery = "" }: PetsTabProps) {
         )}
 
         {loading ? (
-          <div className="p-8 text-center text-gray-400 text-sm animate-pulse">Carregando...</div>
+          <TabLoadingState />
         ) : (
           <>
             {/* Mobile View: Cards */}
@@ -186,7 +186,7 @@ export default function PetsTab({ showToast, searchQuery = "" }: PetsTabProps) {
                 </div>
               ))}
               {filteredPets.length === 0 && !isEditing && (
-                <div className="p-8 text-center text-gray-500">Nenhum pet encontrado.</div>
+                <TabEmptyState label="Nenhum pet encontrado." />
               )}
             </div>
 
@@ -225,7 +225,7 @@ export default function PetsTab({ showToast, searchQuery = "" }: PetsTabProps) {
                 </tbody>
               </table>
               {filteredPets.length === 0 && !isEditing && (
-                <div className="p-8 text-center text-gray-500">Nenhum pet encontrado.</div>
+                <TabEmptyState label="Nenhum pet encontrado." />
               )}
             </div>
           </>

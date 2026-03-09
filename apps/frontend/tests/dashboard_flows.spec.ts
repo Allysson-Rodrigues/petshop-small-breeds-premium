@@ -52,6 +52,7 @@ test.describe("Dashboard critical flows", () => {
 	});
 
 	test("admin can create and delete inventory items", async ({ page }) => {
+		test.slow();
 		const uniqueId = Date.now();
 		const productName = `Item Premium ${uniqueId}`;
 

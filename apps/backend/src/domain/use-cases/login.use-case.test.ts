@@ -17,6 +17,8 @@ const mockUser = {
 function makeStubs() {
 	const userRepository: UserRepository = {
 		findAll: vi.fn(),
+		findClients: vi.fn(),
+		countClients: vi.fn(),
 		create: vi.fn(),
 		findByEmail: vi.fn(),
 		findById: vi.fn(),

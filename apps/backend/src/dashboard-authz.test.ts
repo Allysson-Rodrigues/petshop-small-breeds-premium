@@ -21,13 +21,13 @@ const login = async (email: string, password: string) => {
 		.send({ email, password })
 		.expect(200);
 
-	return response.body.token as string;
+	return response.headers["set-cookie"] as string[];
 };
 
-const createPet = async (token: string, suffix: string) => {
+const createPet = async (cookies: string[], suffix: string) => {
 	const response = await request(app)
 		.post("/api/dashboard/pets")
-		.set("Authorization", `Bearer ${token}`)
+		.set("Cookie", cookies)
 		.send({
 			name: `Pet ${suffix}`,
 			breed: "Shih Tzu",
@@ -50,7 +50,7 @@ describe("Dashboard authorization", () => {
 
 		const response = await request(app)
 			.post("/api/dashboard/appointments")
-			.set("Authorization", `Bearer ${tokenA}`)
+			.set("Cookie", tokenA)
 			.send({
 				date: new Date(Date.now() + 86_400_000).toISOString(),
 				type: "BATH",
@@ -59,7 +59,7 @@ describe("Dashboard authorization", () => {
 
 		expect(response.statusCode).toBe(403);
 		expect(response.body.message).toBe("Forbidden: not the pet owner");
-	});
+	}, 15_000);
 
 	it("allows owners to manage their appointments, blocks other clients, and lets admins see all appointments", async () => {
 		const ownerA = await registerUser(`owner-c-${Date.now()}`);
@@ -85,7 +85,7 @@ describe("Dashboard authorization", () => {
 		const petB = await createPet(tokenB, `owner-${Date.now()}`);
 		const appointmentResponse = await request(app)
 			.post("/api/dashboard/appointments")
-			.set("Authorization", `Bearer ${tokenB}`)
+			.set("Cookie", tokenB)
 			.send({
 				date: new Date(Date.now() + 172_800_000).toISOString(),
 				type: "GROOM",
@@ -97,18 +97,18 @@ describe("Dashboard authorization", () => {
 
 		await request(app)
 			.put(`/api/dashboard/appointments/${appointmentId}`)
-			.set("Authorization", `Bearer ${tokenA}`)
+			.set("Cookie", tokenA)
 			.send({ status: "COMPLETED" })
 			.expect(403);
 
 		await request(app)
 			.delete(`/api/dashboard/appointments/${appointmentId}`)
-			.set("Authorization", `Bearer ${tokenA}`)
+			.set("Cookie", tokenA)
 			.expect(403);
 
 		const ownerUpdateResponse = await request(app)
 			.put(`/api/dashboard/appointments/${appointmentId}`)
-			.set("Authorization", `Bearer ${tokenB}`)
+			.set("Cookie", tokenB)
 			.send({ status: "COMPLETED" })
 			.expect(200);
 
@@ -116,7 +116,7 @@ describe("Dashboard authorization", () => {
 
 		const adminAppointmentsResponse = await request(app)
 			.get("/api/dashboard/appointments")
-			.set("Authorization", `Bearer ${adminToken}`)
+			.set("Cookie", adminToken)
 			.expect(200);
 
 		expect(
@@ -124,5 +124,5 @@ describe("Dashboard authorization", () => {
 				(appointment: { id: string }) => appointment.id === appointmentId,
 			),
 		).toBe(true);
-	});
+	}, 15_000);
 });

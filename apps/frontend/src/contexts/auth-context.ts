@@ -11,7 +11,7 @@ export type AuthContextValue = {
 	isAuthenticated: boolean;
 	isBootstrapping: boolean;
 	getInitials: (name: string) => string;
-	logout: () => void;
+	logout: () => Promise<void>;
 	refreshSession: () => Promise<void>;
 };
 

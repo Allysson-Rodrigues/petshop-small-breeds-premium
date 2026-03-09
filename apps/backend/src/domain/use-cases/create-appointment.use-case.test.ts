@@ -5,6 +5,8 @@ import { CreateAppointmentUseCase } from "./create-appointment.use-case.js";
 function makeStubs() {
 	const appointmentRepository: AppointmentRepository = {
 		findAll: vi.fn(),
+		countAll: vi.fn(),
+		findById: vi.fn(),
 		findByUserId: vi.fn(),
 		create: vi.fn().mockImplementation(async (data) => ({
 			id: "appt-1",

@@ -44,7 +44,7 @@ describe("Auth Integration Tests", () => {
 		});
 
 		expect(response.statusCode).toBe(200);
-		expect(response.body).toHaveProperty("token");
+		expect(response.headers["set-cookie"]).toBeTruthy();
 		expect(response.body.user.email).toBe(credentials.email);
 	});
 
@@ -63,7 +63,7 @@ describe("Auth Integration Tests", () => {
 		});
 
 		expect(response.statusCode).toBe(200);
-		expect(response.body).toHaveProperty("token");
+		expect(response.headers["set-cookie"]).toBeTruthy();
 		expect(response.body.user.email).toBe(credentials.email);
 	});
 
@@ -120,7 +120,7 @@ describe("Auth Integration Tests", () => {
 
 		const response = await request(app)
 			.get("/api/auth/me")
-			.set("Authorization", `Bearer ${loginResponse.body.token}`);
+			.set("Cookie", loginResponse.headers["set-cookie"]);
 
 		expect(response.statusCode).toBe(200);
 		expect(response.body).toMatchObject({
@@ -131,11 +131,44 @@ describe("Auth Integration Tests", () => {
 	});
 
 	it("should return 401 on /auth/me without a valid token", async () => {
-		const response = await request(app)
-			.get("/api/auth/me")
-			.set("Authorization", "Bearer invalid-token");
+		const response = await request(app).get("/api/auth/me");
 
 		expect(response.statusCode).toBe(401);
-		expect(response.body).toHaveProperty("message", "Token invalid");
+		expect(response.body).toHaveProperty("message", "Authentication required");
+	});
+
+	it("should clear the auth cookie on logout", async () => {
+		const loginResponse = await request(app).post("/api/auth/login").send({
+			email: "admin@petshop.com",
+			password: "admin123",
+		});
+
+		const logoutResponse = await request(app)
+			.post("/api/auth/logout")
+			.set("Cookie", loginResponse.headers["set-cookie"]);
+
+		expect(logoutResponse.statusCode).toBe(200);
+		expect(logoutResponse.body).toEqual({ ok: true });
+		expect(logoutResponse.headers["set-cookie"]).toBeTruthy();
+	});
+
+	it("should create a public booking request", async () => {
+		const response = await request(app)
+			.post("/api/public/booking-requests")
+			.send({
+				petName: "Luna",
+				petBreed: "Shih Tzu",
+				serviceType: "spa",
+				preferredDate: "2030-12-20T12:00:00.000Z",
+				preferredPeriod: "manha",
+				ownerName: "Maria Souza",
+				ownerEmail: "maria@example.com",
+				ownerPhone: "(11) 99999-9999",
+				notes: "Pet idoso e sensível a barulhos.",
+			});
+
+		expect(response.statusCode).toBe(201);
+		expect(response.body.protocol).toHaveLength(8);
+		expect(response.body.status).toBe("PENDING");
 	});
 });

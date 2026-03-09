@@ -33,21 +33,19 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (!id.includes('node_modules')) {
-            return undefined;
+          if (id.includes('node_modules/react-dom')) {
+            return 'vendor-react-dom';
           }
 
-          const packagePath = id.split('node_modules/')[1];
-          if (!packagePath) {
-            return 'vendor-misc';
+          if (id.includes('node_modules/react-router')) {
+            return 'vendor-react-router';
           }
 
-          const segments = packagePath.split('/');
-          const packageName = segments[0]?.startsWith('@')
-            ? `${segments[0]}-${segments[1]}`
-            : segments[0];
+          if (id.includes('node_modules/framer-motion')) {
+            return 'vendor-framer-motion';
+          }
 
-          return `vendor-${packageName?.replace('@', '') ?? 'misc'}`;
+          return undefined;
         },
       },
     }

@@ -61,26 +61,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 	useEffect(() => {
 		const syncAuthState = () => {
-			const session = authService.getSession();
-
-			if (!session) {
-				setAuthState({
-					status: "unauthenticated",
-					user: null,
-				});
-				return;
-			}
-
 			void refreshSession();
 		};
 
 		const authEventName = authService.getAuthChangedEventName();
 
-		window.addEventListener("storage", syncAuthState);
 		window.addEventListener(authEventName, syncAuthState);
 
 		return () => {
-			window.removeEventListener("storage", syncAuthState);
 			window.removeEventListener(authEventName, syncAuthState);
 		};
 	}, []);

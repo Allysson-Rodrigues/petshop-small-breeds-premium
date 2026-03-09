@@ -54,3 +54,18 @@ model Breed {
   description String
   image       String
 }
+
+model BookingRequest {
+  id              String   @id @default(uuid())
+  petName         String
+  petBreed        String
+  serviceType     String
+  preferredDate   DateTime
+  preferredPeriod String
+  ownerName       String
+  ownerEmail      String
+  ownerPhone      String?
+  notes           String?
+  status          String   @default("PENDING")
+  createdAt       DateTime @default(now())
+}

@@ -1,6 +1,8 @@
 # Petshop Small Breeds Premium
 
-Full stack monorepo for a premium pet shop focused on small breeds. The project combines a React/Vite SPA frontend with an Express/Prisma REST backend, JWT authentication, an RBAC-enabled dashboard, and automated quality checks with unit, integration, and E2E tests.
+Full stack monorepo for a premium pet shop focused on small breeds. The project combines a React/Vite SPA frontend with an Express/Prisma REST backend, JWT-based session authentication via HTTP-only cookies, an RBAC-enabled dashboard, and automated quality checks with unit, integration, and E2E tests.
+
+The public website can open booking requests without prior login via `POST /api/public/booking-requests`, while authenticated sessions are hydrated through `GET /api/auth/me`.
 
 ## Stack
 
@@ -9,7 +11,7 @@ Full stack monorepo for a premium pet shop focused on small breeds. The project 
 | Frontend | React 19, Vite 7, Tailwind CSS 4, React Router 7, Framer Motion |
 | Backend | Express 5, Prisma, TypeScript |
 | Database | PostgreSQL |
-| Auth | JWT Bearer + bcrypt |
+| Auth | JWT em cookie HTTP-only + bcrypt |
 | Quality | ESLint, Biome, Vitest, Playwright |
 | Deploy | Frontend on Vercel, backend planned for Railway, database planned for Neon |
 
@@ -43,6 +45,8 @@ npm run backend:db:push
 npm run backend:db:seed
 ```
 
+`npm run backend:db:seed` exports `ALLOW_DEMO_SEED=true` for local demo data and is blocked in production.
+
 After that:
 
 ```bash
@@ -66,6 +70,8 @@ Backend variables in `apps/backend/.env`:
 | `NODE_ENV` | `development` |
 | `DATABASE_URL` | `postgresql://postgres:postgres@127.0.0.1:5432/petshop?schema=public` |
 | `JWT_SECRET` | `change-me-to-a-strong-random-secret` |
+| `AUTH_COOKIE_NAME` | `petshop_session` |
+| `ALLOW_DEMO_SEED` | `false` |
 | `CORS_ORIGIN` | `http://localhost:5173,http://127.0.0.1:5173` |
 
 Backend tests use `apps/backend/.env.test` based on `apps/backend/.env.test.example`.
@@ -95,6 +101,8 @@ npm run test:e2e
 npm run db:up
 npm run db:down
 ```
+
+The demo seed is blocked in production and only runs automatically in `test` or when local commands export `ALLOW_DEMO_SEED=true`.
 
 ## Tests
 

@@ -42,7 +42,7 @@ export default function Header() {
     setIsLoggingOut(true);
     await new Promise(resolve => setTimeout(resolve, 300));
 
-    logout();
+    await logout();
     navigate("/");
     setIsMobileMenuOpen(false);
     setIsLoggingOut(false);

@@ -1,7 +1,28 @@
 import type { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 
+export const assertDemoSeedAllowed = () => {
+	if (process.env.NODE_ENV === "test") {
+		return;
+	}
+
+	if (process.env.NODE_ENV === "production") {
+		throw new Error("Demo seed is disabled in production environments.");
+	}
+
+	if (
+		process.env.NODE_ENV !== "development" ||
+		process.env.ALLOW_DEMO_SEED !== "true"
+	) {
+		throw new Error(
+			"Demo seed is allowed only in test or in development with ALLOW_DEMO_SEED=true.",
+		);
+	}
+};
+
 export async function seedDatabase(prisma: PrismaClient) {
+	assertDemoSeedAllowed();
+
 	const adminEmail = "admin@petshop.com";
 	const adminPassword = "admin123";
 	const clientEmail = "cliente@petshop.com";
@@ -77,13 +98,11 @@ export async function seedDatabase(prisma: PrismaClient) {
 		},
 	});
 
-	console.log("Test users created/updated successfully:");
-	console.log(`Admin Email: ${adminEmail}`);
-	console.log(`Admin Password: ${adminPassword}`);
-	console.log(`Client Email: ${clientEmail}`);
-	console.log(`Client Password: ${clientPassword}`);
-	console.log(`Client 2 Email: ${secondClientEmail}`);
-	console.log(`Client 2 Password: ${secondClientPassword}`);
+	console.log("Demo users created/updated:", [
+		adminEmail,
+		clientEmail,
+		secondClientEmail,
+	]);
 
 	const products = [
 		{
@@ -207,5 +226,5 @@ export async function seedDatabase(prisma: PrismaClient) {
 		});
 	}
 
-	console.log("Mock data created successfully.");
+	console.log("Demo seed completed successfully.");
 }

@@ -12,6 +12,10 @@ export class PrismaAppointmentRepository implements AppointmentRepository {
 		return appointments as unknown as Appointment[];
 	}
 
+	async countAll(): Promise<number> {
+		return this.prisma.appointment.count();
+	}
+
 	async findById(id: string): Promise<Appointment | null> {
 		const appointment = await this.prisma.appointment.findUnique({
 			where: { id },

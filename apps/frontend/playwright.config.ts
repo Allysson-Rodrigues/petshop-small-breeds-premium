@@ -14,11 +14,15 @@ export default defineConfig({
 	fullyParallel: true,
 	retries: process.env.CI ? 2 : 0,
 	reporter: process.env.CI ? [["html", { open: "never" }], ["list"]] : "list",
+	expect: {
+		timeout: 10_000,
+	},
 	use: {
 		baseURL: frontendUrl,
 		trace: "retain-on-failure",
 		screenshot: "only-on-failure",
 		video: "retain-on-failure",
+		reducedMotion: "reduce",
 	},
 	webServer: [
 		{

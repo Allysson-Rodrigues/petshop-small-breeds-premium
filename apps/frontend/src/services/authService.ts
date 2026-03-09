@@ -1,3 +1,5 @@
+import { isApiError, requestJson, type ApiError } from "./api";
+
 export type UserRole = "admin" | "client";
 
 export interface SessionUser {
@@ -17,7 +19,6 @@ interface AuthApiUser {
 }
 
 export interface AuthSession {
-	token: string;
 	user: SessionUser;
 }
 
@@ -26,30 +27,23 @@ export type AuthStatus =
 	| "authenticated"
 	| "unauthenticated";
 
-export interface ApiError {
-	status: number;
-	message: string;
-	errors?: Record<string, string[]>;
-}
-
 type AuthResult =
 	| { ok: true }
 	| {
 			ok: false;
 			message: string;
+			errors?: Record<string, string[]>;
 	  };
 
 type BootstrapResult = AuthSession | null;
 
-const AUTH_TOKEN_KEY = "auth_token";
-const AUTH_USER_KEY = "auth_user";
-const AUTH_NOTICE_KEY = "auth_notice";
 const AUTH_CHANGED_EVENT = "auth:changed";
+const AUTH_SYNC_CHANNEL = "petshop-auth";
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "/api").replace(
-	/\/$/,
-	"",
-);
+let currentUser: SessionUser | null = null;
+let authNotice = "";
+let authSyncChannel: BroadcastChannel | null = null;
+let isAuthSyncInitialized = false;
 
 const mapApiUserToSessionUser = (user: AuthApiUser): SessionUser => ({
 	id: user.id,
@@ -58,10 +52,6 @@ const mapApiUserToSessionUser = (user: AuthApiUser): SessionUser => ({
 	role: user.role === "admin" ? "admin" : "client",
 	gender: user.gender,
 });
-
-type JwtPayload = {
-	exp?: number;
-};
 
 const normalizeFieldErrors = (
 	value: unknown,
@@ -140,7 +130,11 @@ const mapBackendMessageToPtBr = (
 		return "Não foi possível criar a conta no servidor. Tente novamente.";
 	}
 
-	if (normalized === "token invalid" || normalized === "user not found") {
+	if (
+		normalized === "token invalid" ||
+		normalized === "user not found" ||
+		normalized === "authentication required"
+	) {
 		return "Sua sessão expirou. Faça login novamente.";
 	}
 
@@ -151,117 +145,58 @@ const mapBackendMessageToPtBr = (
 	return null;
 };
 
-const persistNotice = (message: string) => {
-	sessionStorage.setItem(AUTH_NOTICE_KEY, message);
+const ensureAuthSyncChannel = () => {
+	if (
+		isAuthSyncInitialized ||
+		typeof window === "undefined" ||
+		typeof BroadcastChannel === "undefined"
+	) {
+		return;
+	}
+
+	authSyncChannel = new BroadcastChannel(AUTH_SYNC_CHANNEL);
+	authSyncChannel.addEventListener("message", (event) => {
+		if (event.data?.type !== AUTH_CHANGED_EVENT) {
+			return;
+		}
+
+		window.dispatchEvent(new Event(AUTH_CHANGED_EVENT));
+	});
+	isAuthSyncInitialized = true;
 };
 
 const notifyAuthChanged = () => {
 	if (typeof window !== "undefined") {
+		ensureAuthSyncChannel();
 		window.dispatchEvent(new Event(AUTH_CHANGED_EVENT));
+		authSyncChannel?.postMessage({ type: AUTH_CHANGED_EVENT });
 	}
 };
 
-const clearStoredSession = ({
-	notify,
-	notice,
-}: {
-	notify: boolean;
-	notice?: string;
-}) => {
-	localStorage.removeItem(AUTH_TOKEN_KEY);
-	localStorage.removeItem(AUTH_USER_KEY);
-
-	if (notice) {
-		persistNotice(notice);
-	}
+const setCurrentUser = (user: SessionUser | null, notify = false) => {
+	currentUser = user;
 
 	if (notify) {
 		notifyAuthChanged();
 	}
 };
 
-const decodeJwtPayload = (token: string): JwtPayload | null => {
-	const [, payload] = token.split(".");
-	if (!payload) {
-		return null;
-	}
+const toLocalizedApiError = (error: ApiError): ApiError => {
+	const normalizedErrors = normalizeFieldErrors(error.errors);
+	const fieldErrorMessage = joinFieldErrors(normalizedErrors);
 
-	try {
-		const normalizedPayload = payload.replace(/-/g, "+").replace(/_/g, "/");
-		const decodedPayload = atob(normalizedPayload);
-		return JSON.parse(decodedPayload) as JwtPayload;
-	} catch {
-		return null;
-	}
+	return {
+		...error,
+		message:
+			fieldErrorMessage ??
+			mapBackendMessageToPtBr(error.message, error.status) ??
+			error.message,
+		errors: normalizedErrors,
+	};
 };
 
-const readStoredUser = (): SessionUser | null => {
-	const userJson = localStorage.getItem(AUTH_USER_KEY);
-	if (!userJson) {
-		return null;
-	}
-
-	try {
-		return JSON.parse(userJson) as SessionUser;
-	} catch {
-		return null;
-	}
-};
-
-const isTokenExpired = (token: string): boolean => {
-	const payload = decodeJwtPayload(token);
-	if (!payload || typeof payload.exp !== "number") {
-		return true;
-	}
-
-	return payload.exp * 1000 <= Date.now();
-};
-
-const buildApiError = async (response: Response): Promise<ApiError> => {
-	try {
-		const payload = (await response.json()) as {
-			message?: unknown;
-			errors?: unknown;
-		};
-
-		const fieldErrors = normalizeFieldErrors(payload.errors);
-		const fieldErrorMessage = joinFieldErrors(fieldErrors);
-		const rawMessage =
-			typeof payload.message === "string" && payload.message.trim()
-				? payload.message
-				: fieldErrorMessage ?? `Request failed: ${response.status}`;
-
-		return {
-			status: response.status,
-			message:
-				fieldErrorMessage ??
-				mapBackendMessageToPtBr(rawMessage, response.status) ??
-				rawMessage,
-			errors: fieldErrors,
-		};
-	} catch {
-		return {
-			status: response.status,
-			message:
-				response.status === 401
-					? "Sua sessão expirou. Faça login novamente."
-					: "Não foi possível concluir a solicitação.",
-		};
-	}
-};
-
-const requestCurrentUser = async (token: string): Promise<SessionUser> => {
-	const response = await fetch(`${API_BASE_URL}/auth/me`, {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	});
-
-	if (!response.ok) {
-		throw await buildApiError(response);
-	}
-
-	const payload = (await response.json()) as AuthApiUser;
+const requestCurrentUser = async (): Promise<SessionUser> => {
+	const payload = await requestJson<AuthApiUser>("/auth/me");
 	return mapApiUserToSessionUser(payload);
 };
 
@@ -272,37 +207,32 @@ export const authService = {
 		}
 
 		try {
-			const response = await fetch(`${API_BASE_URL}/auth/login`, {
+			const payload = await requestJson<{
+				user?: AuthApiUser;
+			}>("/auth/login", {
 				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
 				body: JSON.stringify({ email, password: pass }),
 			});
 
-			if (!response.ok) {
-				const apiError = await buildApiError(response);
-				return {
-					ok: false,
-					message: apiError.message,
-				};
-			}
-
-			const payload = (await response.json()) as {
-				token?: string;
-				user?: AuthApiUser;
-			};
-
-			if (!payload.token || !payload.user?.email || !payload.user?.name) {
+			if (!payload.user?.email || !payload.user?.name) {
 				return {
 					ok: false,
 					message: "Resposta inválida do servidor.",
 				};
 			}
 
-			authService.saveSession(payload.token, mapApiUserToSessionUser(payload.user));
+			setCurrentUser(mapApiUserToSessionUser(payload.user), true);
 			return { ok: true };
-		} catch {
+		} catch (error) {
+			if (isApiError(error)) {
+				const apiError = toLocalizedApiError(error);
+				return {
+					ok: false,
+					message: apiError.message,
+					errors: apiError.errors,
+				};
+			}
+
 			return { ok: false, message: "Falha de conexão com o servidor." };
 		}
 	},
@@ -317,115 +247,78 @@ export const authService = {
 		}
 
 		try {
-			const response = await fetch(`${API_BASE_URL}/auth/register`, {
+			await requestJson("/auth/register", {
 				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
 				body: JSON.stringify({ name, email, password: pass }),
 			});
 
-			if (!response.ok) {
-				const apiError = await buildApiError(response);
+			return { ok: true };
+		} catch (error) {
+			if (isApiError(error)) {
+				const apiError = toLocalizedApiError(error);
 				return {
 					ok: false,
 					message: apiError.message,
+					errors: apiError.errors,
 				};
 			}
 
-			return { ok: true };
-		} catch {
 			return { ok: false, message: "Falha de conexão com o servidor." };
 		}
 	},
 
-	saveSession: (token: string, user: SessionUser, notify = true) => {
-		localStorage.setItem(AUTH_TOKEN_KEY, token);
-		localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
-
-		if (notify) {
-			notifyAuthChanged();
+	logout: async () => {
+		try {
+			await requestJson("/auth/logout", { method: "POST" });
+		} catch {
+			// Ignore logout failures and clear client state locally.
 		}
-	},
 
-	logout: () => {
-		clearStoredSession({ notify: true });
+		setCurrentUser(null, true);
 	},
 
 	handleUnauthorized: (message = "Sua sessão expirou. Faça login novamente.") => {
-		clearStoredSession({
-			notify: true,
-			notice: message,
-		});
+		authNotice = message;
+		setCurrentUser(null, true);
 	},
 
 	consumeNotice: () => {
-		const notice = sessionStorage.getItem(AUTH_NOTICE_KEY);
-		if (!notice) {
+		if (!authNotice) {
 			return "";
 		}
 
-		sessionStorage.removeItem(AUTH_NOTICE_KEY);
+		const notice = authNotice;
+		authNotice = "";
 		return notice;
 	},
 
-	isAuthenticated: () => {
-		return authService.getSession() !== null;
-	},
+	isAuthenticated: () => currentUser !== null,
 
-	getToken: (): string | null => {
-		return authService.getSession()?.token ?? null;
-	},
-
-	getUser: (): SessionUser | null => {
-		return authService.getSession()?.user ?? null;
-	},
-
-	getSession: (): AuthSession | null => {
-		const token = localStorage.getItem(AUTH_TOKEN_KEY);
-		const user = readStoredUser();
-
-		if (!token || !user) {
-			if (token || localStorage.getItem(AUTH_USER_KEY)) {
-				clearStoredSession({ notify: false });
-			}
-			return null;
-		}
-
-		if (isTokenExpired(token)) {
-			clearStoredSession({
-				notify: true,
-				notice: "Sua sessão expirou. Faça login novamente.",
-			});
-			return null;
-		}
-
-		return { token, user };
-	},
+	getUser: (): SessionUser | null => currentUser,
 
 	bootstrapSession: async (): Promise<BootstrapResult> => {
-		const session = authService.getSession();
-		if (!session) {
-			return null;
-		}
-
 		try {
-			const user = await requestCurrentUser(session.token);
-			authService.saveSession(session.token, user, false);
-			return { token: session.token, user };
+			const user = await requestCurrentUser();
+			setCurrentUser(user);
+			return { user };
 		} catch (error) {
-			const apiError = error as ApiError;
+			if (isApiError(error)) {
+				if (error.status === 401) {
+					setCurrentUser(null);
+					return null;
+				}
 
-			if (apiError?.status === 401) {
-				authService.handleUnauthorized(
-					apiError.message || "Sua sessão expirou. Faça login novamente.",
-				);
-				return null;
+				if (currentUser) {
+					return { user: currentUser };
+				}
 			}
 
-			return session;
+			return currentUser ? { user: currentUser } : null;
 		}
 	},
 
-	getAuthChangedEventName: () => AUTH_CHANGED_EVENT,
+	getAuthChangedEventName: () => {
+		ensureAuthSyncChannel();
+		return AUTH_CHANGED_EVENT;
+	},
 };

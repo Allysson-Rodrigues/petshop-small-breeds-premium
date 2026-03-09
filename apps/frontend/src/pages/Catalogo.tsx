@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Helmet } from "../components/seo/HelmetCompat";
 import RevealSection from "../components/ui/RevealSection";
 import { categories, products, type Product } from "../data/products";
@@ -7,6 +7,9 @@ export default function Catalogo() {
   const [activeCategory, setActiveCategory] = useState("Todos");
   const [sortOrder, setSortOrder] = useState("padrao");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const lastFocusedElementRef = useRef<HTMLElement | null>(null);
 
   const filteredProducts =
     activeCategory === "Todos"
@@ -19,14 +22,62 @@ export default function Catalogo() {
     return 0;
   });
 
-  // Close modal on Escape key
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setSelectedProduct(null);
+    if (!selectedProduct) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.setTimeout(() => closeButtonRef.current?.focus(), 0);
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setSelectedProduct(null);
+        return;
+      }
+
+      if (event.key !== "Tab" || !modalRef.current) {
+        return;
+      }
+
+      const focusableElements = modalRef.current.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      );
+
+      if (focusableElements.length === 0) {
+        return;
+      }
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
+      }
     };
-    document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
-  }, []);
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", handleKeyDown);
+      lastFocusedElementRef.current?.focus();
+    };
+  }, [selectedProduct]);
+
+  const openProductDetails = (
+    product: Product,
+    trigger: HTMLButtonElement | null,
+  ) => {
+    lastFocusedElementRef.current = trigger;
+    setSelectedProduct(product);
+  };
 
   return (
     <div
@@ -126,7 +177,10 @@ export default function Catalogo() {
                     {/* Minimalist Details Indicator */}
                     <div className="absolute bottom-5 left-5 md:bottom-6 md:left-6 overflow-hidden hidden lg:block">
                       <button
-                        onClick={() => setSelectedProduct(p)}
+                        type="button"
+                        onClick={(event) =>
+                          openProductDetails(p, event.currentTarget)
+                        }
                         className="flex items-center gap-3 translate-y-full opacity-0 lg:opacity-100 lg:translate-y-full group-hover:translate-y-0 reveal-child transition-transform duration-700 ease-expo"
                       >
                         <span className="h-[1px] w-8 bg-black/40" />
@@ -150,7 +204,9 @@ export default function Catalogo() {
 
                     <button
                       type="button"
-                      onClick={() => setSelectedProduct(p)}
+                      onClick={(event) =>
+                        openProductDetails(p, event.currentTarget)
+                      }
                       className="mobile-affordance mb-4 inline-flex min-h-11 items-center gap-3 lg:hidden"
                       aria-label={`Ver detalhes de ${p.name}`}
                     >
@@ -161,12 +217,14 @@ export default function Catalogo() {
                       <span className="material-symbols-outlined text-sm">arrow_forward</span>
                     </button>
 
-                    <button className="w-full border border-black bg-transparent text-black px-4 py-3 text-[9px] font-medium uppercase tracking-widest hover:bg-black hover:text-white transition-colors duration-500 group/btn">
+                    <button
+                      type="button"
+                      disabled
+                      aria-disabled="true"
+                      className="w-full cursor-not-allowed border border-black/20 bg-neutral-100 px-4 py-3 text-[9px] font-medium uppercase tracking-widest text-neutral-500"
+                    >
                       <div className="flex items-center justify-center gap-3">
-                        Comprar Agora
-                        <span className="material-symbols-outlined text-xs -translate-x-2 opacity-0 group-hover/btn:translate-x-0 group-hover/btn:opacity-100 transition-[transform,opacity] duration-500">
-                          arrow_forward
-                        </span>
+                        Comprar em breve
                       </div>
                     </button>
                   </div>
@@ -180,14 +238,22 @@ export default function Catalogo() {
       {/* Product Modal */}
       {selectedProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
-          <button aria-label="Fechar modal" className="absolute inset-0 w-full bg-black/60 backdrop-blur-sm cursor-pointer border-none" onClick={() => setSelectedProduct(null)}></button>
+          <button
+            type="button"
+            aria-label="Fechar modal"
+            className="absolute inset-0 w-full cursor-pointer border-none bg-black/60 backdrop-blur-sm"
+            onClick={() => setSelectedProduct(null)}
+          />
           <div
+            ref={modalRef}
             role="dialog"
             aria-modal="true"
             aria-labelledby="product-modal-title"
             className="relative bg-white w-full max-w-5xl max-h-[90dvh] overflow-hidden flex flex-col md:flex-row shadow-2xl animate-fade-in animate-scale-up"
           >
             <button
+              ref={closeButtonRef}
+              type="button"
               onClick={() => setSelectedProduct(null)}
               aria-label="Fechar modal"
               className="absolute top-3 right-3 md:top-4 md:right-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-black shadow-sm hover:opacity-70 transition-opacity"
@@ -230,9 +296,18 @@ export default function Catalogo() {
                 )}
               </div>
 
-              <button className="w-full bg-black text-white px-8 py-4 text-xs font-medium uppercase tracking-widest hover:bg-neutral-800 transition-colors shadow-lg active:scale-95">
-                Adicionar ao Carrinho
+              <button
+                type="button"
+                disabled
+                aria-disabled="true"
+                className="w-full cursor-not-allowed bg-neutral-200 px-8 py-4 text-xs font-medium uppercase tracking-widest text-neutral-500"
+              >
+                Carrinho em breve
               </button>
+              <p className="mt-3 text-sm text-neutral-500">
+                Enquanto o checkout não é liberado, fale com a equipe pelo
+                telefone no rodapé para reservar este item.
+              </p>
             </div>
           </div>
         </div>

@@ -7,11 +7,13 @@ export const loginAs = async (email: string, password: string) => {
 		password,
 	});
 
-	if (response.statusCode !== 200 || !response.body.token) {
+	const setCookieHeader = response.headers["set-cookie"];
+
+	if (response.statusCode !== 200 || !setCookieHeader) {
 		throw new Error(`Unable to login test user ${email}`);
 	}
 
-	return response.body.token as string;
+	return Array.isArray(setCookieHeader) ? setCookieHeader : [setCookieHeader];
 };
 
 export const loginAsAdmin = async () =>

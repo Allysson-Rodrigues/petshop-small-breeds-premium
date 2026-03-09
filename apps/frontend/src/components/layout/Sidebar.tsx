@@ -80,18 +80,16 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, onClose }: Si
           const isActive = activeTab === item.id;
           const labelDelay = isExpanded ? `${80 + index * 30}ms` : "0ms";
           return (
-            <a
+            <button
+              type="button"
               key={item.id}
-              role="button"
-              tabIndex={0}
               title={!isExpanded ? item.label : ""}
               className={[
                 "flex items-center gap-4 px-3.5 py-3.5 rounded-xl cursor-pointer whitespace-nowrap",
                 "transition-all duration-300",
                 isActive ? "bg-white text-black shadow-lg shadow-white/5 scale-[1.02]" : "text-gray-400 hover:text-white hover:bg-white/5",
               ].join(" ")}
-              onClick={(e) => { e.preventDefault(); setActiveTab(item.id); if (onClose) onClose(); }}
-              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setActiveTab(item.id); if (onClose) onClose(); } }}
+              onClick={() => { setActiveTab(item.id); if (onClose) onClose(); }}
             >
               <span className={`material-symbols-outlined text-[24px] shrink-0 ${isActive ? "text-black" : ""}`}>{item.icon}</span>
               <span
@@ -104,7 +102,7 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, onClose }: Si
               >
                 {item.label}
               </span>
-            </a>
+            </button>
           );
         })}
 
@@ -127,16 +125,14 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, onClose }: Si
             </span>
           </Link>
 
-          <a
-            role="button"
-            tabIndex={0}
+          <button
+            type="button"
             className={[
               "flex items-center gap-4 px-3 py-3 rounded-lg cursor-pointer whitespace-nowrap",
               "transition-colors duration-200",
               activeTab === "settings" ? "bg-white/10 text-white" : "text-gray-400 hover:text-white hover:bg-white/5",
             ].join(" ")}
-            onClick={(e) => { e.preventDefault(); setActiveTab("settings"); if (onClose) onClose(); }}
-            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setActiveTab("settings"); if (onClose) onClose(); } }}
+            onClick={() => { setActiveTab("settings"); if (onClose) onClose(); }}
           >
             <span className="material-symbols-outlined text-[22px] shrink-0">settings</span>
             <span
@@ -149,7 +145,7 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, onClose }: Si
             >
               Configurações
             </span>
-          </a>
+          </button>
         </div>
       </nav>
 

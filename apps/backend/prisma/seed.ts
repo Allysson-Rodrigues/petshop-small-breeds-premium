@@ -1,10 +1,14 @@
 import { PrismaClient } from "@prisma/client";
 import { pathToFileURL } from "node:url";
-import { seedDatabase } from "../src/main/utils/seed-database.js";
+import {
+	assertDemoSeedAllowed,
+	seedDatabase,
+} from "../src/main/utils/seed-database.js";
 
 const prisma = new PrismaClient();
 
 async function main() {
+	assertDemoSeedAllowed();
 	await seedDatabase(prisma);
 }
 

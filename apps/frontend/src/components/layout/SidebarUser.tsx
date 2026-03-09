@@ -8,8 +8,8 @@ export default function SidebarUser({ isCollapsed }: { isCollapsed?: boolean }) 
 
     if (!user) return null;
 
-    const handleLogout = () => {
-        logout();
+    const handleLogout = async () => {
+        await logout();
         navigate("/");
     };
 

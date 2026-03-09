@@ -5,6 +5,10 @@ import { CreatePetUseCase } from "./create-pet.use-case.js";
 function makeStubs() {
 	const petRepository: PetRepository = {
 		findAll: vi.fn(),
+		findRecent: vi.fn(),
+		countAll: vi.fn(),
+		countByOwnerIds: vi.fn(),
+		findById: vi.fn(),
 		findByUserId: vi.fn(),
 		create: vi.fn().mockImplementation(async (data) => ({
 			id: "pet-1",

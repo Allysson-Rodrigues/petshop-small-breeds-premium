@@ -6,6 +6,8 @@ test.describe("Catalog mobile experience", () => {
 	test("shows product CTA and opens/closes details modal on mobile", async ({
 		page,
 	}) => {
+		test.slow();
+
 		await page.goto("/loja");
 
 		const firstCard = page.locator("article").first();

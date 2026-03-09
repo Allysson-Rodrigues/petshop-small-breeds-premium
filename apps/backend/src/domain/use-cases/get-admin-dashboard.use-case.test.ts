@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Pet } from "../entities/pet.entity.js";
-import { ProductCategory } from "../entities/product.entity.js";
 import type { AppointmentRepository } from "../repositories/appointment.repository.js";
 import type { PetRepository } from "../repositories/pet.repository.js";
 import type { ProductRepository } from "../repositories/product.repository.js";
@@ -15,47 +14,29 @@ const mockPets: Pet[] = [
 
 function makeStubs() {
 	const petRepository: PetRepository = {
-		findAll: vi.fn().mockResolvedValue(mockPets),
+		findAll: vi.fn(),
+		findRecent: vi.fn().mockResolvedValue(mockPets.slice(0, 2)),
+		countAll: vi.fn().mockResolvedValue(3),
+		countByOwnerIds: vi.fn(),
+		findById: vi.fn(),
 		findByUserId: vi.fn(),
 		create: vi.fn(),
 		update: vi.fn(),
 		delete: vi.fn(),
 	};
 	const appointmentRepository: AppointmentRepository = {
-		findAll: vi.fn().mockResolvedValue([
-			{
-				id: "a1",
-				date: new Date(),
-				type: "Banho",
-				status: "PENDING",
-				userId: "u1",
-				petId: "p1",
-			},
-		]),
+		findAll: vi.fn(),
+		countAll: vi.fn().mockResolvedValue(1),
+		findById: vi.fn(),
 		findByUserId: vi.fn(),
 		create: vi.fn(),
 		updateStatus: vi.fn(),
 		delete: vi.fn(),
 	};
 	const userRepository: UserRepository = {
-		findAll: vi.fn().mockResolvedValue([
-			{
-				id: "u1",
-				name: "User 1",
-				email: "u1@test.com",
-				password: "h",
-				role: "client",
-				createdAt: new Date(),
-			},
-			{
-				id: "u2",
-				name: "User 2",
-				email: "u2@test.com",
-				password: "h",
-				role: "admin",
-				createdAt: new Date(),
-			},
-		]),
+		findAll: vi.fn(),
+		findClients: vi.fn(),
+		countClients: vi.fn().mockResolvedValue(1),
 		create: vi.fn(),
 		findByEmail: vi.fn(),
 		findById: vi.fn(),
@@ -63,32 +44,9 @@ function makeStubs() {
 		delete: vi.fn(),
 	};
 	const productRepository: ProductRepository = {
-		findAll: vi.fn().mockResolvedValue([
-			{
-				id: "pr1",
-				name: "Shampoo",
-				description: "Dog shampoo",
-				price: 29.9,
-				category: ProductCategory.ACCESSORY,
-				stock: 50,
-			},
-			{
-				id: "pr2",
-				name: "Ração",
-				description: "Dog food",
-				price: 89.9,
-				category: ProductCategory.FOOD,
-				stock: 3,
-			},
-			{
-				id: "pr3",
-				name: "Coleira",
-				description: "Small collar",
-				price: 45.0,
-				category: ProductCategory.ACCESSORY,
-				stock: 0,
-			},
-		]),
+		findAll: vi.fn(),
+		countAll: vi.fn().mockResolvedValue(3),
+		countLowStock: vi.fn().mockResolvedValue(2),
 		findById: vi.fn(),
 		create: vi.fn(),
 		update: vi.fn(),
@@ -121,30 +79,31 @@ describe("GetAdminDashboardUseCase", () => {
 
 		expect(result.stats.totalPets).toBe(3);
 		expect(result.stats.totalAppointments).toBe(1);
-		expect(result.stats.totalClients).toBe(2);
+		expect(result.stats.totalClients).toBe(1);
 		expect(result.stats.totalProducts).toBe(3);
 	});
 
 	it("should calculate low stock items (stock <= 5)", async () => {
 		const result = await sut.execute();
 
-		// "Ração" stock=3 and "Coleira" stock=0 => 2 low stock
 		expect(result.stats.lowStockItems).toBe(2);
 	});
 
-	it("should return recent pets (max 5)", async () => {
+	it("should return recent pets with repository ordering and limit", async () => {
 		const result = await sut.execute();
 
-		expect(result.recentPets).toHaveLength(3);
+		expect(result.recentPets).toHaveLength(2);
 		expect(result.recentPets[0].name).toBe("Rex");
 	});
 
-	it("should call findAll on all repositories", async () => {
+	it("should use explicit aggregation methods", async () => {
 		await sut.execute();
 
-		expect(stubs.petRepository.findAll).toHaveBeenCalledTimes(1);
-		expect(stubs.appointmentRepository.findAll).toHaveBeenCalledTimes(1);
-		expect(stubs.userRepository.findAll).toHaveBeenCalledTimes(1);
-		expect(stubs.productRepository.findAll).toHaveBeenCalledTimes(1);
+		expect(stubs.petRepository.countAll).toHaveBeenCalledTimes(1);
+		expect(stubs.petRepository.findRecent).toHaveBeenCalledWith(5);
+		expect(stubs.appointmentRepository.countAll).toHaveBeenCalledTimes(1);
+		expect(stubs.userRepository.countClients).toHaveBeenCalledTimes(1);
+		expect(stubs.productRepository.countAll).toHaveBeenCalledTimes(1);
+		expect(stubs.productRepository.countLowStock).toHaveBeenCalledWith(5);
 	});
 });
