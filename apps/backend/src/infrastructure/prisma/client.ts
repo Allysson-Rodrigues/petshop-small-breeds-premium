@@ -1,5 +1,6 @@
-import { PrismaClient } from "@prisma/client";
 import "dotenv/config";
+import type { PrismaClient } from "@prisma/client";
+import { createPrismaClient } from "./create-client.js";
 
 declare global {
 	namespace NodeJS {
@@ -15,7 +16,7 @@ const globalForPrisma = globalThis as typeof globalThis & {
 
 export const prisma =
 	globalForPrisma.prisma ??
-	new PrismaClient({
+	createPrismaClient({
 		log: process.env.NODE_ENV === "development" ? ["warn", "error"] : ["error"],
 	});
 
