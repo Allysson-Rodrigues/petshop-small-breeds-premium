@@ -11,7 +11,8 @@ export default defineConfig({
 		seed: "tsx prisma/seed.ts",
 	},
 	datasource: {
-		// `prisma generate` in CI quality/install steps does not need a live database.
+		// Prisma ORM v7 reads the datasource URL from config instead of schema.prisma.
+		// Keep a fallback so `prisma generate` can run during CI install/build steps.
 		url: process.env.DATABASE_URL ?? fallbackDatabaseUrl,
 	},
 });

@@ -1,11 +1,12 @@
-import { PrismaClient } from "@prisma/client";
+import "dotenv/config";
 import { pathToFileURL } from "node:url";
+import { createPrismaClient } from "../src/infrastructure/prisma/create-client.js";
 import {
 	assertDemoSeedAllowed,
 	seedDatabase,
 } from "../src/main/utils/seed-database.js";
 
-const prisma = new PrismaClient();
+const prisma = createPrismaClient();
 
 async function main() {
 	assertDemoSeedAllowed();

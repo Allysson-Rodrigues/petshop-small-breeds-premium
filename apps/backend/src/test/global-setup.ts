@@ -68,13 +68,7 @@ export default async function globalSetup() {
 	try {
 		execFileSync(
 			"npx",
-			[
-				"prisma",
-				"db",
-				"push",
-				"--skip-generate",
-				"--schema=./prisma/schema.prisma",
-			],
+			["prisma", "db", "push", "--schema=./prisma/schema.prisma"],
 			{
 				cwd: backendDir,
 				env: process.env,
