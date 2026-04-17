@@ -22,5 +22,8 @@
     "test:backend": "npm --prefix apps/backend run test",
     "test:frontend": "npm --prefix apps/frontend run test",
     "test:e2e": "npm --prefix apps/frontend run test:e2e"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3"
   }
 }
