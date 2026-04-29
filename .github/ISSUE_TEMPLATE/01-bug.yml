@@ -1,0 +1,34 @@
+name: Bug Report
+description: Report a defect affecting the storefront, dashboard, API, or deployment flow.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Describe the problem and affected surface.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps To Reproduce
+      placeholder: |
+        1. Open ...
+        2. Sign in as ...
+        3. Trigger ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Paste stack traces, screenshots, failing routes, or payload samples if available.
