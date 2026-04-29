@@ -1,0 +1,6 @@
+{
+  "3248154": "apps/backend/prisma/migrations/20260220222901_init/migration.sql",
+  "3248155": "apps/backend/prisma/migrations/20260301204500_add_user_role/migration.sql",
+  "3248156": "apps/backend/prisma/migrations/20260305195000_normalize_user_role_default/migration.sql",
+  "3248157": "apps/backend/prisma/migrations/20260309093000_add_booking_requests/migration.sql"
+}
