@@ -1,0 +1,25 @@
+name: Feature Request
+description: Propose a bounded product or workflow improvement.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective
+      description: What user or operator outcome should improve?
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: Keep the request implementation-ready and bounded.
+    validations:
+      required: true
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints
+      description: Mention deployment, auth, data, or UX constraints to preserve.
