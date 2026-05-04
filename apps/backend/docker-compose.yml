@@ -22,7 +22,7 @@ services:
       dockerfile: Dockerfile
     container_name: petshop-backend-api
     ports:
-      - "3000:3000"
+      - "3001:3000"
     env_file:
       - .env
     environment:
