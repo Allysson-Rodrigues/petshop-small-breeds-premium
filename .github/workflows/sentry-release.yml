@@ -1,0 +1,48 @@
+name: sentry-release
+
+on:
+  push:
+    branches: [main, master]
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+      SENTRY_FRONTEND_PROJECT: ${{ secrets.SENTRY_FRONTEND_PROJECT }}
+      SENTRY_BACKEND_PROJECT: ${{ secrets.SENTRY_BACKEND_PROJECT }}
+      SENTRY_RELEASE: ${{ github.sha }}
+      SENTRY_ENVIRONMENT: production
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci --legacy-peer-deps
+
+      - name: Build and upload frontend source maps
+        run: npm --prefix apps/frontend run build
+
+      - name: Build backend
+        run: npm --prefix apps/backend run build
+
+      - name: Create Sentry release
+        uses: getsentry/action-release@v3
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+        with:
+          environment: production
+          release: ${{ github.sha }}
+          set_commits: auto
+          projects: ${{ secrets.SENTRY_FRONTEND_PROJECT }} ${{ secrets.SENTRY_BACKEND_PROJECT }}

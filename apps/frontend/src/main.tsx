@@ -5,8 +5,10 @@ import App from "./App.tsx";
 import { printConsoleEasterEgg } from "./consoleEasterEgg.ts";
 import { AuthProvider } from "./contexts/AuthContext.tsx";
 import "./index.css";
+import { initSentry } from "./sentry.ts";
 
 printConsoleEasterEgg();
+initSentry();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

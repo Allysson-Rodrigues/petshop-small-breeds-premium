@@ -22,6 +22,7 @@ import {
 	normalizeErrorCode,
 	sendErrorResponse,
 } from "./main/utils/error-response.js";
+import { setupSentryErrorHandler } from "./instrument.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -57,6 +58,7 @@ app.use("/api", healthRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/public", publicRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+setupSentryErrorHandler(app);
 
 // Global error handler — prevents stack traces leaking to client
 app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
