@@ -18,9 +18,13 @@ if (sentryDsn) {
 	const release = process.env.SENTRY_RELEASE;
 	const options: Sentry.NodeOptions = {
 		dsn: sentryDsn,
-		environment: process.env.SENTRY_ENVIRONMENT ?? process.env.NODE_ENV ?? "development",
+		environment:
+			process.env.SENTRY_ENVIRONMENT ?? process.env.NODE_ENV ?? "development",
 		sendDefaultPii: false,
-		tracesSampleRate: readSampleRate(process.env.SENTRY_TRACES_SAMPLE_RATE, 0.05),
+		tracesSampleRate: readSampleRate(
+			process.env.SENTRY_TRACES_SAMPLE_RATE,
+			0.05,
+		),
 	};
 
 	if (release) {
