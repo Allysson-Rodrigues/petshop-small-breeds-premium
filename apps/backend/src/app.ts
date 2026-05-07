@@ -9,6 +9,7 @@ import express, {
 } from "express";
 import helmet from "helmet";
 import { AppError } from "./domain/errors/app-error.js";
+import { setupSentryErrorHandler } from "./instrument.js";
 import authRoutes from "./main/config/auth-routes.js";
 import dashboardRoutes from "./main/config/dashboard-routes.js";
 import {
@@ -22,7 +23,6 @@ import {
 	normalizeErrorCode,
 	sendErrorResponse,
 } from "./main/utils/error-response.js";
-import { setupSentryErrorHandler } from "./instrument.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
