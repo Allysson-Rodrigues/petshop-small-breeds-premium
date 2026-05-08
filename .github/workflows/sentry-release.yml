@@ -19,11 +19,11 @@ jobs:
       SENTRY_ENVIRONMENT: production
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 24
           cache: npm
@@ -37,7 +37,7 @@ jobs:
         run: npm --prefix apps/backend run build
 
       - name: Create Sentry release
-        uses: getsentry/action-release@v3
+        uses: getsentry/action-release@5657c9e888b4e2cc85f4d29143ea4131fde4a73a # v3
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}

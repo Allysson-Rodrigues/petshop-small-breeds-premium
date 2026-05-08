@@ -1,7 +1,7 @@
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react-swc';
-import { defineConfig, type PluginOption } from 'vite';
+import { defineConfig } from 'vite';
 
 const apiProxyTarget = process.env.API_PROXY_TARGET ?? 'http://127.0.0.1:3000';
 const sentryOrg = process.env.SENTRY_ORG;
@@ -21,18 +21,13 @@ const sentryBuildPlugin =
         telemetry: false,
       })
     : null;
-const plugins: PluginOption[] = [
-  react(),
-  tailwindcss(),
-];
-
-if (sentryBuildPlugin) {
-  plugins.push(sentryBuildPlugin);
-}
-
 // https://vite.dev/config/
 export default defineConfig({
-  plugins,
+  plugins: [
+    react(),
+    tailwindcss(),
+    sentryBuildPlugin,
+  ],
   define: {
     __APP_RELEASE__: JSON.stringify(sentryRelease ?? 'development'),
   },
